@@ -6,10 +6,10 @@ const Header = () => {
     const [hide, setHide] = useState(false);
     const { toggle, setToggle } = useGlobalContext();
     return (
-        <nav className="navbar navbar-expand-lg navbar-light bg-light header">
+        <nav className="navbar navbar-expand navbar-dark bg-dark topNavbar">
             <div className="container-fluid">
                 <span className="navbar-brand toggle-btn" onClick={() => setToggle(!toggle)}>
-                    ☰
+                    <i className="bi bi-list"></i>
                 </span>
                 <div className="collapse navbar-collapse">
                     <ul className="navbar-nav ms-auto">

@@ -7,58 +7,77 @@ export default function Dashboard() {
             <div className="content-area">
                 <div className="row">
                     {/* Card 1 */}
-                    <div className="col-md-4 mb-4">
-                        <div className="card">
+                    <div className="col-xl-3 col-md-3 mb-4">
+                        <div className="card bg-primary text-white">
                             <div className="card-body">
                                 <h5 className="card-title">Total Sales</h5>
                                 <p className="card-text">1,200</p>
                             </div>
                         </div>
                     </div>
-                    {/* Card 2 */}
-                    <div className="col-md-4 mb-4">
-                        <div className="card">
+
+                    <div className="col-xl-3 col-md-3 mb-4">
+                        <div className="card bg-warning text-white">
                             <div className="card-body">
-                                <h5 className="card-title">Total Customer</h5>
-                                <p className="card-text">350</p>
+                                <h5 className="card-title">Total Sales</h5>
+                                <p className="card-text">1,200</p>
                             </div>
                         </div>
                     </div>
+
+                    <div className="col-xl-3 col-md-3 mb-4">
+                        <div className="card bg-success text-white">
+                            <div className="card-body">
+                                <h5 className="card-title">Total Sales</h5>
+                                <p className="card-text">1,200</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="col-xl-3 col-md-3 mb-4">
+                        <div className="card bg-danger text-white">
+                            <div className="card-body">
+                                <h5 className="card-title">Total Sales</h5>
+                                <p className="card-text">1,200</p>
+                            </div>
+                        </div>
+                    </div>
+
                     {/* Card 3 */}
-                    <div className="col-md-4 mb-4">
-                        <div className="card">
-                            <div className="card-body">
-                                <h5 className="card-title">Total Staff</h5>
-                                <p className="card-text">5</p>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 <div className="row">
-                    {/* Card 4 */}
-                    <div className="col-md-4 mb-4">
-                        <div className="card">
+                    <div className="col-xl-3 col-md-3 mb-4">
+                        <div className="card bg-primary text-white">
                             <div className="card-body">
-                                <h5 className="card-title">Total Store</h5>
-                                <p className="card-text">10</p>
+                                <h5 className="card-title">Total Sales</h5>
+                                <p className="card-text">1,200</p>
                             </div>
                         </div>
                     </div>
-                    {/* Card 5 */}
-                    <div className="col-md-4 mb-4">
-                        <div className="card">
+
+                    <div className="col-xl-3 col-md-3 mb-4">
+                        <div className="card bg-warning text-white">
                             <div className="card-body">
-                                <h5 className="card-title">Total Subscription</h5>
-                                <p className="card-text">12</p>
+                                <h5 className="card-title">Total Sales</h5>
+                                <p className="card-text">1,200</p>
                             </div>
                         </div>
                     </div>
-                    {/* Card 6 */}
-                    <div className="col-md-4 mb-4">
-                        <div className="card">
+
+                    <div className="col-xl-3 col-md-3 mb-4">
+                        <div className="card bg-success text-white">
                             <div className="card-body">
-                                <h5 className="card-title">Total Service</h5>
-                                <p className="card-text">8</p>
+                                <h5 className="card-title">Total Sales</h5>
+                                <p className="card-text">1,200</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="col-xl-3 col-md-3 mb-4">
+                        <div className="card bg-danger text-white">
+                            <div className="card-body">
+                                <h5 className="card-title">Total Sales</h5>
+                                <p className="card-text">1,200</p>
                             </div>
                         </div>
                     </div>
