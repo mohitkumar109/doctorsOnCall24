@@ -3,10 +3,7 @@ import Breadcrumb from "../../components/Breadcrumb";
 export default function Dashboard() {
     return (
         <div className="container-fluid">
-            <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
-                <h1 className="h3">Dashboard</h1>
-                <Breadcrumb pageName={"Dashboard"} />
-            </div>
+            <Breadcrumb pageName={"Dashboard"} />
             <div className="content-area">
                 <div className="row">
                     {/* Card 1 */}

@@ -1,10 +1,16 @@
-import { Link } from "react-router-dom";
-import { useGlobalContext } from "../context/AppContext";
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useGlobalContext } from "../context/AppContext";
 
 const Header = () => {
     const [hide, setHide] = useState(false);
-    const { toggle, setToggle } = useGlobalContext();
+    const { toggle, setToggle, logout } = useGlobalContext();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logout();
+        navigate("/");
+    };
     return (
         <nav className="navbar navbar-expand navbar-dark bg-dark topNavbar">
             <div className="container-fluid">
@@ -36,7 +42,7 @@ const Header = () => {
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to="#" className="dropdown-item">
+                                    <Link to="#" className="dropdown-item" onClick={handleLogout}>
                                         <i className="bi bi-box-arrow-right"></i> Logout
                                     </Link>
                                 </li>
