@@ -1,7 +1,5 @@
+import { asyncHandler, ApiResponse, ApiError } from "../utils/index.js";
 import { User } from "../models/userModel.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
-import { ApiError } from "../utils/ApiError.js";
 
 const generateAccessAndRefreshTokens = async (userId) => {
     try {
@@ -71,7 +69,7 @@ class Controller {
 
         const cookieOptions = {
             httpOnly: true,
-            secure: process.env.Node_ENV === "development",
+            secure: process.env.NODE_ENV === "development",
             sameSite: "strict",
             maxAge: 1 * 24 * 60 * 60 * 1000,
         };

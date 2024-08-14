@@ -34,4 +34,4 @@ const usageSchema = new Schema({
     },
 });
 
-export default Usage = mongoose.model("Usage", usageSchema);
+export const Usage = mongoose.model("Usage", usageSchema);

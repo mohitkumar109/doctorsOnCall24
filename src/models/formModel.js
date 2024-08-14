@@ -34,4 +34,4 @@ const formOfMedicineSchema = new Schema({
     },
 });
 
-export default FormOfMedicine = mongoose.model("FormOfMedicine", formOfMedicineSchema);
+export const FormOfMedicine = mongoose.model("FormOfMedicine", formOfMedicineSchema);

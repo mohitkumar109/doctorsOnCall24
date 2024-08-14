@@ -1,5 +1,15 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import {
+    BsSpeedometer,
+    BsCapsule,
+    BsTruck,
+    BsBox,
+    BsCart,
+    BsShieldLock,
+    BsTools,
+    BsCardList,
+} from "react-icons/bs";
 import { useGlobalContext } from "../context/AppContext";
 
 const Sidebar = () => {
@@ -17,7 +27,7 @@ const Sidebar = () => {
                 <ul className="list-unstyled components">
                     <li>
                         <Link to="/">
-                            <i className="bi bi-speedometer"></i>
+                            <BsSpeedometer className="bi" />
                             Dashboard
                         </Link>
                     </li>
@@ -28,7 +38,7 @@ const Sidebar = () => {
                             className="dropdown-toggle"
                             onClick={() => handleToggle("medicine")}
                         >
-                            <i className="bi bi-capsule"></i>
+                            <BsCapsule className="bi" />
                             Medicine
                         </Link>
                         <ul
@@ -38,41 +48,41 @@ const Sidebar = () => {
                         >
                             <li>
                                 <Link to="/manage-category">
-                                    <i className="bi bi-tags" />
+                                    <BsCardList className="bi" />
                                     Medicine Category
                                 </Link>
                             </li>
                             <li>
                                 <Link to="/manage-brand">
-                                    <i className="bi bi-award" />
+                                    <BsCardList className="bi" />
                                     Medicine Brand
                                 </Link>
                             </li>
 
                             <li>
                                 <Link to="#">
-                                    <i className="bi bi-fonts" />
+                                    <BsCardList className="bi" />
                                     Generic Name
                                 </Link>
                             </li>
 
                             <li>
                                 <Link to="#">
-                                    <i className="bi bi-file-earmark-medical" />
+                                    <BsCardList className="bi" />
                                     Form of medicine
                                 </Link>
                             </li>
 
                             <li>
                                 <Link to="#">
-                                    <i className="bi bi-bar-chart-line" />
+                                    <BsCardList className="bi" />
                                     Strength of medicine
                                 </Link>
                             </li>
 
                             <li>
                                 <Link to="#">
-                                    <i className="bi bi-journal-medical" />
+                                    <BsCardList className="bi" />
                                     Usage of medicine
                                 </Link>
                             </li>
@@ -85,7 +95,7 @@ const Sidebar = () => {
                             className="dropdown-toggle"
                             onClick={() => handleToggle("stores")}
                         >
-                            <i className="bi bi-truck"></i>
+                            <BsTruck className="bi" />
                             Stores
                         </Link>
                         <ul
@@ -95,13 +105,13 @@ const Sidebar = () => {
                         >
                             <li>
                                 <Link to="#">
-                                    <i className="bi bi-file-earmark-text" />
+                                    <BsCardList className="bi" />
                                     Manage Store
                                 </Link>
                             </li>
                             <li>
                                 <Link to="#">
-                                    <i className="bi bi-file-earmark-text" />
+                                    <BsCardList className="bi" />
                                     Manage Staff
                                 </Link>
                             </li>
@@ -114,7 +124,7 @@ const Sidebar = () => {
                             className="dropdown-toggle"
                             onClick={() => handleToggle("inventory")}
                         >
-                            <i className="bi bi-box"></i>
+                            <BsBox className="bi" />
                             Inventory
                         </Link>
                         <ul
@@ -124,13 +134,13 @@ const Sidebar = () => {
                         >
                             <li>
                                 <Link to="#">
-                                    <i className="bi bi-person-plus" />
+                                    <BsCardList className="bi" />
                                     Add Inventory
                                 </Link>
                             </li>
                             <li>
                                 <Link to="#">
-                                    <i className="bi bi-file-earmark-text" />
+                                    <BsCardList className="bi" />
                                     Manage Inventory
                                 </Link>
                             </li>
@@ -143,7 +153,7 @@ const Sidebar = () => {
                             className="dropdown-toggle"
                             onClick={() => handleToggle("assign")}
                         >
-                            <i className="bi bi-cart"></i>
+                            <BsCart className="bi" />
                             Assign Inventory
                         </Link>
                         <ul
@@ -153,7 +163,7 @@ const Sidebar = () => {
                         >
                             <li>
                                 <Link to="#">
-                                    <i className="bi bi-file-earmark-text" />
+                                    <BsCardList className="bi" />
                                     Assign to Store
                                 </Link>
                             </li>
@@ -166,7 +176,7 @@ const Sidebar = () => {
                             className="dropdown-toggle"
                             onClick={() => handleToggle("settings")}
                         >
-                            <i className="bi bi-gear" />
+                            <BsTools className="bi" />
                             Settings
                         </Link>
                         <ul
@@ -176,7 +186,7 @@ const Sidebar = () => {
                         >
                             <li>
                                 <Link to="#">
-                                    <i className="bi bi-shield-lock" />
+                                    <BsShieldLock className="bi" />
                                     Change Password
                                 </Link>
                             </li>
@@ -185,11 +195,11 @@ const Sidebar = () => {
                 </ul>
             )}
 
-            {auth === "staff" && (
+            {auth === "user" && (
                 <ul className="list-unstyled components">
                     <li>
                         <Link to="/">
-                            <i className="bi bi-house-door" />
+                            <BsSpeedometer className="bi" />
                             Dashboard
                         </Link>
                     </li>
@@ -199,7 +209,7 @@ const Sidebar = () => {
                             className="dropdown-toggle"
                             onClick={() => handleToggle("history")}
                         >
-                            <i className="bi bi-people" />
+                            <BsBox className="bi" />
                             Inventory
                         </Link>
                         <ul
@@ -209,8 +219,8 @@ const Sidebar = () => {
                         >
                             <li>
                                 <Link to="#">
-                                    <i className="bi bi-person-lines-fill" />
-                                    History of Inventory Receive
+                                    <BsCardList className="bi" />
+                                    Receive Inventory History
                                 </Link>
                             </li>
                         </ul>

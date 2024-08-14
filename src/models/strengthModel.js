@@ -34,4 +34,4 @@ const strengthOfMedicineSchema = new Schema({
     },
 });
 
-export default Strength = mongoose.model("StrengthOfMedicine", strengthOfMedicineSchema);
+export const Strength = mongoose.model("StrengthOfMedicine", strengthOfMedicineSchema);

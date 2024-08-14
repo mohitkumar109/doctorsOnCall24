@@ -54,15 +54,19 @@ li {
 .sidebar ul li a {
     padding: 10px 20px;
     margin: 10px 0; /* Adjusted for better vertical spacing */
-    font-size: 0.9em;
+    font-size: 1em;
     display: flex;
     align-items: center;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(225, 241, 229, 0.5);
     text-decoration: none;
     transition: all 0.3s, color 0.3s;
 }
 
 .sidebar ul li a:hover {
+    color: #fff;
+}
+
+.sidebar ul li a:hover .bi {
     color: #fff;
 }
 
@@ -108,6 +112,48 @@ li {
 .toggle-btn {
     cursor: pointer;
     font-size: 1.5em;
+}
+
+/*--------------Model CSS ------------*/
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: grid;
+    place-items: center;
+    transition: 0.3s ease-in-out all;
+    z-index: 200;
+}
+.modal-container {
+    width: 80vw;
+    max-width: 600px;
+    height: 80vh;
+    background: #fff;
+    border-radius: 0.25rem;
+}
+.modal-img {
+    height: 15rem;
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+}
+.modal-content {
+    padding: 1rem 1.5rem;
+}
+.modal-content p {
+    color: #475569;
+}
+.modal-content a {
+    display: block;
+    color: #03449d;
+    margin-bottom: 1rem;
+    text-decoration: underline;
+    transition: 0.3s ease-in-out all;
+}
+.modal-content a:hover {
+    color: #222;
 }
 
 /* Responsive adjustments */

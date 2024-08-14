@@ -34,4 +34,4 @@ const genericNameSchema = new Schema({
     },
 });
 
-export default GenericName = mongoose.model("GenericName", genericNameSchema);
+export const GenericName = mongoose.model("GenericName", genericNameSchema);

@@ -1,9 +1,12 @@
+import { useNavigate } from "react-router-dom";
+import { BsPencil, BsTrash3Fill } from "react-icons/bs";
 import Pagination from "../../../components/Pagination";
 import Filter from "../../../components/Filter";
 import Breadcrumb from "../../../components/Breadcrumb";
 import GroupButton from "../../../components/GroupButton";
 
 export default function ManageBrand() {
+    const navigate = useNavigate();
     return (
         <div className="container-fluid">
             <Breadcrumb pageName={"Brand"} />
@@ -18,7 +21,7 @@ export default function ManageBrand() {
                         </div>
                     </div>
                     <div className="card-body">
-                        <GroupButton />
+                        <GroupButton buttonLink="/add-brand" />
                         <div className="table-responsive">
                             <table className="table table-striped table-bordered table-hover">
                                 <thead>
@@ -52,15 +55,15 @@ export default function ManageBrand() {
                                             <span className="text-default"> 15/05/2024 </span>
                                         </td>
                                         <td>
-                                            <span class="badge bg-danger">Active</span>
+                                            <span className="badge bg-danger">Active</span>
                                         </td>
                                         <td className="text-default">
                                             <div className="d-flex gap-1">
                                                 <button className="btn btn-primary btn-sm">
-                                                    <i className="bi bi-pencil" />
+                                                    <BsPencil />
                                                 </button>
                                                 <button className="btn btn-danger btn-sm">
-                                                    <i className="bi bi-trash" />
+                                                    <BsTrash3Fill />
                                                 </button>
                                             </div>
                                         </td>

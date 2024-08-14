@@ -1,3 +1,4 @@
+import { BsPencil, BsTrash3Fill } from "react-icons/bs";
 import Pagination from "../../../components/Pagination";
 import Filter from "../../../components/Filter";
 import Breadcrumb from "../../../components/Breadcrumb";
@@ -18,7 +19,7 @@ export default function ManageCategory() {
                         </div>
                     </div>
                     <div className="card-body">
-                        <GroupButton />
+                        <GroupButton buttonLink="/add-category" />
                         <div className="table-responsive">
                             <table className="table table-striped table-bordered table-hover">
                                 <thead>
@@ -53,15 +54,15 @@ export default function ManageCategory() {
                                         </td>
 
                                         <td>
-                                            <span class="badge bg-success">Active</span>
+                                            <span className="badge bg-success">Active</span>
                                         </td>
                                         <td className="text-default">
                                             <div className="d-flex gap-1">
                                                 <button className="btn btn-primary btn-sm">
-                                                    <i className="bi bi-pencil" />
+                                                    <BsPencil />
                                                 </button>
                                                 <button className="btn btn-danger btn-sm">
-                                                    <i className="bi bi-trash" />
+                                                    <BsTrash3Fill />
                                                 </button>
                                             </div>
                                         </td>

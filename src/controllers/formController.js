@@ -1,6 +1,4 @@
-import { asyncHandler } from "../utils/asyncHandler.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
-import { ApiError } from "../utils/ApiError.js";
+import { asyncHandler, ApiResponse, ApiError } from "../utils/index.js";
 
 class Controller {
     addForm = asyncHandler(async (req, res) => {});

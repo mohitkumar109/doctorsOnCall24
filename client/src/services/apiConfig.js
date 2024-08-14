@@ -7,6 +7,7 @@ const option = {
     headers: {
         "Content-Type": "application/json", // Example header
         Accept: "application/json",
+        Authorization: `Bearer ${JSON.parse(await localStorage.getItem("token"))}`,
     },
 };
 

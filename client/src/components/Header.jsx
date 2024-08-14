@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { BsList, BsPeople, BsBoxArrowRight } from "react-icons/bs";
 import { useGlobalContext } from "../context/AppContext";
+import UpdateProfileModel from "../components/UpdateProfileModel";
 
 const Header = () => {
     const [hide, setHide] = useState(false);
+    const [open, setOpen] = useState(false);
     const { toggle, setToggle, logout } = useGlobalContext();
     const navigate = useNavigate();
 
@@ -11,11 +14,17 @@ const Header = () => {
         logout();
         navigate("/");
     };
+
+    const handleProfileClick = () => {
+        setOpen(true); // Open the profile modal
+        setHide(false); // Hide the dropdown menu
+    };
+
     return (
         <nav className="navbar navbar-expand navbar-dark bg-dark topNavbar">
             <div className="container-fluid">
                 <span className="navbar-brand toggle-btn" onClick={() => setToggle(!toggle)}>
-                    <i className="bi bi-list"></i>
+                    <BsList />
                 </span>
                 <div className="collapse navbar-collapse">
                     <ul className="navbar-nav ms-auto">
@@ -37,19 +46,20 @@ const Header = () => {
                             </Link>
                             <ul className={`dropdown-menu dropdown-menu-end ${hide && "show"}`}>
                                 <li>
-                                    <Link to="#" className="dropdown-item">
-                                        <i className="bi bi-people"></i> Profile
-                                    </Link>
+                                    <button className="dropdown-item" onClick={handleProfileClick}>
+                                        <BsPeople /> Profile
+                                    </button>
                                 </li>
                                 <li>
                                     <Link to="#" className="dropdown-item" onClick={handleLogout}>
-                                        <i className="bi bi-box-arrow-right"></i> Logout
+                                        <BsBoxArrowRight /> Logout
                                     </Link>
                                 </li>
                             </ul>
                         </li>
                     </ul>
                 </div>
+                {open && <UpdateProfileModel open={open} setOpen={setOpen} />}
             </div>
         </nav>
     );

@@ -1,6 +1,7 @@
 import { User } from "../models/userModel.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
+import { config } from "../common/config.js";
 import jwt from "jsonwebtoken";
 
 export const protect = asyncHandler(async (req, _, next) => {
@@ -11,7 +12,7 @@ export const protect = asyncHandler(async (req, _, next) => {
         throw new ApiError(401, "Unauthorized Request");
     }
     try {
-        const decodeToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        const decodeToken = jwt.verify(token, config.accessTokenSecret);
 
         // Log the decoded token (avoid logging sensitive information in production)
         //console.log("Decoded Token:", decodeToken);

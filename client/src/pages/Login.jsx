@@ -23,7 +23,6 @@ const Login = () => {
                         "Content-Type": "application/json",
                         Accept: "application/json",
                     },
-                    withCredentials: true,
                 });
 
                 if (response && response?.data?.success) {

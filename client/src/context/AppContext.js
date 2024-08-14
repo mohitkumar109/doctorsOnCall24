@@ -21,6 +21,7 @@ const AppProvider = ({ children }) => {
                 headers: {
                     "Content-Type": "application/json",
                     Accept: "application/json",
+                    Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
                 },
                 withCredentials: true,
             });
