@@ -1,6 +1,6 @@
-import mongoose, { Schema } from "mongoose";
+import { Dependencies } from "../packages/index.js";
 
-const brandSchema = new Schema({
+const brandSchema = new Dependencies.mongoose.Schema({
     brandName: {
         type: String,
         required: true,
@@ -15,12 +15,12 @@ const brandSchema = new Schema({
         default: "Active",
     },
     createdBy: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Dependencies.mongoose.Schema.Types.ObjectId,
         ref: "Users",
         required: true,
     },
     updatedBy: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Dependencies.mongoose.Schema.Types.ObjectId,
         ref: "Users",
         required: true,
     },
@@ -34,4 +34,4 @@ const brandSchema = new Schema({
     },
 });
 
-export const Brand = mongoose.model("Brand", brandSchema);
+export const Brand = Dependencies.mongoose.model("Brand", brandSchema);

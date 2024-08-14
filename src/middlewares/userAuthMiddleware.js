@@ -1,10 +1,9 @@
-import { User } from "../models/userModel.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
-import { ApiError } from "../utils/ApiError.js";
-import { config } from "../common/config.js";
-import jwt from "jsonwebtoken";
+import { Dependencies } from "../packages/index.js";
+import { MODEL } from "../models/index.js";
+import { asyncHandler, ApiError } from "../utils/index.js";
+import { config } from "../common/index.js";
 
-export const protect = asyncHandler(async (req, _, next) => {
+export const userAuth = asyncHandler(async (req, _, next) => {
     const token =
         req.cookies?.accessToken || (req.header("Authorization") || "").replace("Bearer ", "");
 
@@ -12,12 +11,12 @@ export const protect = asyncHandler(async (req, _, next) => {
         throw new ApiError(401, "Unauthorized Request");
     }
     try {
-        const decodeToken = jwt.verify(token, config.accessTokenSecret);
+        const decodeToken = Dependencies.jwt.verify(token, config.accessTokenSecret);
 
         // Log the decoded token (avoid logging sensitive information in production)
         //console.log("Decoded Token:", decodeToken);
 
-        const user = await User.findById(decodeToken?._id).select("-password -refreshToken");
+        const user = await MODEL.User.findById(decodeToken?._id).select("-password -refreshToken");
 
         // Log the user information (avoid logging sensitive information in production)
         //console.log("Authenticated User:", user);

@@ -2,6 +2,7 @@ import { Dependencies } from "./packages/index.js";
 import { config } from "./common/index.js";
 
 const app = Dependencies.express();
+
 const corsOptions = {
     origin: config.frontendDomain, // replace with your frontend URL
     methods: "GET,POST,PUT,PATCH,DELETE",
@@ -20,21 +21,22 @@ app.use(Dependencies.cookieParser());
 app.use(Dependencies.cors(corsOptions));
 
 app.use((req, res, next) => {
-    console.log("--------Request Details--------", req.method, req.originalUrl);
-    console.log("authorization using headers--", req.header("Authorization"));
-    console.log("authorization using cookies---", req.cookies["accessToken"]);
+    console.log("Request Details--------", req.method, req.originalUrl);
+    //console.log("authorization using headers--", req.header("Authorization"));
+    //console.log("authorization using cookies---", req.cookies["accessToken"]);
     Object.keys(req.body).length ? console.log("BODY : ", req.body) : "";
     Object.keys(req.query).length ? console.log("Query : ", req.query) : "";
-    console.log("-----------ENDS------------");
     next();
 });
 
 // routes import
-import { errorHandler } from "./middlewares/errorMiddleware.js";
-import userRoute from "./routes/userRoutes.js";
+import { errorHandler, InvalidRoute } from "./middlewares/index.js";
+import * as Routes from "./routes/index.js";
 
 // routes declaration
-app.use("/api/v1/users", userRoute);
+app.use(Routes.AdminBase, Routes.AdminRoute);
 
+app.use(InvalidRoute);
 app.use(errorHandler);
+
 export { app };

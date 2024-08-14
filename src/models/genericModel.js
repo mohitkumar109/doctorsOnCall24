@@ -1,6 +1,6 @@
-import mongoose, { Schema } from "mongoose";
+import { Dependencies } from "../packages/index.js";
 
-const genericNameSchema = new Schema({
+const genericNameSchema = new Dependencies.mongoose.Schema({
     genericName: {
         type: String,
         required: true,
@@ -15,14 +15,12 @@ const genericNameSchema = new Schema({
         default: "Active",
     },
     createdBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Users",
-        required: true,
+        type: Dependencies.mongoose.Schema.Types.ObjectId,
+        ref: "AdminUser",
     },
     updatedBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Users",
-        required: true,
+        type: Dependencies.mongoose.Schema.Types.ObjectId,
+        ref: "AdminUser",
     },
     createdAt: {
         type: Date,
@@ -34,4 +32,4 @@ const genericNameSchema = new Schema({
     },
 });
 
-export const GenericName = mongoose.model("GenericName", genericNameSchema);
+export const Generic = Dependencies.mongoose.model("GenericName", genericNameSchema);

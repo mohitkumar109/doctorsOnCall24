@@ -1,8 +1,8 @@
 import { Dependencies } from "../packages/index.js";
 import { config } from "../common/index.js";
 
-const userSchema = new Dependencies.mongoose.Schema({
-    fullName: {
+const adminSchema = new Dependencies.mongoose.Schema({
+    name: {
         type: String,
         required: true,
         unique: true,
@@ -22,12 +22,7 @@ const userSchema = new Dependencies.mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ["admin", "user"],
-        required: true,
-    },
-    checked: {
-        type: Boolean,
-        default: false,
+        default: "admin",
     },
     status: {
         type: String,
@@ -46,23 +41,22 @@ const userSchema = new Dependencies.mongoose.Schema({
     },
 });
 
-userSchema.pre("save", async function (next) {
+adminSchema.pre("save", async function (next) {
     if (!this.isModified("password")) return next();
     const salt = await Dependencies.bcrypt.genSalt(10);
     this.password = await Dependencies.bcrypt.hash(this.password, salt);
     next();
 });
 
-userSchema.methods.isPasswordCorrect = async function (password) {
+adminSchema.methods.isPasswordCorrect = async function (password) {
     return Dependencies.bcrypt.compare(password, this.password);
 };
 
-userSchema.methods.generateAccessToken = function () {
-    return jwt.sign(
+adminSchema.methods.generateAccessToken = function () {
+    return Dependencies.jwt.sign(
         {
             _id: this._id,
             email: this.email,
-            fullName: this.fullName,
         },
         config.accessTokenSecret,
         {
@@ -71,8 +65,8 @@ userSchema.methods.generateAccessToken = function () {
     );
 };
 
-userSchema.methods.generateRefreshToken = function () {
-    return jwt.sign(
+adminSchema.methods.generateRefreshToken = function () {
+    return Dependencies.jwt.sign(
         {
             _id: this._id,
         },
@@ -83,4 +77,4 @@ userSchema.methods.generateRefreshToken = function () {
     );
 };
 
-export const User = Dependencies.mongoose.model("Users", userSchema);
+export const AdminUser = Dependencies.mongoose.model("AdminUser", adminSchema);

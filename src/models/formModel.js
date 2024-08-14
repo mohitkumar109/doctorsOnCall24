@@ -1,6 +1,6 @@
-import mongoose, { Schema } from "mongoose";
+import { Dependencies } from "../packages/index.js";
 
-const formOfMedicineSchema = new Schema({
+const formOfMedicineSchema = new Dependencies.mongoose.Schema({
     formName: {
         type: String,
         required: true,
@@ -15,12 +15,12 @@ const formOfMedicineSchema = new Schema({
         default: "Active",
     },
     createdBy: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Dependencies.mongoose.Schema.Types.ObjectId,
         ref: "Users",
         required: true,
     },
     updatedBy: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Dependencies.mongoose.Schema.Types.ObjectId,
         ref: "Users",
         required: true,
     },
@@ -34,4 +34,4 @@ const formOfMedicineSchema = new Schema({
     },
 });
 
-export const FormOfMedicine = mongoose.model("FormOfMedicine", formOfMedicineSchema);
+export const FormOfMedicine = Dependencies.mongoose.model("FormOfMedicine", formOfMedicineSchema);

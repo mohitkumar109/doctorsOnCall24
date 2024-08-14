@@ -1,6 +1,6 @@
-import mongoose, { Schema } from "mongoose";
+import { Dependencies } from "../packages/index.js";
 
-const categorySchema = new Schema({
+const categorySchema = new Dependencies.mongoose.Schema({
     categoryName: {
         type: String,
         required: true,
@@ -15,12 +15,12 @@ const categorySchema = new Schema({
         default: "Active",
     },
     createdBy: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Dependencies.mongoose.Schema.Types.ObjectId,
         ref: "Users",
         required: true,
     },
     updatedBy: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Dependencies.mongoose.Schema.Types.ObjectId,
         ref: "Users",
         required: true,
     },
@@ -34,4 +34,4 @@ const categorySchema = new Schema({
     },
 });
 
-export const Category = mongoose.model("Category", categorySchema);
+export const Category = Dependencies.mongoose.model("Category", categorySchema);

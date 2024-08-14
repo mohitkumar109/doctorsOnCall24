@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
-import { ApiError } from "../utils/ApiError.js";
+import { Dependencies } from "../packages/index.js";
+import { ApiError } from "../utils/index.js";
 
-const errorHandler = (err, req, res, next) => {
+export const errorHandler = (err, req, res, next) => {
     let error = err;
 
     // Check if the error is an instance of an ApiError class which extends native Error class
@@ -10,7 +10,8 @@ const errorHandler = (err, req, res, next) => {
         // create a new ApiError instance to keep the consistency
 
         // assign an appropriate status code
-        const statusCode = error.statusCode || error instanceof mongoose.Error ? 400 : 500;
+        const statusCode =
+            error.statusCode || error instanceof Dependencies.mongoose.Error ? 400 : 500;
 
         // set a message from native Error instance or a custom one
         const message = error.message || "Something went wrong";
@@ -28,4 +29,7 @@ const errorHandler = (err, req, res, next) => {
     return res.status(error.statusCode).json(response);
 };
 
-export { errorHandler };
+export const InvalidRoute = (req, res, next) => {
+    // console.log("invalid route",req.body,req.query,req)
+    throw new ApiError(404, "invalid route");
+};
