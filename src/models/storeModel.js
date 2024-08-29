@@ -1,10 +1,22 @@
 import { Dependencies } from "../packages/index.js";
 
-const usageSchema = new Dependencies.mongoose.Schema({
-    usageName: {
+const storeSchema = new Dependencies.mongoose.Schema({
+    storeName: {
         type: String,
         required: true,
         unique: true,
+    },
+    location: {
+        phone: { type: String },
+        address: { type: String },
+        state: { type: String },
+        city: { type: String },
+        pin: { type: String },
+    },
+    contactPerson: {
+        personName: { type: String },
+        email: { type: String },
+        mobile: { type: String },
     },
     checked: {
         type: Boolean,
@@ -16,11 +28,11 @@ const usageSchema = new Dependencies.mongoose.Schema({
     },
     createdBy: {
         type: Dependencies.mongoose.Schema.Types.ObjectId,
-        ref: "AdminUser",
+        ref: "User",
     },
     updatedBy: {
         type: Dependencies.mongoose.Schema.Types.ObjectId,
-        ref: "AdminUser",
+        ref: "User",
     },
     createdAt: {
         type: Date,
@@ -32,4 +44,4 @@ const usageSchema = new Dependencies.mongoose.Schema({
     },
 });
 
-export const Usage = Dependencies.mongoose.model("Usage", usageSchema);
+export const Store = Dependencies.mongoose.model("medicineStore", storeSchema);

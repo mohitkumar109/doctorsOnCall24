@@ -110,7 +110,7 @@ const Sidebar = () => {
                                 </Link>
                             </li>
                             <li>
-                                <Link to="#">
+                                <Link to="/manage-user">
                                     <BsCardList className="bi" />
                                     Manage Staff
                                 </Link>

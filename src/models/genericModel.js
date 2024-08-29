@@ -12,7 +12,7 @@ const genericNameSchema = new Dependencies.mongoose.Schema({
     },
     status: {
         type: String,
-        default: "Active",
+        default: "active",
     },
     createdBy: {
         type: Dependencies.mongoose.Schema.Types.ObjectId,

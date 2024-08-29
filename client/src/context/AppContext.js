@@ -17,11 +17,11 @@ const AppProvider = ({ children }) => {
 
     const checkUser = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/users/`, {
+            const response = await axios.get(`${BASE_URL}/admin/currentUser`, {
                 headers: {
                     "Content-Type": "application/json",
                     Accept: "application/json",
-                    Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+                    Authorization: `Bearer ${await JSON.parse(localStorage.getItem("token"))}`,
                 },
                 withCredentials: true,
             });

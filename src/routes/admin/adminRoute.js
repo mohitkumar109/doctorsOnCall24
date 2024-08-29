@@ -1,22 +1,100 @@
 import { Dependencies } from "../../packages/index.js";
 import { AdminController, AdminMasterController } from "../../controllers/index.js";
-import { adminAuth } from "../../middlewares/index.js";
+import { userAuth, checkPermission } from "../../middlewares/index.js";
 
 const router = Dependencies.Router();
 
 //admin user
-router.post("/register", AdminController.registerAdmin);
 router.post("/login", AdminController.adminLogin);
-router.get("/view-profile", adminAuth, AdminController.viewProfile);
-router.patch("/edit-profile", adminAuth, AdminController.editProfile);
-router.post("/logout", adminAuth, AdminController.adminLogout);
+router.post("/register", userAuth, checkPermission("create"), AdminController.registerAdmin);
+router.get("/currentUser", userAuth, checkPermission("read"), AdminController.currentUser);
+router.get("/user", userAuth, checkPermission("read"), AdminController.userList);
+router.get("/view-profile", userAuth, checkPermission("read"), AdminController.viewProfile);
+router.patch("/edit-profile/:id", userAuth, checkPermission("update"), AdminController.editProfile);
+router.post("/logout", userAuth, checkPermission("read"), AdminController.adminLogout);
 
-// Medicine generic name
-router.post("/generic", adminAuth, AdminMasterController.addGeneric);
-router.get("/generic", adminAuth, AdminMasterController.fetchGeneric);
-router.get("/generic/:id", adminAuth, AdminMasterController.fetchGenericById);
-router.patch("/generic/:id", adminAuth, AdminMasterController.updateGeneric);
-router.delete("/generic/:id", adminAuth, AdminMasterController.deleteGeneric);
-router.patch("/actionOnGeneric", adminAuth, AdminMasterController.actionOnGeneric);
+//Medicine Generic
+router.post("/generic", userAuth, checkPermission("create"), AdminMasterController.addGeneric);
+router.get("/generic", userAuth, checkPermission("read"), AdminMasterController.fetchGeneric);
+router.get(
+    "/generic/:id",
+    userAuth,
+    checkPermission("read"),
+    AdminMasterController.fetchGenericById
+);
+router.patch(
+    "/generic/:id",
+    userAuth,
+    checkPermission("update"),
+    AdminMasterController.updateGeneric
+);
+router.delete(
+    "/generic/:id",
+    userAuth,
+    checkPermission("delete"),
+    AdminMasterController.deleteGeneric
+);
+router.patch(
+    "/actionOnGeneric",
+    userAuth,
+    checkPermission("update"),
+    AdminMasterController.actionOnGeneric
+);
+router.patch(
+    "/actionOnGeneric/:id",
+    userAuth,
+    checkPermission("update"),
+    AdminMasterController.actionOnGeneric
+);
+
+//Medicine Category
+router.post("/category", userAuth, AdminMasterController.addCategory);
+router.get("/category", userAuth, AdminMasterController.fetchCategory);
+router.get("/category/:id", userAuth, AdminMasterController.fetchCategoryById);
+router.patch("/category/:id", userAuth, AdminMasterController.updateCategory);
+router.patch("/actionOnCategory", userAuth, AdminMasterController.actionOnCategory);
+router.patch("/actionOnCategory/:id", userAuth, AdminMasterController.actionOnCategory);
+
+//Medicine Brand
+router.post("/brand", userAuth, AdminMasterController.addBrand);
+router.get("/brand", userAuth, AdminMasterController.fetchBrand);
+router.get("/brand/:id", userAuth, AdminMasterController.fetchBrandById);
+router.patch("/brand/:id", userAuth, AdminMasterController.updateBrand);
+router.patch("/actionOnBrand", userAuth, AdminMasterController.actionOnBrand);
+router.patch("/actionOnBrand/:id", userAuth, AdminMasterController.actionOnBrand);
+
+//Medicine Strength
+router.post("/strength", userAuth, AdminMasterController.addStrength);
+router.get("/strength", userAuth, AdminMasterController.fetchStrength);
+router.get("/strength/:id", userAuth, AdminMasterController.fetchStrengthById);
+router.patch("/strength/:id", userAuth, AdminMasterController.updateStrength);
+router.patch("/actionOnStrength", userAuth, AdminMasterController.actionOnStrength);
+router.patch("/actionOnStrength/:id", userAuth, AdminMasterController.actionOnStrength);
+
+//Medicine Usage
+router.post("/usage", userAuth, AdminMasterController.addUsage);
+router.get("/usage", userAuth, AdminMasterController.fetchUsage);
+router.get("/usage/:id", userAuth, AdminMasterController.fetchUsageById);
+router.patch("/usage/:id", userAuth, AdminMasterController.updateUsage);
+router.patch("/actionOnUsage", userAuth, AdminMasterController.actionOnUsage);
+router.patch("/actionOnUsage/:id", userAuth, AdminMasterController.actionOnUsage);
+
+//Medicine Store
+router.post("/store", userAuth, checkPermission("create"), AdminMasterController.addStore);
+router.get("/store", userAuth, checkPermission("read"), AdminMasterController.fetchStore);
+router.get("/store/:id", userAuth, checkPermission("read"), AdminMasterController.fetchStoreById);
+router.patch("/store/:id", userAuth, checkPermission("update"), AdminMasterController.updateStore);
+router.patch(
+    "/actionOnStore",
+    userAuth,
+    checkPermission("update"),
+    AdminMasterController.actionOnStore
+);
+router.patch(
+    "/actionOnStore/:id",
+    userAuth,
+    checkPermission("update"),
+    AdminMasterController.actionOnStore
+);
 
 export const AdminRoute = router;

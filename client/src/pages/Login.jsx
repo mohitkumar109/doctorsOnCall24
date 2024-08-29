@@ -11,23 +11,23 @@ const Login = () => {
     const { setAuth } = useGlobalContext();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [role, setRole] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const debouncedLogin = useCallback(
         debounce(async (data) => {
             try {
-                const response = await axios.post(`${BASE_URL}/users/login`, data, {
+                const response = await axios.post(`${BASE_URL}/admin/login`, data, {
                     headers: {
                         "Content-Type": "application/json",
                         Accept: "application/json",
                     },
+                    withCredentials: true,
                 });
 
                 if (response && response?.data?.success) {
-                    localStorage.setItem("token", JSON.stringify(response.data.data.accessToken));
-                    setAuth(response?.data?.data?.user?.role);
+                    localStorage.setItem("token", JSON.stringify(response.data?.data?.accessToken));
+                    setAuth(response?.data?.data?.data?.role);
                     toast.success(response?.data.message, { duration: 3000 });
                     navigate("/");
                 }
@@ -44,7 +44,7 @@ const Login = () => {
     const loginHandle = async (e) => {
         e.preventDefault();
         setLoading(true);
-        const data = { email, password, role };
+        const data = { email, password };
         debouncedLogin(data);
     };
 
@@ -87,7 +87,7 @@ const Login = () => {
                                     <label htmlFor="floatingPassword">Password</label>
                                 </div>
 
-                                <div className="form-floating mb-3">
+                                {/* <div className="form-floating mb-3">
                                     <div className="form-check">
                                         <input
                                             type="radio"
@@ -114,7 +114,7 @@ const Login = () => {
                                             User
                                         </label>
                                     </div>
-                                </div>
+                                </div> */}
 
                                 <button
                                     type={loading ? "button" : "submit"}

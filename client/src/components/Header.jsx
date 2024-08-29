@@ -5,9 +5,9 @@ import { useGlobalContext } from "../context/AppContext";
 import UpdateProfileModel from "../components/UpdateProfileModel";
 
 const Header = () => {
+    const { toggle, setToggle, logout } = useGlobalContext();
     const [hide, setHide] = useState(false);
     const [open, setOpen] = useState(false);
-    const { toggle, setToggle, logout } = useGlobalContext();
     const navigate = useNavigate();
 
     const handleLogout = () => {

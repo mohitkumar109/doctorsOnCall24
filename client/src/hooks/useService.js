@@ -1,10 +1,10 @@
 import { useState, useCallback } from "react";
-import { api } from "../services/api.config";
+import { api } from "../services/apiConfig";
 //import storage from "../config/storage";
 
 const useServices = () => {
     const [data, setData] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     // Only For Show Data use fetchData Function
@@ -39,7 +39,6 @@ const useServices = () => {
             const res = await api({ url, method, data, headers });
             return res.data;
         } catch (error) {
-            //console.log(error);
             setError(error);
             console.error("Error in posting data", error);
             return error.response ? error.response.data : { error: "Unknown error" };

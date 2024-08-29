@@ -1,13 +1,14 @@
+import { Dependencies } from "../../packages/index.js";
 import { asyncHandler, ApiResponse, ApiError } from "../../utils/index.js";
 import { MODEL } from "../../models/index.js";
 
-const generateAccessAndRefreshTokens = async (adminId) => {
+const generateAccessAndRefreshTokens = async (userId) => {
     try {
-        const admin = await MODEL.AdminUser.findById(adminId);
-        const accessToken = admin.generateAccessToken();
-        const refreshToken = admin.generateRefreshToken();
-        admin.refreshToken = refreshToken;
-        await admin.save({ validateBeforeSave: false });
+        const user = await MODEL.User.findById(userId);
+        const accessToken = user.generateAccessToken();
+        const refreshToken = user.generateRefreshToken();
+        user.refreshToken = refreshToken;
+        await user.save({ validateBeforeSave: false });
         return { accessToken, refreshToken };
     } catch (error) {
         throw new ApiError(500, "Something went wrong while generating refresh and access token");
@@ -18,27 +19,27 @@ class Controller {
     // description    Register new Admin User
     // route          POST /api/v1/admin/register
     registerAdmin = asyncHandler(async (req, res) => {
-        const { name, email, password, mobile } = req.body;
-        if (!name || !email || !password || !mobile) {
+        const { fullName, email, password, role, mobile } = req.body;
+        if (!fullName || !email || !password || !role || !mobile) {
             throw new ApiError(400, "Required all fields");
         }
-        const admin = await MODEL.AdminUser.findOne({ email });
-        if (admin) {
-            throw new ApiError(400, "Admin already exist with this email");
+        const user = await MODEL.User.findOne({ email });
+        if (user) {
+            throw new ApiError(400, "User already exist with this email");
         }
-        const newAdmin = await MODEL.AdminUser.create({
-            name,
+        const newUser = await MODEL.User.create({
+            fullName,
             email,
             password,
             mobile,
+            role,
+            createdBy: req?.user?._id,
         });
-        const createdAdmin = await MODEL.AdminUser.findById(newAdmin._id).select("name email");
-        if (!createdAdmin) {
+        const createdUser = await MODEL.User.findById(newUser._id).select("fullName email role");
+        if (!createdUser) {
             throw new ApiError(500, "Something went wrong while registering the user");
         }
-        return res
-            .status(201)
-            .json(new ApiResponse(201, createdAdmin, "Admin created successfully"));
+        return res.status(201).json(new ApiResponse(201, createdUser, "User created successfully"));
     });
 
     // description    Auth Admin/Set Token
@@ -49,20 +50,19 @@ class Controller {
             throw new ApiError(400, "Email and password is required");
         }
 
-        const admin = await MODEL.AdminUser.findOne({ email });
-        if (!admin) {
-            throw new ApiError(400, "Admin user does not exist");
+        const user = await MODEL.User.findOne({ email });
+        if (!user) {
+            throw new ApiError(400, "User does not exist");
         }
 
-        const isPasswordValid = await admin.isPasswordCorrect(password);
+        const isPasswordValid = await user.isPasswordCorrect(password);
         if (!isPasswordValid) {
-            throw new ApiError(400, "Invalid admin credentials");
+            throw new ApiError(400, "Invalid user credentials");
         }
 
-        const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(admin._id);
-        const loggedInAdmin = await MODEL.AdminUser.findById(admin._id).select(
-            "-password -refreshToken"
-        );
+        const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id);
+
+        const loggedInUser = await MODEL.User.findById(user._id).select("-password -refreshToken");
 
         const cookieOptions = {
             httpOnly: true,
@@ -79,13 +79,77 @@ class Controller {
                 new ApiResponse(
                     200,
                     {
-                        data: loggedInAdmin,
+                        data: loggedInUser,
                         accessToken,
                         refreshToken,
                     },
-                    "Admin user Logged In Successfully"
+                    "User Logged In Successfully"
                 )
             );
+    });
+
+    // description    Edit Profile
+    // route          Patch /api/v1/admin/edit-profile
+    editProfile = asyncHandler(async (req, res) => {
+        const userId = req.params.id;
+        const { fullName, email, password, mobile } = req.body;
+
+        if (!Dependencies.mongoose.isValidObjectId(userId)) {
+            throw new ApiError(400, "This is not valid id");
+        }
+
+        const user = await MODEL.User.findById(userId);
+        if (!user) {
+            throw new ApiError(400, "This user does not exist in the database");
+        }
+
+        // Update fields that are provided
+        if (fullName) user.fullName = fullName;
+        if (email) user.email = email;
+        if (mobile) user.mobile = mobile;
+
+        // Hash the password only if it's provided
+        if (password) user.password = password; // This triggers the pre-save middleware to hash the password
+
+        const updatedUser = await user.save();
+        return res.status(200).json(new ApiResponse(200, updatedUser, "User Updated Successfully"));
+    });
+
+    // description    Admin view profile
+    // route          Get /api/v1/admin/view-profile
+    viewProfile = asyncHandler(async (req, res) => {
+        const userId = req.user._id;
+        const user = await MODEL.User.findById(userId).select("name mobile");
+        if (!user) {
+            throw new ApiError(404, "User not found");
+        }
+        return res
+            .status(200)
+            .json(new ApiResponse(200, user, "Fetch Profile details successfully"));
+    });
+
+    currentUser = asyncHandler(async (req, res) => {
+        return res.status(200).json(new ApiResponse(200, req.user, "User fetched Successfully"));
+    });
+
+    userList = asyncHandler(async (req, res) => {
+        if (req.user.role === "admin") {
+            // Admin can view all users
+            const users = await MODEL.User.find({ role: { $ne: "admin" } });
+            if (!users) {
+                throw new ApiError(400, "User not found");
+            }
+            return res.status(200).json(new ApiResponse(200, users, "All Users List"));
+        } else if (req.user.role === "user") {
+            // Regular user can view only their own profile
+            const user = await MODEL.User.findById(req.user._id);
+            if (!user) {
+                throw new ApiError(400, "User not found");
+            }
+            return res.status(200).json(new ApiResponse(200, user, "Get User"));
+        } else {
+            return res.status(403).json({ message: "Forbidden: Insufficient permissions" });
+        }
     });
 
     // description    Admin Reset password
@@ -103,26 +167,27 @@ class Controller {
     // description    Admin logout
     // route          POST /api/v1/admin/logout
     adminLogout = asyncHandler(async (req, res) => {
-        console.log("hello4");
-    });
+        await MODEL.User.findByIdAndUpdate(
+            req.user._id,
+            {
+                $unset: {
+                    refreshToken: 1, // This remove the field from document
+                },
+            },
+            {
+                new: true,
+            }
+        );
+        const options = {
+            httpOnly: true,
+            secure: true,
+        };
 
-    // description    Edit Profile
-    // route          Patch /api/v1/admin/edit-profile
-    editProfile = asyncHandler(async (req, res) => {
-        console.log("hello3");
-    });
-
-    // description    Admin view profile
-    // route          Get /api/v1/admin/view-profile
-    viewProfile = asyncHandler(async (req, res) => {
-        const adminId = req.admin._id;
-        const admin = await MODEL.AdminUser.findById(adminId).select("name mobile");
-        if (!admin) {
-            throw new ApiError(404, "User not found");
-        }
         return res
             .status(200)
-            .json(new ApiResponse(200, admin, "Fetch Profile details successfully"));
+            .clearCookie("accessToken", options)
+            .clearCookie("refreshToken", options)
+            .json(new ApiResponse(200, {}, "User Logged Out Successfully"));
     });
 }
 

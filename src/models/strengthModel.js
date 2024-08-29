@@ -1,6 +1,6 @@
-import mongoose, { Schema } from "mongoose";
+import { Dependencies } from "../packages/index.js";
 
-const strengthOfMedicineSchema = new Schema({
+const strengthOfMedicineSchema = new Dependencies.mongoose.Schema({
     strengthName: {
         type: String,
         required: true,
@@ -12,15 +12,15 @@ const strengthOfMedicineSchema = new Schema({
     },
     status: {
         type: String,
-        default: "Active",
+        default: "active",
     },
     createdBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Users",
+        type: Dependencies.mongoose.Schema.Types.ObjectId,
+        ref: "AdminUser",
     },
     updatedBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Users",
+        type: Dependencies.mongoose.Schema.Types.ObjectId,
+        ref: "AdminUser",
     },
     createdAt: {
         type: Date,
@@ -32,4 +32,4 @@ const strengthOfMedicineSchema = new Schema({
     },
 });
 
-export const Strength = mongoose.model("StrengthOfMedicine", strengthOfMedicineSchema);
+export const Strength = Dependencies.mongoose.model("StrengthOfMedicine", strengthOfMedicineSchema);

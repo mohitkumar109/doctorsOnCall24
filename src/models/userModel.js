@@ -22,8 +22,12 @@ const userSchema = new Dependencies.mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ["admin", "user"],
-        required: true,
+        enum: ["admin", "manager", "user"],
+        default: "user",
+    },
+    storeId: {
+        type: Dependencies.mongoose.Schema.Types.ObjectId,
+        ref: "medicineStore",
     },
     checked: {
         type: Boolean,
@@ -31,7 +35,15 @@ const userSchema = new Dependencies.mongoose.Schema({
     },
     status: {
         type: String,
-        default: "Active",
+        default: "active",
+    },
+    createdBy: {
+        type: Dependencies.mongoose.Schema.Types.ObjectId,
+        ref: "Users",
+    },
+    updatedBy: {
+        type: Dependencies.mongoose.Schema.Types.ObjectId,
+        ref: "Users",
     },
     createdAt: {
         type: Date,
@@ -58,7 +70,7 @@ userSchema.methods.isPasswordCorrect = async function (password) {
 };
 
 userSchema.methods.generateAccessToken = function () {
-    return jwt.sign(
+    return Dependencies.jwt.sign(
         {
             _id: this._id,
             email: this.email,
@@ -72,7 +84,7 @@ userSchema.methods.generateAccessToken = function () {
 };
 
 userSchema.methods.generateRefreshToken = function () {
-    return jwt.sign(
+    return Dependencies.jwt.sign(
         {
             _id: this._id,
         },

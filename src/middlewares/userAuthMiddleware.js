@@ -1,6 +1,6 @@
 import { Dependencies } from "../packages/index.js";
-import { MODEL } from "../models/index.js";
 import { asyncHandler, ApiError } from "../utils/index.js";
+import { MODEL } from "../models/index.js";
 import { config } from "../common/index.js";
 
 export const userAuth = asyncHandler(async (req, _, next) => {

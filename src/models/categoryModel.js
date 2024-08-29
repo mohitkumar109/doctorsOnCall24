@@ -12,17 +12,15 @@ const categorySchema = new Dependencies.mongoose.Schema({
     },
     status: {
         type: String,
-        default: "Active",
+        default: "active",
     },
     createdBy: {
         type: Dependencies.mongoose.Schema.Types.ObjectId,
-        ref: "Users",
-        required: true,
+        ref: "AdminUser",
     },
     updatedBy: {
         type: Dependencies.mongoose.Schema.Types.ObjectId,
-        ref: "Users",
-        required: true,
+        ref: "AdminUser",
     },
     createdAt: {
         type: Date,
