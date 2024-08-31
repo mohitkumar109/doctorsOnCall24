@@ -1,17 +1,54 @@
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { BsPencil, BsTrash3Fill } from "react-icons/bs";
+import { toast } from "react-hot-toast";
 import Pagination from "../../../components/Pagination";
 import Filter from "../../../components/Filter";
 import Breadcrumb from "../../../components/Breadcrumb";
-import GroupButton from "../../../components/GroupButton";
+import AddButton from "../../../components/AddButton";
+import useService from "../../../hooks/useService";
+import { apiEnd } from "../../../services/adminApi";
 
 export default function ManageBrand() {
-    const navigate = useNavigate();
+    const { postData } = useService();
+    const [search, setSearch] = useState("");
+    const [sorting, setSorting] = useState("");
+    const [status, setStatus] = useState("");
+    const [page, setPage] = useState(1);
+    const [pagination, setPagination] = useState("");
+    const [data, setData] = useState([]);
+
+    const fetchBrand = async () => {
+        const req = apiEnd.getBrand(search, sorting, status, page);
+        const res = await postData(req);
+        setData(res?.data?.results);
+        setPagination(res?.data?.pagination);
+    };
+
+    const changeStatus = async (id, status) => {
+        const req = apiEnd.actionBrandOne(id, status);
+        const res = await postData(req, {});
+        if (res?.success) {
+            toast.success(res.message);
+            fetchBrand(); // Ensure fetchCategory is defined
+        } else {
+            toast.error(res?.message || "Failed to delete category");
+        }
+    };
+
+    useEffect(() => {
+        fetchBrand();
+    }, [search, sorting, status, page]);
+
+    const filteredData = data.filter(
+        (result) => result.brandName.toLowerCase().indexOf(search.toLowerCase()) !== -1
+    );
+
     return (
         <div className="container-fluid">
             <Breadcrumb pageName={"Brand"} />
             <div className="content-area">
-                <Filter />
+                <Filter setSearch={setSearch} setSorting={setSorting} setStatus={setStatus} />
                 <div className="card">
                     <div className="card-header">
                         <span className="card-title">Brand List</span>
@@ -21,18 +58,12 @@ export default function ManageBrand() {
                         </div>
                     </div>
                     <div className="card-body">
-                        <GroupButton buttonLink="/add-brand" />
+                        <AddButton buttonLink="/add-brand" />
                         <div className="table-responsive">
                             <table className="table table-striped table-bordered table-hover">
                                 <thead>
                                     <tr>
-                                        <th scope="col">
-                                            <input
-                                                type="checkbox"
-                                                name="checked"
-                                                className="form-check-input"
-                                            />
-                                        </th>
+                                        <th scope="col">SN</th>
                                         <th className="col-9">Brand</th>
                                         <th className="col-2">CreatedAt</th>
                                         <th className="col-1">Status</th>
@@ -40,38 +71,93 @@ export default function ManageBrand() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>
-                                            <input
-                                                type="checkbox"
-                                                name="checked"
-                                                className="form-check-input"
-                                            />
-                                        </td>
-                                        <td>
-                                            <span className="text-default">Electronic</span>
-                                        </td>
-                                        <td>
-                                            <span className="text-default"> 15/05/2024 </span>
-                                        </td>
-                                        <td>
-                                            <span className="badge bg-danger">Active</span>
-                                        </td>
-                                        <td className="text-default">
-                                            <div className="d-flex gap-1">
-                                                <button className="btn btn-primary btn-sm">
-                                                    <BsPencil />
-                                                </button>
-                                                <button className="btn btn-danger btn-sm">
-                                                    <BsTrash3Fill />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    {filteredData?.length > 0 ? (
+                                        <>
+                                            {filteredData?.map((brand, index) => (
+                                                <tr key={index}>
+                                                    <td>{index + 1}</td>
+                                                    <td>
+                                                        <span className="text-default">
+                                                            {brand?.brandName}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span className="text-default">
+                                                            {brand.createdAt.split("T")[0]}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <div className="form-check form-switch">
+                                                            <input
+                                                                type="checkbox"
+                                                                role="switch"
+                                                                id={`flexSwitchCheckChecked-${brand._id}`}
+                                                                checked={brand.status === "active"}
+                                                                className="form-check-input mt-2"
+                                                                onChange={() =>
+                                                                    changeStatus(
+                                                                        brand._id,
+                                                                        brand.status === "active"
+                                                                            ? "inactive"
+                                                                            : "active"
+                                                                    )
+                                                                }
+                                                            />
+                                                            <span
+                                                                className={`badge ${
+                                                                    brand.status === "active"
+                                                                        ? "bg-success"
+                                                                        : "bg-danger"
+                                                                }`}
+                                                            >
+                                                                {brand.status === "active"
+                                                                    ? "Active"
+                                                                    : "Inactive"}
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                    <td className="text-default">
+                                                        <div className="d-flex gap-3">
+                                                            <Link
+                                                                to={`/edit-brand/${brand._id}`}
+                                                                className="text-primary"
+                                                            >
+                                                                <BsPencil />
+                                                            </Link>
+
+                                                            <Link to="#" className="text-danger">
+                                                                <BsTrash3Fill
+                                                                    onClick={() =>
+                                                                        changeStatus(
+                                                                            brand._id,
+                                                                            "delete"
+                                                                        )
+                                                                    }
+                                                                />
+                                                            </Link>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </>
+                                    ) : (
+                                        <>
+                                            <tr>
+                                                <td colSpan="12" className="p-4 text-center">
+                                                    No Data Found!
+                                                </td>
+                                            </tr>
+                                        </>
+                                    )}
                                 </tbody>
                             </table>
                         </div>
-                        <Pagination />
+                        <Pagination
+                            totalResult={pagination.totalResult}
+                            pages={pagination.totalPages}
+                            page={pagination.currentPage}
+                            changePage={setPage}
+                        />
                     </div>
                 </div>
             </div>

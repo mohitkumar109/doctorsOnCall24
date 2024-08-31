@@ -23,8 +23,8 @@ app.use(Dependencies.cors(corsOptions));
 
 app.use((req, res, next) => {
     console.log("Request Details--------", req.method, req.originalUrl);
-    console.log("authorization using headers--", req.header("Authorization"));
-    console.log("authorization using cookies---", req.cookies["accessToken"]);
+    //console.log("authorization using headers--", req.header("Authorization"));
+    //console.log("authorization using cookies---", req.cookies["accessToken"]);
     Object.keys(req.body).length ? console.log("BODY : ", req.body) : "";
     Object.keys(req.query).length ? console.log("Query : ", req.query) : "";
     next();

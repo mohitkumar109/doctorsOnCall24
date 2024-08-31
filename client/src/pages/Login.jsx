@@ -53,6 +53,7 @@ const Login = () => {
             debouncedLogin.cancel(); // Cleanup the debounced function on component unmount
         };
     }, [debouncedLogin]);
+
     return (
         <>
             <LoginHeader />

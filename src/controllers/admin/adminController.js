@@ -1,5 +1,6 @@
 import { Dependencies } from "../../packages/index.js";
 import { asyncHandler, ApiResponse, ApiError } from "../../utils/index.js";
+import { Helpers } from "../../common/index.js";
 import { MODEL } from "../../models/index.js";
 
 const generateAccessAndRefreshTokens = async (userId) => {
@@ -19,7 +20,7 @@ class Controller {
     // description    Register new Admin User
     // route          POST /api/v1/admin/register
     registerAdmin = asyncHandler(async (req, res) => {
-        const { fullName, email, password, role, mobile } = req.body;
+        const { fullName, email, password, role, mobile, status } = req.body;
         if (!fullName || !email || !password || !role || !mobile) {
             throw new ApiError(400, "Required all fields");
         }
@@ -33,6 +34,7 @@ class Controller {
             password,
             mobile,
             role,
+            status: status || "active",
             createdBy: req?.user?._id,
         });
         const createdUser = await MODEL.User.findById(newUser._id).select("fullName email role");
@@ -92,7 +94,7 @@ class Controller {
     // route          Patch /api/v1/admin/edit-profile
     editProfile = asyncHandler(async (req, res) => {
         const userId = req.params.id;
-        const { fullName, email, password, mobile } = req.body;
+        const { fullName, email, password, mobile, status } = req.body;
 
         if (!Dependencies.mongoose.isValidObjectId(userId)) {
             throw new ApiError(400, "This is not valid id");
@@ -106,10 +108,10 @@ class Controller {
         // Update fields that are provided
         if (fullName) user.fullName = fullName;
         if (email) user.email = email;
-        if (mobile) user.mobile = mobile;
-
         // Hash the password only if it's provided
         if (password) user.password = password; // This triggers the pre-save middleware to hash the password
+        if (mobile) user.mobile = mobile;
+        if (status) user.status = status;
 
         const updatedUser = await user.save();
         return res.status(200).json(new ApiResponse(200, updatedUser, "User Updated Successfully"));
@@ -152,16 +154,25 @@ class Controller {
         }
     });
 
-    // description    Admin Reset password
-    // route          POST /api/v1/admin/resetPassword
-    resetPassword = asyncHandler(async (req, res) => {
-        console.log("hello4");
+    userOne = asyncHandler(async (req, res) => {
+        const userId = req.params.id;
+        const user = await MODEL.User.findById(userId);
+        if (!user) {
+            throw new ApiError(404, "User not found");
+        }
+        return res.status(200).json(new ApiResponse(200, user, "Fetch user details successfully"));
     });
 
-    // description    Admin Change password
-    // route          POST /api/v1/admin/changePassword
-    changePassword = asyncHandler(async (req, res) => {
-        console.log("hello4");
+    actionOnUser = asyncHandler(async (req, res) => {
+        const { ids } = req.body;
+        const action = ids
+            ? Helpers.actionOnMultipleIds(ids.split(","), req.params.status, MODEL.User)
+            : Helpers.actionOnSingleId(req.params.id, req.params.status, MODEL.User);
+        await action;
+        const successMessage = ids
+            ? `Selected record(s) ${req.params.status} successfully`
+            : `Selected ${req.params.status} successfully`;
+        return res.status(200).json(new ApiResponse(200, {}, successMessage));
     });
 
     // description    Admin logout
@@ -188,6 +199,18 @@ class Controller {
             .clearCookie("accessToken", options)
             .clearCookie("refreshToken", options)
             .json(new ApiResponse(200, {}, "User Logged Out Successfully"));
+    });
+
+    // description    Admin Reset password
+    // route          POST /api/v1/admin/resetPassword
+    resetPassword = asyncHandler(async (req, res) => {
+        console.log("hello4");
+    });
+
+    // description    Admin Change password
+    // route          POST /api/v1/admin/changePassword
+    changePassword = asyncHandler(async (req, res) => {
+        console.log("hello4");
     });
 }
 

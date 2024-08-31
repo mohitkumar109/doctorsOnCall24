@@ -16,11 +16,11 @@ const usageSchema = new Dependencies.mongoose.Schema({
     },
     createdBy: {
         type: Dependencies.mongoose.Schema.Types.ObjectId,
-        ref: "AdminUser",
+        ref: "Users",
     },
     updatedBy: {
         type: Dependencies.mongoose.Schema.Types.ObjectId,
-        ref: "AdminUser",
+        ref: "Users",
     },
     createdAt: {
         type: Date,

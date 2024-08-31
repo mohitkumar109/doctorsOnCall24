@@ -28,11 +28,11 @@ const storeSchema = new Dependencies.mongoose.Schema({
     },
     createdBy: {
         type: Dependencies.mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "Users",
     },
     updatedBy: {
         type: Dependencies.mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "Users",
     },
     createdAt: {
         type: Date,

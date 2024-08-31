@@ -114,6 +114,21 @@ li {
     font-size: 1.5em;
 }
 
+.btn-edit,
+.btn-delete {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    margin-right: 5px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.btn-delete {
+    background-color: #e74c3c;
+}
+
 /*--------------Model CSS ------------*/
 .modal-overlay {
     position: fixed;

@@ -1,6 +1,6 @@
 import { Dependencies } from "../../packages/index.js";
 import { asyncHandler, ApiResponse, ApiError } from "../../utils/index.js";
-import { Helpers } from "../../common/index.js";
+import { Helpers, PAGINATION_LIMIT } from "../../common/index.js";
 import { MODEL } from "../../models/index.js";
 
 // description    Admin Master Module
@@ -13,7 +13,7 @@ class Controller {
     // route            POST /api/v1/admin/generic
     // access           Private
     addGeneric = asyncHandler(async (req, res) => {
-        const { genericName } = req.body;
+        const { genericName, status } = req.body;
         if (!genericName) {
             throw new ApiError(404, "Generic name is required");
         }
@@ -25,7 +25,8 @@ class Controller {
 
         const createdGeneric = await MODEL.Generic.create({
             genericName,
-            createdBy: req?.admin?._id,
+            status: status || "active",
+            createdBy: req?.user?._id,
         });
 
         return res
@@ -69,10 +70,11 @@ class Controller {
         }
 
         //Pagination
-        const limit = parseInt(req.query.limit) || 10;
+        const limit = parseInt(req.query.limit) || PAGINATION_LIMIT;
         const skip = parseInt(req.query.page - 1) * limit;
 
         const query = await MODEL.Generic.find(filter).sort(sortOption).limit(limit).skip(skip);
+
         const totalResults = await MODEL.Generic.find(filter).countDocuments();
         const totalPages = Math.ceil(totalResults / limit);
 
@@ -107,6 +109,17 @@ class Controller {
         return res.status(200).json(new ApiResponse(200, generic, "All List of generic"));
     });
 
+    // description      Fetch generic by active
+    // route            GET /api/v1/admin/generic-select
+    // access           Private
+    getGenericSelect = asyncHandler(async (req, res) => {
+        const result = await MODEL.Generic.find({ status: "active" });
+        if (!result) {
+            throw new ApiError(404, "Active record");
+        }
+        return res.status(200).json(new ApiResponse(200, { data: result }, "Get active generic"));
+    });
+
     // description      Update Generic
     // route            PATCH /api/v1/admin/generic/:id
     // access           Private
@@ -126,7 +139,7 @@ class Controller {
         const updated = await MODEL.Generic.findByIdAndUpdate(
             genId,
             {
-                $set: { genericName, status },
+                $set: { genericName, status, updatedBy: req.user._id },
             },
             { new: true }
         );
@@ -140,15 +153,13 @@ class Controller {
     // access           Private
     actionOnGeneric = asyncHandler(async (req, res) => {
         const { ids } = req.body;
-        const { status } = req.query;
-
         const action = ids
-            ? Helpers.actionOnMultipleIds(ids.split(","), status, MODEL.Generic)
-            : Helpers.actionOnSingleId(req.params.id, status, MODEL.Generic);
+            ? Helpers.actionOnMultipleIds(ids.split(","), req.params.status, MODEL.Generic)
+            : Helpers.actionOnSingleId(req.params.id, req.params.status, MODEL.Generic);
         await action;
         const successMessage = ids
-            ? `Selected record(s) ${status} successfully`
-            : `Selected ${status} successfully`;
+            ? `Selected record(s) ${req.params.status} successfully`
+            : `Selected ${req.params.status} successfully`;
         return res.status(200).json(new ApiResponse(200, {}, successMessage));
     });
 
@@ -175,7 +186,7 @@ class Controller {
     // route            POST /api/v1/admin/category/add
     // access           Private
     addCategory = asyncHandler(async (req, res) => {
-        const { categoryName } = req.body;
+        const { categoryName, status } = req.body;
         if (!categoryName) {
             throw new ApiError(404, "Medicine category is required");
         }
@@ -187,7 +198,8 @@ class Controller {
 
         const createdCategory = await MODEL.Category.create({
             categoryName,
-            createdBy: req?.admin?._id,
+            status: status || "active",
+            createdBy: req?.user?._id,
         });
 
         return res
@@ -228,15 +240,16 @@ class Controller {
                 sortOption.categoryName = -1;
                 break;
             default:
-                sortOption.createdAt = -1;
+                sortOption.createdAt = 1;
                 break;
         }
 
         //Pagination
-        const limit = parseInt(req.query.limit) || 10;
+        const limit = parseInt(req.query.limit) || PAGINATION_LIMIT;
         const skip = parseInt(req.query.page - 1) * limit;
 
         const query = await MODEL.Category.find(filter).sort(sortOption).limit(limit).skip(skip);
+
         const totalResults = await MODEL.Category.find(filter).countDocuments();
         const totalPages = Math.ceil(totalResults / limit);
 
@@ -290,7 +303,7 @@ class Controller {
         const updated = await MODEL.Category.findByIdAndUpdate(
             catId,
             {
-                $set: { categoryName, status },
+                $set: { categoryName, status, updatedBy: req.user._id },
             },
             { new: true }
         );
@@ -300,20 +313,35 @@ class Controller {
             .json(new ApiResponse(200, updated, "Category Updated Successfully!"));
     });
 
+    // description      Delete Category
+    // route            Delete /api/v1/category/delete/:id
+    // access           Private
+    deleteCategory = asyncHandler(async (req, res) => {
+        const catId = req.params.id;
+        if (!Dependencies.mongoose.isValidObjectId(catId)) {
+            throw new ApiError(400, "This is not valid id");
+        }
+
+        const exist = await MODEL.Category.findById(catId);
+        if (!exist) {
+            throw new ApiError(400, "This Id is not exist in database");
+        }
+        const deleted = await MODEL.Category.findByIdAndDelete(catId);
+        return res.status(200).json(new ApiResponse(200, deleted, "Deleted Successfully"));
+    });
+
     // description      Action on Category
     // route            PATCH /api/v1/category/actionOnCategory
     // access           Private
     actionOnCategory = asyncHandler(async (req, res) => {
         const { ids } = req.body;
-        const { status } = req.query;
-
         const action = ids
-            ? Helpers.actionOnMultipleIds(ids.split(","), status, MODEL.Category)
-            : Helpers.actionOnSingleId(req.params.id, status, MODEL.Category);
+            ? Helpers.actionOnMultipleIds(ids.split(","), req.params.status, MODEL.Category)
+            : Helpers.actionOnSingleId(req.params.id, req.params.status, MODEL.Category);
         await action;
         const successMessage = ids
-            ? `Selected record(s) ${status} successfully`
-            : `Selected ${status} successfully`;
+            ? `Selected record(s) ${req.params.status} successfully`
+            : `Selected ${req.params.status} successfully`;
         return res.status(200).json(new ApiResponse(200, {}, successMessage));
     });
 
@@ -323,7 +351,7 @@ class Controller {
     // route            POST /api/v1/admin/brand/add
     // access           Private
     addBrand = asyncHandler(async (req, res) => {
-        const { brandName } = req.body;
+        const { brandName, status } = req.body;
         if (!brandName) {
             throw new ApiError(404, "Brand name is required");
         }
@@ -333,7 +361,8 @@ class Controller {
         }
         const brand = await MODEL.Brand.create({
             brandName,
-            createdBy: req?.admin?._id,
+            status: status || "active",
+            createdBy: req?.user?._id,
         });
         return res.status(201).json(new ApiResponse(201, brand, "Brand name created successfully"));
     });
@@ -374,7 +403,7 @@ class Controller {
         }
 
         //Pagination
-        const limit = parseInt(req.query.limit) || 10;
+        const limit = parseInt(req.query.limit) || PAGINATION_LIMIT;
         const skip = parseInt(req.query.page - 1) * limit;
 
         const query = await MODEL.Brand.find(filter).sort(sortOption).limit(limit).skip(skip);
@@ -431,7 +460,7 @@ class Controller {
         const updated = await MODEL.Brand.findByIdAndUpdate(
             brandId,
             {
-                $set: { brandName, status },
+                $set: { brandName, status, updatedBy: req.user._id },
             },
             { new: true }
         );
@@ -444,15 +473,13 @@ class Controller {
     // access           Private
     actionOnBrand = asyncHandler(async (req, res) => {
         const { ids } = req.body;
-        const { status } = req.query;
-
         const action = ids
-            ? Helpers.actionOnMultipleIds(ids.split(","), status, MODEL.Brand)
-            : Helpers.actionOnSingleId(req.params.id, status, MODEL.Brand);
+            ? Helpers.actionOnMultipleIds(ids.split(","), req.params.status, MODEL.Brand)
+            : Helpers.actionOnSingleId(req.params.id, req.params.status, MODEL.Brand);
         await action;
         const successMessage = ids
-            ? `Selected record(s) ${status} successfully`
-            : `Selected ${status} successfully`;
+            ? `Selected record(s) ${req.params.status} successfully`
+            : `Selected ${req.params.status} successfully`;
         return res.status(200).json(new ApiResponse(200, {}, successMessage));
     });
 
@@ -462,7 +489,7 @@ class Controller {
     // route            POST /api/v1/admin/strength/add
     // access           Private
     addStrength = asyncHandler(async (req, res) => {
-        const { strengthName } = req.body;
+        const { strengthName, status } = req.body;
         if (!strengthName) {
             throw new ApiError(404, "Strength is required");
         }
@@ -472,7 +499,8 @@ class Controller {
         }
         const strength = await MODEL.Strength.create({
             strengthName,
-            createdBy: req?.admin?._id,
+            status: status || "active",
+            createdBy: req?.user?._id,
         });
         return res
             .status(201)
@@ -515,7 +543,7 @@ class Controller {
         }
 
         //Pagination
-        const limit = parseInt(req.query.limit) || 10;
+        const limit = parseInt(req.query.limit) || PAGINATION_LIMIT;
         const skip = parseInt(req.query.page - 1) * limit;
 
         const query = await MODEL.Strength.find(filter).sort(sortOption).limit(limit).skip(skip);
@@ -572,7 +600,7 @@ class Controller {
         const updated = await MODEL.Strength.findByIdAndUpdate(
             strengthId,
             {
-                $set: { strengthName, status },
+                $set: { strengthName, status, updatedBy: req.user._id },
             },
             { new: true }
         );
@@ -587,15 +615,13 @@ class Controller {
     // access           Private
     actionOnStrength = asyncHandler(async (req, res) => {
         const { ids } = req.body;
-        const { status } = req.query;
-
         const action = ids
-            ? Helpers.actionOnMultipleIds(ids.split(","), status, MODEL.Strength)
-            : Helpers.actionOnSingleId(req.params.id, status, MODEL.Strength);
+            ? Helpers.actionOnMultipleIds(ids.split(","), req.params.status, MODEL.Strength)
+            : Helpers.actionOnSingleId(req.params.id, req.params.status, MODEL.Strength);
         await action;
         const successMessage = ids
-            ? `Selected record(s) ${status} successfully`
-            : `Selected ${status} successfully`;
+            ? `Selected record(s) ${req.params.status} successfully`
+            : `Selected ${req.params.status} successfully`;
         return res.status(200).json(new ApiResponse(200, {}, successMessage));
     });
 
@@ -605,7 +631,7 @@ class Controller {
     // route            POST /api/v1/admin/usage/add
     // access           Private
     addUsage = asyncHandler(async (req, res) => {
-        const { usageName } = req.body;
+        const { usageName, status } = req.body;
         if (!usageName) {
             throw new ApiError(404, "Usage name is required");
         }
@@ -617,6 +643,8 @@ class Controller {
 
         const usage = await MODEL.Usage.create({
             usageName,
+            status: status || "active",
+            createdBy: req?.user?._id,
         });
 
         return res
@@ -660,7 +688,7 @@ class Controller {
         }
 
         //Pagination
-        const limit = parseInt(req.query.limit) || 10;
+        const limit = parseInt(req.query.limit) || PAGINATION_LIMIT;
         const skip = parseInt(req.query.page - 1) * limit;
 
         const query = await MODEL.Usage.find(filter).sort(sortOption).limit(limit).skip(skip);
@@ -717,7 +745,7 @@ class Controller {
         const updated = await MODEL.Usage.findByIdAndUpdate(
             usageId,
             {
-                $set: { usageName, status },
+                $set: { usageName, status, updatedBy: req.user._id },
             },
             { new: true }
         );
@@ -730,22 +758,21 @@ class Controller {
     // access           Private
     actionOnUsage = asyncHandler(async (req, res) => {
         const { ids } = req.body;
-        const { status } = req.query;
-
         const action = ids
-            ? Helpers.actionOnMultipleIds(ids.split(","), status, MODEL.Usage)
-            : Helpers.actionOnSingleId(req.params.id, status, MODEL.Usage);
+            ? Helpers.actionOnMultipleIds(ids.split(","), req.params.status, MODEL.Usage)
+            : Helpers.actionOnSingleId(req.params.id, req.params.status, MODEL.Usage);
         await action;
         const successMessage = ids
-            ? `Selected record(s) ${status} successfully`
-            : `Selected ${status} successfully`;
+            ? `Selected record(s) ${req.params.status} successfully`
+            : `Selected ${req.params.status} successfully`;
         return res.status(200).json(new ApiResponse(200, {}, successMessage));
     });
 
     /*-------------Medicine Store--------------*/
 
     addStore = asyncHandler(async (req, res) => {
-        const { storeName, phone, address, state, city, pin, personName, email, mobile } = req.body;
+        const { storeName, phone, address, state, city, pin, personName, email, mobile, status } =
+            req.body;
         if (
             !storeName ||
             !phone ||
@@ -769,6 +796,7 @@ class Controller {
             "contactPerson.personName": personName,
             "contactPerson.email": email,
             "contactPerson.mobile": mobile,
+            status: status || "active",
             createdBy: req?.user?._id,
         });
 
@@ -812,7 +840,7 @@ class Controller {
         }
 
         //Pagination
-        const limit = parseInt(req.query.limit) || 10;
+        const limit = parseInt(req.query.limit) || PAGINATION_LIMIT;
         const skip = parseInt(req.query.page - 1) * limit;
 
         const query = await MODEL.Store.find(filter).sort(sortOption).limit(limit).skip(skip);
@@ -884,15 +912,13 @@ class Controller {
 
     actionOnStore = asyncHandler(async (req, res) => {
         const { ids } = req.body;
-        const { status } = req.query;
-
         const action = ids
-            ? Helpers.actionOnMultipleIds(ids.split(","), status, MODEL.Store)
-            : Helpers.actionOnSingleId(req.params.id, status, MODEL.Store);
+            ? Helpers.actionOnMultipleIds(ids.split(","), req.params.status, MODEL.Store)
+            : Helpers.actionOnSingleId(req.params.id, req.params.status, MODEL.Store);
         await action;
         const successMessage = ids
-            ? `Selected record(s) ${status} successfully`
-            : `Selected ${status} successfully`;
+            ? `Selected record(s) ${req.params.status} successfully`
+            : `Selected ${req.params.status} successfully`;
         return res.status(200).json(new ApiResponse(200, {}, successMessage));
     });
 }

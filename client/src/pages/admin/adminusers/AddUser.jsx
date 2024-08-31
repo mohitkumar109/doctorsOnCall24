@@ -1,44 +1,95 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useCallback } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import { debounce } from "lodash";
 import Breadcrumb from "../../../components/Breadcrumb";
 import useServices from "../../../hooks/useService";
-import { apiPoint } from "../../../services/adminApi";
-import { toast } from "react-hot-toast";
+import { apiEnd } from "../../../services/adminApi";
 
 export default function AddUser() {
-    const { loading, postData } = useServices();
+    const { postData } = useServices();
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [mobile, setMobile] = useState("");
     const [role, setRole] = useState("");
     const [status, setStatus] = useState("");
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { id } = useParams();
+
+    useEffect(() => {
+        if (id) {
+            getUser();
+        }
+    }, [id]);
+
+    const getUser = async () => {
+        try {
+            const req = apiEnd.getUserById(id);
+            const res = await postData(req);
+            if (res?.success) {
+                setFullName(res?.data?.fullName || "");
+                setEmail(res?.data?.email || "");
+                //setPassword(res?.data?.password || "");
+                setMobile(res?.data?.mobile || "");
+                setRole(res?.data?.role || "");
+                setStatus(res?.data?.status || "");
+            } else {
+                toast.error(res?.message);
+            }
+        } catch (error) {
+            toast.error("Failed to fetch user details.");
+        }
+    };
+
+    const debouncedUser = useCallback(
+        debounce(async (data) => {
+            try {
+                const req = id ? apiEnd.updateProfile(id, data) : apiEnd.userRegister(data);
+                const res = await postData(req);
+                if (res.success === true) {
+                    toast.success(res?.message, { duration: 2000 });
+                    navigate("/manage-user");
+                } else {
+                    toast.error(res?.message, { duration: 2000 });
+                }
+            } catch (error) {
+                toast.error(error.res.data.message, { duration: 2000 });
+            } finally {
+                setLoading(false);
+            }
+        }, 1000), // 300ms debounce delay
+        [navigate]
+    );
+
+    useEffect(() => {
+        return () => {
+            debouncedUser.cancel(); // Cleanup the debounced function on component unmount
+        };
+    }, [debouncedUser]);
 
     const handleUser = async (e) => {
         e.preventDefault();
-        try {
-            const req = apiPoint.userRegister({ fullName, email, password, mobile, role, status });
-            const res = await postData(req);
-            if (res.success === true) {
-                toast.success(res?.message, { duration: 3000 });
-                navigate("/manage-user");
-            } else {
-                toast.error(res?.message, { duration: 3000 });
-            }
-        } catch (error) {
-            //console.log(error);
-            toast.error(error.res.data.message, { duration: 3000 });
-        }
+        setLoading(true);
+        const data = {
+            fullName,
+            email,
+            password,
+            mobile,
+            role,
+            status,
+        };
+        debouncedUser(data);
     };
 
     return (
         <div className="container-fluid">
-            <Breadcrumb pageName={"Add User"} />
+            <Breadcrumb pageName={id ? "Update User" : "Add User"} />
             <div className="content-area">
                 <div className="card">
                     <div className="card-header">
-                        <span className="card-title">Add User</span>
+                        <span className="card-title">{id ? "Update" : "Add"}</span>
                         <div className="d-flex gap-2" style={{ float: "right" }}>
                             <Link to="/manage-user" className="btn btn-primary btn-sm waves-effect">
                                 Back
@@ -55,6 +106,7 @@ export default function AddUser() {
                                     <input
                                         type="text"
                                         name="fullName"
+                                        value={fullName}
                                         onChange={(e) => setFullName(e.target.value)}
                                         className="form-control"
                                         placeholder="Enter your full name"
@@ -70,6 +122,7 @@ export default function AddUser() {
                                     <input
                                         type="text"
                                         name="email"
+                                        value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         className="form-control"
                                         placeholder="Enter your email"
@@ -85,6 +138,7 @@ export default function AddUser() {
                                     <input
                                         type="text"
                                         name="password"
+                                        value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         className="form-control"
                                         placeholder="Enter your password"
@@ -100,6 +154,7 @@ export default function AddUser() {
                                     <input
                                         type="text"
                                         name="mobile"
+                                        value={mobile}
                                         onChange={(e) => setMobile(e.target.value)}
                                         className="form-control"
                                         placeholder="Enter your mobile"
@@ -115,9 +170,10 @@ export default function AddUser() {
                                     <select
                                         className="form-select"
                                         name="role"
+                                        value={role}
                                         onChange={(e) => setRole(e.target.value)}
                                     >
-                                        <option>----Choose role----</option>
+                                        <option>---- Choose Role ----</option>
                                         <option value="admin">Admin</option>
                                         <option value="manager">Manager</option>
                                         <option value="user">User</option>
@@ -131,11 +187,12 @@ export default function AddUser() {
                                 </label>
                                 <div className="col-sm-6">
                                     <select
-                                        className="form-select"
                                         name="status"
+                                        value={status}
                                         onChange={(e) => setStatus(e.target.value)}
+                                        className="form-select"
                                     >
-                                        <option>----Choose status----</option>
+                                        <option>---- Choose Status ----</option>
                                         <option value="active">Active</option>
                                         <option value="inactive">Inactive</option>
                                     </select>
@@ -157,7 +214,7 @@ export default function AddUser() {
                                                 <span role="status">Loading...</span>
                                             </>
                                         ) : (
-                                            "Submit"
+                                            <>{id ? "Update User" : "Submit"}</>
                                         )}
                                     </button>
                                     <button

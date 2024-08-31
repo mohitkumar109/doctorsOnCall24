@@ -14,10 +14,13 @@ export default function AdminRoutes() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/manage-user" element={<ManageUser />} />
             <Route path="/add-user" element={<AddUser />} />
+            <Route path="/edit-user/:id" element={<AddUser />} />
             <Route path="/manage-category" element={<ManageCategory />} />
             <Route path="/add-category" element={<AddCategory />} />
+            <Route path="/edit-category/:id" element={<AddCategory />} />
             <Route path="/manage-brand" element={<ManageBrand />} />
             <Route path="/add-brand" element={<AddBrand />} />
+            <Route path="/edit-brand/:id" element={<AddBrand />} />
         </Routes>
     );
 }

@@ -16,7 +16,12 @@ const useServices = () => {
         setLoading(true);
         setError(null);
         try {
-            const res = await api({ url, method, data });
+            const headers = {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+            };
+            const res = await api({ url, method, data, headers });
             setData(res.data.data);
         } catch (error) {
             setError(error);
@@ -35,6 +40,7 @@ const useServices = () => {
             const headers = {
                 "Content-Type": contentType,
                 Accept: "application/json",
+                Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
             };
             const res = await api({ url, method, data, headers });
             return res.data;

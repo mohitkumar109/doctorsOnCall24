@@ -1,30 +1,66 @@
 import React, { useState, useEffect } from "react";
 import { BsPencil, BsTrash3Fill } from "react-icons/bs";
+import { Link } from "react-router-dom";
+import { toast } from "react-hot-toast";
 import Pagination from "../../../components/Pagination";
-import Filter from "../../../components/Filter";
 import Breadcrumb from "../../../components/Breadcrumb";
-import GroupButton from "../../../components/GroupButton";
 import useServices from "../../../hooks/useService";
-import { apiPoint } from "../../../services/adminApi";
+import { apiEnd } from "../../../services/adminApi";
 
 export default function ManageUser() {
     const { postData } = useServices();
-    const [data, setData] = useState("");
+    const [search, setSearch] = useState("");
+    const [data, setData] = useState([]);
 
-    const fetchUser = async () => {
-        const req = apiPoint.userFetch();
-        const res = await postData(req);
-        setData(res?.data);
-    };
     useEffect(() => {
         fetchUser();
     }, []);
 
+    const fetchUser = async () => {
+        const req = apiEnd.userFetch();
+        const res = await postData(req);
+        setData(res?.data);
+    };
+
+    const changeStatus = async (id, status) => {
+        const req = apiEnd.actionUserOne(id, status);
+        const res = await postData(req, {});
+        if (res?.success) {
+            toast.success(res.message, { duration: 3000 });
+            fetchUser(); // Ensure fetchCategory is defined
+        } else {
+            toast.error(res?.message || "Failed to delete category", { duration: 3000 });
+        }
+    };
+
+    const filteredData = data?.filter(
+        (result) => result.fullName.toLowerCase().indexOf(search.toLowerCase()) !== -1
+    );
+
     return (
         <div className="container-fluid">
-            <Breadcrumb pageName={"User"} />
+            <Breadcrumb pageName={"All User"} />
             <div className="content-area">
-                <Filter />
+                <div className="card my-3">
+                    <div className="card-body">
+                        <h6>Filter</h6>
+                        <div className="row">
+                            <div className="col-sm-6 my-2">
+                                <div className="input-group mb-3">
+                                    <input
+                                        type="text"
+                                        name="search"
+                                        value={search}
+                                        onChange={(e) => setSearch(e.target.value)}
+                                        className="form-control form-control-sm"
+                                        placeholder="Search here...."
+                                    />
+                                    <span className="input-group-text bg-info">Search</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div className="card">
                     <div className="card-header">
                         <span className="card-title">User List</span>
@@ -34,7 +70,11 @@ export default function ManageUser() {
                         </div>
                     </div>
                     <div className="card-body">
-                        <GroupButton buttonLink="/add-user" />
+                        <div className="btn-group mb-3">
+                            <Link to="/add-user" className="btn btn-primary btn-sm waves-effect">
+                                Add User
+                            </Link>
+                        </div>
                         <div className="table-responsive">
                             <table className="table table-striped table-bordered table-hover">
                                 <thead>
@@ -48,17 +88,17 @@ export default function ManageUser() {
                                         </th>
                                         <th className="col-3">Full Name</th>
                                         <th className="col-3">Email</th>
-                                        <th className="col-3">Role</th>
+                                        <th className="col-2">Role</th>
                                         <th className="col-2">Mobile</th>
-                                        <th className="col-3">CreatedAt</th>
-                                        <th className="col-1">Status</th>
+                                        <th className="col-2">CreatedAt</th>
+                                        <th className="col-3">Status</th>
                                         <th className="col-1">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {data?.length > 0 ? (
+                                    {filteredData?.length > 0 ? (
                                         <>
-                                            {data?.map((user, index) => (
+                                            {filteredData?.map((user, index) => (
                                                 <tr key={index}>
                                                     <td>
                                                         <input
@@ -95,24 +135,54 @@ export default function ManageUser() {
                                                     </td>
 
                                                     <td>
-                                                        <span
-                                                            className={`badge ${
-                                                                user?.status === "active"
-                                                                    ? "bg-success"
-                                                                    : "bg-danger"
-                                                            }`}
-                                                        >
-                                                            {user?.status}
-                                                        </span>
+                                                        <div className="form-check form-switch">
+                                                            <input
+                                                                type="checkbox"
+                                                                role="switch"
+                                                                id={`flexSwitchCheckChecked-${user._id}`}
+                                                                checked={user.status === "active"}
+                                                                className="form-check-input mt-2"
+                                                                onChange={() =>
+                                                                    changeStatus(
+                                                                        user._id,
+                                                                        user.status === "active"
+                                                                            ? "inactive"
+                                                                            : "active"
+                                                                    )
+                                                                }
+                                                            />
+                                                            <span
+                                                                className={`badge ${
+                                                                    user.status === "active"
+                                                                        ? "bg-success"
+                                                                        : "bg-danger"
+                                                                }`}
+                                                            >
+                                                                {user.status === "active"
+                                                                    ? "Active"
+                                                                    : "Inactive"}
+                                                            </span>
+                                                        </div>
                                                     </td>
                                                     <td className="text-default">
-                                                        <div className="d-flex gap-1">
-                                                            <button className="btn btn-primary btn-sm">
+                                                        <div className="d-flex gap-3">
+                                                            <Link
+                                                                to={`/edit-user/${user._id}`}
+                                                                className="text-primary"
+                                                            >
                                                                 <BsPencil />
-                                                            </button>
-                                                            <button className="btn btn-danger btn-sm">
-                                                                <BsTrash3Fill />
-                                                            </button>
+                                                            </Link>
+
+                                                            <Link className="text-danger">
+                                                                <BsTrash3Fill
+                                                                    onClick={() =>
+                                                                        changeStatus(
+                                                                            user._id,
+                                                                            "delete"
+                                                                        )
+                                                                    }
+                                                                />
+                                                            </Link>
                                                         </div>
                                                     </td>
                                                 </tr>
