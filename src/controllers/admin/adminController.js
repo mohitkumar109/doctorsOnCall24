@@ -20,7 +20,7 @@ class Controller {
     // description    Register new Admin User
     // route          POST /api/v1/admin/register
     registerAdmin = asyncHandler(async (req, res) => {
-        const { fullName, email, password, role, mobile, status } = req.body;
+        const { fullName, email, password, role, mobile, status, storeId } = req.body;
         if (!fullName || !email || !password || !role || !mobile) {
             throw new ApiError(400, "Required all fields");
         }
@@ -34,6 +34,7 @@ class Controller {
             password,
             mobile,
             role,
+            storeId,
             status: status || "active",
             createdBy: req?.user?._id,
         });
@@ -94,7 +95,7 @@ class Controller {
     // route          Patch /api/v1/admin/edit-profile
     editProfile = asyncHandler(async (req, res) => {
         const userId = req.params.id;
-        const { fullName, email, password, mobile, status } = req.body;
+        const { fullName, email, password, mobile, status, storeId } = req.body;
 
         if (!Dependencies.mongoose.isValidObjectId(userId)) {
             throw new ApiError(400, "This is not valid id");
@@ -112,7 +113,9 @@ class Controller {
         if (password) user.password = password; // This triggers the pre-save middleware to hash the password
         if (mobile) user.mobile = mobile;
         if (status) user.status = status;
+        if (storeId) user.storeId = storeId;
 
+        user.updatedBy = req?.user?._id;
         const updatedUser = await user.save();
         return res.status(200).json(new ApiResponse(200, updatedUser, "User Updated Successfully"));
     });
@@ -137,7 +140,11 @@ class Controller {
     userList = asyncHandler(async (req, res) => {
         if (req.user.role === "admin") {
             // Admin can view all users
-            const users = await MODEL.User.find({ role: { $ne: "admin" } });
+            const users = await MODEL.User.find({ role: { $ne: "admin" } })
+                .populate("createdBy", "fullName")
+                .populate("updatedBy", "fullName")
+                .populate("storeId", "storeName")
+                .select("-refreshToken -password -updatedAt -__v");
             if (!users) {
                 throw new ApiError(400, "User not found");
             }

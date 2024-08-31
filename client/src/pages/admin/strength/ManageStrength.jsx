@@ -1,98 +1,73 @@
 import React, { useState, useEffect } from "react";
-import { BsPencil, BsTrash3Fill } from "react-icons/bs";
 import { Link } from "react-router-dom";
+import { BsPencil, BsTrash3Fill } from "react-icons/bs";
 import { toast } from "react-hot-toast";
 import Pagination from "../../../components/Pagination";
+import Filter from "../../../components/Filter";
 import Breadcrumb from "../../../components/Breadcrumb";
-import useServices from "../../../hooks/useService";
+import AddButton from "../../../components/AddButton";
+import useService from "../../../hooks/useService";
 import { apiEnd } from "../../../services/adminApi";
 
-export default function ManageUser() {
-    const { postData } = useServices();
+export default function ManageStrength() {
+    const { postData } = useService();
     const [search, setSearch] = useState("");
+    const [sorting, setSorting] = useState("");
+    const [status, setStatus] = useState("");
+    const [pagination, setPagination] = useState("");
+    const [page, setPage] = useState(1);
     const [data, setData] = useState([]);
 
-    useEffect(() => {
-        fetchUser();
-    }, []);
-
-    const fetchUser = async () => {
-        const req = apiEnd.userFetch();
+    const fetchStrength = async () => {
+        const req = apiEnd.getStrength(search, sorting, status, page);
         const res = await postData(req);
-        setData(res?.data);
+        setData(res?.data?.results);
+        setPagination(res?.data?.pagination);
     };
 
     const changeStatus = async (id, status) => {
-        const req = apiEnd.actionUserOne(id, status);
+        const req = apiEnd.actionStrengthOne(id, status);
         const res = await postData(req, {});
         if (res?.success) {
             toast.success(res.message, { duration: 1000 });
-            fetchUser(); // Ensure fetchUser is defined
+            fetchStrength(); // Ensure fetchStrength is defined
         } else {
-            toast.error(res?.message || "Failed to delete User", { duration: 1000 });
+            toast.error(res?.message || "Failed to delete strength", { duration: 1000 });
         }
     };
 
-    const filteredData = data?.filter(
-        (result) => result.fullName.toLowerCase().indexOf(search.toLowerCase()) !== -1
+    useEffect(() => {
+        fetchStrength();
+    }, [search, sorting, status, page]);
+
+    const filteredData = data.filter(
+        (result) => result?.strengthName.toLowerCase().indexOf(search.toLowerCase()) !== -1
     );
 
     return (
         <div className="container-fluid">
-            <Breadcrumb pageName={"All User"} />
+            <Breadcrumb pageName={"Strength"} />
             <div className="content-area">
-                <div className="card my-3">
-                    <div className="card-body">
-                        <h6>Filter</h6>
-                        <div className="row">
-                            <div className="col-sm-6 my-2">
-                                <div className="input-group mb-3">
-                                    <input
-                                        type="text"
-                                        name="search"
-                                        value={search}
-                                        onChange={(e) => setSearch(e.target.value)}
-                                        className="form-control form-control-sm"
-                                        placeholder="Search here...."
-                                    />
-                                    <span className="input-group-text bg-info">Search</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <Filter setSearch={setSearch} setSorting={setSorting} setStatus={setStatus} />
                 <div className="card">
                     <div className="card-header">
-                        <span className="card-title">User List</span>
+                        <span className="card-title">Strength List</span>
                         <div className="d-flex gap-2" style={{ float: "right" }}>
                             <button className="btn btn-success btn-sm waves-effect">Table</button>
                             <button className="btn btn-primary btn-sm waves-effect">Card</button>
                         </div>
                     </div>
                     <div className="card-body">
-                        <div className="btn-group mb-3">
-                            <Link to="/add-user" className="btn btn-primary btn-sm waves-effect">
-                                Add User
-                            </Link>
-                        </div>
+                        <AddButton buttonLink="/add-strength" />
                         <div className="table-responsive">
                             <table className="table table-striped table-bordered table-hover">
                                 <thead>
                                     <tr>
-                                        <th scope="col">
-                                            <input
-                                                type="checkbox"
-                                                name="checked"
-                                                className="form-check-input"
-                                            />
-                                        </th>
-                                        <th className="col-3">Full Name</th>
-                                        <th className="col-3">Email</th>
-                                        <th className="col-2">Selected Store</th>
-                                        <th className="col-1">Role Type</th>
-                                        <th className="col-1">CreatedBy</th>
-                                        <th className="col-1">UpdatedBy</th>
-                                        <th className="col-1">CreatedAt</th>
+                                        <th scope="col">SN</th>
+                                        <th className="col-6">Strength Name</th>
+                                        <th className="col-2">CreatedBy</th>
+                                        <th className="col-2">UpdatedBy</th>
+                                        <th className="col-2">CreatedAt</th>
                                         <th className="col-1">Status</th>
                                         <th className="col-1">Actions</th>
                                     </tr>
@@ -100,64 +75,45 @@ export default function ManageUser() {
                                 <tbody>
                                     {filteredData?.length > 0 ? (
                                         <>
-                                            {filteredData?.map((user, index) => (
+                                            {filteredData?.map((strength, index) => (
                                                 <tr key={index}>
-                                                    <td>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="checked"
-                                                            className="form-check-input"
-                                                        />
-                                                    </td>
+                                                    <td>{index + 1}</td>
                                                     <td>
                                                         <span className="text-default">
-                                                            {user?.fullName}
+                                                            {strength?.strengthName}
                                                         </span>
                                                     </td>
                                                     <td>
                                                         <span className="text-default">
-                                                            {user?.email}
+                                                            {strength?.createdBy?.fullName ||
+                                                                "None"}
                                                         </span>
                                                     </td>
                                                     <td>
                                                         <span className="text-default">
-                                                            {user?.storeId?.storeName}
+                                                            {strength?.updatedBy?.fullName ||
+                                                                "None"}
                                                         </span>
                                                     </td>
                                                     <td>
                                                         <span className="text-default">
-                                                            {user?.role}
+                                                            {strength.createdAt.split("T")[0]}
                                                         </span>
                                                     </td>
-
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {user?.createdBy?.fullName || "None"}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {user?.updatedBy?.fullName || "None"}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {user.createdAt.split("T")[0]}
-                                                        </span>
-                                                    </td>
-
                                                     <td>
                                                         <div className="form-check form-switch">
                                                             <input
                                                                 type="checkbox"
                                                                 role="switch"
-                                                                id={`flexSwitchCheckChecked-${user._id}`}
-                                                                checked={user.status === "active"}
+                                                                id={`flexSwitchCheckChecked-${strength._id}`}
+                                                                checked={
+                                                                    strength.status === "active"
+                                                                }
                                                                 className="form-check-input mt-2"
                                                                 onChange={() =>
                                                                     changeStatus(
-                                                                        user._id,
-                                                                        user.status === "active"
+                                                                        strength._id,
+                                                                        strength.status === "active"
                                                                             ? "inactive"
                                                                             : "active"
                                                                     )
@@ -165,12 +121,12 @@ export default function ManageUser() {
                                                             />
                                                             <span
                                                                 className={`badge ${
-                                                                    user.status === "active"
+                                                                    strength.status === "active"
                                                                         ? "bg-success"
                                                                         : "bg-danger"
                                                                 }`}
                                                             >
-                                                                {user.status === "active"
+                                                                {strength.status === "active"
                                                                     ? "Active"
                                                                     : "Inactive"}
                                                             </span>
@@ -179,17 +135,17 @@ export default function ManageUser() {
                                                     <td className="text-default">
                                                         <div className="d-flex gap-3">
                                                             <Link
-                                                                to={`/edit-user/${user._id}`}
+                                                                to={`/edit-strength/${strength._id}`}
                                                                 className="text-primary"
                                                             >
                                                                 <BsPencil />
                                                             </Link>
 
-                                                            <Link className="text-danger">
+                                                            <Link to="#" className="text-danger">
                                                                 <BsTrash3Fill
                                                                     onClick={() =>
                                                                         changeStatus(
-                                                                            user._id,
+                                                                            strength._id,
                                                                             "delete"
                                                                         )
                                                                     }
@@ -212,7 +168,12 @@ export default function ManageUser() {
                                 </tbody>
                             </table>
                         </div>
-                        <Pagination />
+                        <Pagination
+                            totalResult={pagination.totalResult}
+                            pages={pagination.totalPages}
+                            page={pagination.currentPage}
+                            changePage={setPage}
+                        />
                     </div>
                 </div>
             </div>

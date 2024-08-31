@@ -14,13 +14,7 @@ export default function AddCategory() {
     const navigate = useNavigate();
     const { id } = useParams();
 
-    useEffect(() => {
-        if (id) {
-            getCategory();
-        }
-    }, [id]);
-
-    const getCategory = async () => {
+    const getCategory = useCallback(async () => {
         try {
             const req = apiEnd.getCategoryById(id);
             const res = await postData(req);
@@ -33,7 +27,13 @@ export default function AddCategory() {
         } catch (error) {
             toast.error("Failed to fetch user details.");
         }
-    };
+    }, [id, postData]);
+
+    useEffect(() => {
+        if (id) {
+            getCategory();
+        }
+    }, [id, getCategory]);
 
     const debouncedCategory = useCallback(
         debounce(async (data) => {
@@ -52,16 +52,13 @@ export default function AddCategory() {
                 setLoading(false);
             }
         }, 1000), // 300ms debounce delay
-        []
+        [postData, navigate, id] // Include all necessary dependencies
     );
 
     useEffect(() => {
         return () => {
             debouncedCategory.cancel(); // Cleanup the debounced function on component unmount
         };
-        if (id) {
-            getCategory();
-        }
     }, [debouncedCategory]);
 
     const handleSubmit = async (e) => {
@@ -116,7 +113,7 @@ export default function AddCategory() {
                                         onChange={(e) => setStatus(e.target.value)}
                                         className="form-select"
                                     >
-                                        <option>----Choose Status----</option>
+                                        <option value="">----Choose Status----</option>
                                         <option value="active">Active</option>
                                         <option value="inactive">Inactive</option>
                                     </select>

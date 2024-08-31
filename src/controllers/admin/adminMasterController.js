@@ -73,7 +73,12 @@ class Controller {
         const limit = parseInt(req.query.limit) || PAGINATION_LIMIT;
         const skip = parseInt(req.query.page - 1) * limit;
 
-        const query = await MODEL.Generic.find(filter).sort(sortOption).limit(limit).skip(skip);
+        const query = await MODEL.Generic.find(filter)
+            .sort(sortOption)
+            .limit(limit)
+            .skip(skip)
+            .populate("createdBy", "fullName")
+            .populate("updatedBy", "fullName");
 
         const totalResults = await MODEL.Generic.find(filter).countDocuments();
         const totalPages = Math.ceil(totalResults / limit);
@@ -248,7 +253,12 @@ class Controller {
         const limit = parseInt(req.query.limit) || PAGINATION_LIMIT;
         const skip = parseInt(req.query.page - 1) * limit;
 
-        const query = await MODEL.Category.find(filter).sort(sortOption).limit(limit).skip(skip);
+        const query = await MODEL.Category.find(filter)
+            .sort(sortOption)
+            .limit(limit)
+            .skip(skip)
+            .populate("createdBy", "fullName")
+            .populate("updatedBy", "fullName");
 
         const totalResults = await MODEL.Category.find(filter).countDocuments();
         const totalPages = Math.ceil(totalResults / limit);
@@ -406,7 +416,12 @@ class Controller {
         const limit = parseInt(req.query.limit) || PAGINATION_LIMIT;
         const skip = parseInt(req.query.page - 1) * limit;
 
-        const query = await MODEL.Brand.find(filter).sort(sortOption).limit(limit).skip(skip);
+        const query = await MODEL.Brand.find(filter)
+            .sort(sortOption)
+            .limit(limit)
+            .skip(skip)
+            .populate("createdBy", "fullName")
+            .populate("updatedBy", "fullName");
         const totalResults = await MODEL.Brand.find(filter).countDocuments();
         const totalPages = Math.ceil(totalResults / limit);
 
@@ -546,7 +561,12 @@ class Controller {
         const limit = parseInt(req.query.limit) || PAGINATION_LIMIT;
         const skip = parseInt(req.query.page - 1) * limit;
 
-        const query = await MODEL.Strength.find(filter).sort(sortOption).limit(limit).skip(skip);
+        const query = await MODEL.Strength.find(filter)
+            .sort(sortOption)
+            .limit(limit)
+            .skip(skip)
+            .populate("createdBy", "fullName")
+            .populate("updatedBy", "fullName");
         const totalResults = await MODEL.Strength.find(filter).countDocuments();
         const totalPages = Math.ceil(totalResults / limit);
 
@@ -691,7 +711,12 @@ class Controller {
         const limit = parseInt(req.query.limit) || PAGINATION_LIMIT;
         const skip = parseInt(req.query.page - 1) * limit;
 
-        const query = await MODEL.Usage.find(filter).sort(sortOption).limit(limit).skip(skip);
+        const query = await MODEL.Usage.find(filter)
+            .sort(sortOption)
+            .limit(limit)
+            .skip(skip)
+            .populate("createdBy", "fullName")
+            .populate("updatedBy", "fullName");
         const totalResults = await MODEL.Usage.find(filter).countDocuments();
         const totalPages = Math.ceil(totalResults / limit);
 
@@ -800,10 +825,6 @@ class Controller {
             createdBy: req?.user?._id,
         });
 
-        const newUser = req?.user;
-        newUser.storeId.push(store._id);
-        await newUser.save();
-
         return res.status(201).json(new ApiResponse(201, store, "Store created successfully"));
     });
 
@@ -843,7 +864,12 @@ class Controller {
         const limit = parseInt(req.query.limit) || PAGINATION_LIMIT;
         const skip = parseInt(req.query.page - 1) * limit;
 
-        const query = await MODEL.Store.find(filter).sort(sortOption).limit(limit).skip(skip);
+        const query = await MODEL.Store.find(filter)
+            .sort(sortOption)
+            .limit(limit)
+            .skip(skip)
+            .populate("createdBy", "fullName")
+            .populate("updatedBy", "fullName");
         const totalResults = await MODEL.Store.find(filter).countDocuments();
         const totalPages = Math.ceil(totalResults / limit);
 
@@ -873,6 +899,14 @@ class Controller {
             throw new ApiError(400, "Store not found");
         }
         return res.status(200).json(new ApiResponse(200, store, "Get store"));
+    });
+
+    fetchSelect = asyncHandler(async (req, res) => {
+        const result = await MODEL.Store.find({ status: "active" }).select("storeName");
+        if (!result) {
+            throw new ApiError(404, "Active record not found");
+        }
+        return res.status(200).json(new ApiResponse(200, { data: result }, "Get active store"));
     });
 
     updateStore = asyncHandler(async (req, res) => {

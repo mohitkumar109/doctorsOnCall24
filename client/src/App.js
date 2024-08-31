@@ -8,7 +8,7 @@ export default function App() {
         <AppProvider>
             <BrowserRouter>
                 <Layout />
-                <Toaster position="bottom-right" reverseOrder={false} />
+                <Toaster position="bottom-right" reverseOrder={true} />
             </BrowserRouter>
         </AppProvider>
     );

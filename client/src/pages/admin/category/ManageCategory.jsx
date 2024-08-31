@@ -96,7 +96,9 @@ export default function ManageCategory() {
                                                 className="form-check-input"
                                             />
                                         </th>
-                                        <th className="col-9">Category</th>
+                                        <th className="col-6">Category</th>
+                                        <th className="col-2">CreatedBy</th>
+                                        <th className="col-2">UpdatedBy</th>
                                         <th className="col-2">CreatedAt</th>
                                         <th className="col-1">Status</th>
                                         <th className="col-1">Actions</th>
@@ -121,6 +123,16 @@ export default function ManageCategory() {
                                                     <td>
                                                         <span className="text-default">
                                                             {cat.categoryName}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span className="text-default">
+                                                            {cat?.createdBy?.fullName || "None"}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span className="text-default">
+                                                            {cat?.updatedBy?.fullName || "None"}
                                                         </span>
                                                     </td>
                                                     <td>

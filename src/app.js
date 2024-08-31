@@ -31,13 +31,13 @@ app.use((req, res, next) => {
 });
 
 // routes import
-import { errorHandler, InvalidRoute } from "./middlewares/index.js";
+import Middleware from "./middlewares/index.js";
 import * as Routes from "./routes/index.js";
 
 // routes declaration
 app.use(Routes.AdminBase, Routes.AdminRoute);
 
-app.use(InvalidRoute);
-app.use(errorHandler);
+app.use(Middleware.InvalidRoute);
+app.use(Middleware.errorHandler);
 
 export { app };

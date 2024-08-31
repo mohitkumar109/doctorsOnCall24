@@ -29,10 +29,10 @@ export default function ManageBrand() {
         const req = apiEnd.actionBrandOne(id, status);
         const res = await postData(req, {});
         if (res?.success) {
-            toast.success(res.message);
-            fetchBrand(); // Ensure fetchCategory is defined
+            toast.success(res.message, { duration: 1000 });
+            fetchBrand(); // Ensure fetchBrand is defined
         } else {
-            toast.error(res?.message || "Failed to delete category");
+            toast.error(res?.message || "Failed to delete brand", { duration: 1000 });
         }
     };
 
@@ -64,7 +64,9 @@ export default function ManageBrand() {
                                 <thead>
                                     <tr>
                                         <th scope="col">SN</th>
-                                        <th className="col-9">Brand</th>
+                                        <th className="col-6">Brand</th>
+                                        <th className="col-2">CreatedBy</th>
+                                        <th className="col-2">UpdatedBy</th>
                                         <th className="col-2">CreatedAt</th>
                                         <th className="col-1">Status</th>
                                         <th className="col-1">Actions</th>
@@ -79,6 +81,16 @@ export default function ManageBrand() {
                                                     <td>
                                                         <span className="text-default">
                                                             {brand?.brandName}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span className="text-default">
+                                                            {brand?.createdBy?.fullName || "None"}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span className="text-default">
+                                                            {brand?.updatedBy?.fullName || "None"}
                                                         </span>
                                                     </td>
                                                     <td>

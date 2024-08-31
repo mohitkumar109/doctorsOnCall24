@@ -27,7 +27,7 @@ const userSchema = new Dependencies.mongoose.Schema({
     },
     storeId: {
         type: Dependencies.mongoose.Schema.Types.ObjectId,
-        ref: "medicineStore",
+        ref: "Store",
     },
     checked: {
         type: Boolean,

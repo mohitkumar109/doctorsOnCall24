@@ -141,7 +141,184 @@ const actionBrandOne = (id, status) => {
     };
 };
 
+//--------------Medicine Generic-----------------//
+
+const adGeneric = (values) => {
+    return {
+        url: `${BASE_URL}/admin/generic/`,
+        method: "POST",
+        data: values,
+    };
+};
+
+const getGeneric = (search, sorting, status, page) => {
+    return {
+        url: `${BASE_URL}/admin/generic/?search=${search}&sorting=${sorting}&status=${status}&page=${page}`,
+        method: "GET",
+        data: null,
+    };
+};
+
+const getGenericById = (id) => {
+    return {
+        url: `${BASE_URL}/admin/generic/${id}`,
+        method: "GET",
+        data: null,
+    };
+};
+
+const updateGeneric = (id, values) => {
+    return {
+        url: `${BASE_URL}/admin/generic/${id}`,
+        method: "PATCH",
+        data: values,
+    };
+};
+
+const actionGenericOne = (id, status) => {
+    return {
+        url: `${BASE_URL}/admin/actionOnGeneric/${id}/${status}`,
+        method: "PATCH",
+        data: null,
+    };
+};
+
+//--------------Medicine Strength-----------------//
+
+const adStrength = (values) => {
+    return {
+        url: `${BASE_URL}/admin/strength/`,
+        method: "POST",
+        data: values,
+    };
+};
+
+const getStrength = (search, sorting, status, page) => {
+    return {
+        url: `${BASE_URL}/admin/strength/?search=${search}&sorting=${sorting}&status=${status}&page=${page}`,
+        method: "GET",
+        data: null,
+    };
+};
+
+const getStrengthById = (id) => {
+    return {
+        url: `${BASE_URL}/admin/strength/${id}`,
+        method: "GET",
+        data: null,
+    };
+};
+
+const updateStrength = (id, values) => {
+    return {
+        url: `${BASE_URL}/admin/strength/${id}`,
+        method: "PATCH",
+        data: values,
+    };
+};
+
+const actionStrengthOne = (id, status) => {
+    return {
+        url: `${BASE_URL}/admin/actionOnStrength/${id}/${status}`,
+        method: "PATCH",
+        data: null,
+    };
+};
+
+//--------------Medicine Usage-----------------//
+
+const adUsage = (values) => {
+    return {
+        url: `${BASE_URL}/admin/usage/`,
+        method: "POST",
+        data: values,
+    };
+};
+
+const getUsage = (search, sorting, status, page) => {
+    return {
+        url: `${BASE_URL}/admin/usage/?search=${search}&sorting=${sorting}&status=${status}&page=${page}`,
+        method: "GET",
+        data: null,
+    };
+};
+
+const getUsageById = (id) => {
+    return {
+        url: `${BASE_URL}/admin/usage/${id}`,
+        method: "GET",
+        data: null,
+    };
+};
+
+const updateUsage = (id, values) => {
+    return {
+        url: `${BASE_URL}/admin/usage/${id}`,
+        method: "PATCH",
+        data: values,
+    };
+};
+
+const actionUsageOne = (id, status) => {
+    return {
+        url: `${BASE_URL}/admin/actionOnUsage/${id}/${status}`,
+        method: "PATCH",
+        data: null,
+    };
+};
+
+//--------------Medicine Store-----------------//
+
+const adStore = (values) => {
+    return {
+        url: `${BASE_URL}/admin/store/`,
+        method: "POST",
+        data: values,
+    };
+};
+
+const getStore = (search, sorting, status, page) => {
+    return {
+        url: `${BASE_URL}/admin/store/?search=${search}&sorting=${sorting}&status=${status}&page=${page}`,
+        method: "GET",
+        data: null,
+    };
+};
+
+const getStoreById = (id) => {
+    return {
+        url: `${BASE_URL}/admin/store/${id}`,
+        method: "GET",
+        data: null,
+    };
+};
+
+const getStoreSelect = () => {
+    return {
+        url: `${BASE_URL}/admin/store-select/`,
+        method: "GET",
+        data: null,
+    };
+};
+
+const updateStore = (id, values) => {
+    return {
+        url: `${BASE_URL}/admin/store/${id}`,
+        method: "PATCH",
+        data: values,
+    };
+};
+
+const actionStoreOne = (id, status) => {
+    return {
+        url: `${BASE_URL}/admin/actionOnStore/${id}/${status}`,
+        method: "PATCH",
+        data: null,
+    };
+};
+
 export const apiEnd = {
+    // User function
     userRegister,
     userFetch,
     getUserById,
@@ -149,6 +326,7 @@ export const apiEnd = {
     updateProfile,
     actionUserOne,
 
+    // Category function
     adCategory,
     getCategory,
     getCategoryById,
@@ -156,9 +334,39 @@ export const apiEnd = {
     actionCategoryOne,
     actionCategoryMulti,
 
+    // Brand function
     adBrand,
     getBrand,
     getBrandById,
     updateBrand,
     actionBrandOne,
+
+    // Generic function
+    adGeneric,
+    getGeneric,
+    getGenericById,
+    updateGeneric,
+    actionGenericOne,
+
+    // Strength function
+    adStrength,
+    getStrength,
+    getStrengthById,
+    updateStrength,
+    actionStrengthOne,
+
+    // Usage function
+    adUsage,
+    getUsage,
+    getUsageById,
+    updateUsage,
+    actionUsageOne,
+
+    // Store function
+    adStore,
+    getStore,
+    getStoreById,
+    getStoreSelect,
+    updateStore,
+    actionStoreOne,
 };

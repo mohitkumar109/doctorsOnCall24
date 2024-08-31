@@ -47,6 +47,13 @@ const Sidebar = () => {
                             }`}
                         >
                             <li>
+                                <Link to="/manage-generic">
+                                    <BsCardList className="bi" />
+                                    Medicine Generic Name
+                                </Link>
+                            </li>
+
+                            <li>
                                 <Link to="/manage-category">
                                     <BsCardList className="bi" />
                                     Medicine Category
@@ -60,30 +67,16 @@ const Sidebar = () => {
                             </li>
 
                             <li>
-                                <Link to="#">
+                                <Link to="/manage-strength">
                                     <BsCardList className="bi" />
-                                    Generic Name
+                                    Medicine Strength
                                 </Link>
                             </li>
 
                             <li>
-                                <Link to="#">
+                                <Link to="/manage-usage">
                                     <BsCardList className="bi" />
-                                    Form of medicine
-                                </Link>
-                            </li>
-
-                            <li>
-                                <Link to="#">
-                                    <BsCardList className="bi" />
-                                    Strength of medicine
-                                </Link>
-                            </li>
-
-                            <li>
-                                <Link to="#">
-                                    <BsCardList className="bi" />
-                                    Usage of medicine
+                                    Medicine Usage
                                 </Link>
                             </li>
                         </ul>
@@ -104,7 +97,7 @@ const Sidebar = () => {
                             }`}
                         >
                             <li>
-                                <Link to="#">
+                                <Link to="/manage-store">
                                     <BsCardList className="bi" />
                                     Manage Store
                                 </Link>

@@ -44,4 +44,4 @@ const storeSchema = new Dependencies.mongoose.Schema({
     },
 });
 
-export const Store = Dependencies.mongoose.model("medicineStore", storeSchema);
+export const Store = Dependencies.mongoose.model("Store", storeSchema);
