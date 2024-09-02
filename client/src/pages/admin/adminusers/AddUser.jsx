@@ -24,8 +24,6 @@ export default function AddUser() {
         try {
             const req = apiEnd.getUserById(id);
             const res = await postData(req);
-
-            console.log(res);
             if (res?.success) {
                 setFullName(res?.data?.fullName || "");
                 setEmail(res?.data?.email || "");
@@ -117,10 +115,10 @@ export default function AddUser() {
                                 </label>
                                 <div className="col-sm-6">
                                     <select
-                                        className="form-select"
                                         name="storeId"
                                         value={storeId}
                                         onChange={(e) => setStoreId(e.target.value)}
+                                        className="form-select"
                                     >
                                         <option value="">---- Choose Store ----</option>
                                         {store?.data?.map((line, index) => (

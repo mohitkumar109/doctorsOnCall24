@@ -1,65 +1,61 @@
 import { Dependencies } from "../packages/index.js";
 import { config } from "../common/index.js";
 
-const userSchema = new Dependencies.mongoose.Schema({
-    fullName: {
-        type: String,
-        required: true,
-        lowercase: true,
-        trim: true,
+const userSchema = new Dependencies.mongoose.Schema(
+    {
+        fullName: {
+            type: String,
+            required: true,
+            lowercase: true,
+            trim: true,
+        },
+        email: {
+            type: String,
+            required: [true, "email is required"],
+            unique: true,
+            lowercase: true,
+            trim: true,
+        },
+        password: {
+            type: String,
+            required: true,
+        },
+        mobile: {
+            type: Number,
+            required: true,
+        },
+        role: {
+            type: String,
+            enum: ["admin", "manager", "user"],
+            default: "user",
+        },
+        storeId: {
+            type: Dependencies.mongoose.Schema.Types.ObjectId,
+            ref: "Store",
+        },
+        checked: {
+            type: Boolean,
+            default: false,
+        },
+        status: {
+            type: String,
+            default: "active",
+        },
+        createdBy: {
+            type: Dependencies.mongoose.Schema.Types.ObjectId,
+            ref: "Users",
+        },
+        updatedBy: {
+            type: Dependencies.mongoose.Schema.Types.ObjectId,
+            ref: "Users",
+        },
+
+        refreshToken: {
+            type: String,
+        },
     },
-    email: {
-        type: String,
-        required: [true, "email is required"],
-        unique: true,
-        lowercase: true,
-        trim: true,
-    },
-    password: {
-        type: String,
-        required: true,
-    },
-    mobile: {
-        type: Number,
-        required: true,
-    },
-    role: {
-        type: String,
-        enum: ["admin", "manager", "user"],
-        default: "user",
-    },
-    storeId: {
-        type: Dependencies.mongoose.Schema.Types.ObjectId,
-        ref: "Store",
-    },
-    checked: {
-        type: Boolean,
-        default: false,
-    },
-    status: {
-        type: String,
-        default: "active",
-    },
-    createdBy: {
-        type: Dependencies.mongoose.Schema.Types.ObjectId,
-        ref: "Users",
-    },
-    updatedBy: {
-        type: Dependencies.mongoose.Schema.Types.ObjectId,
-        ref: "Users",
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now,
-    },
-    updatedAt: {
-        type: Date,
-        default: Date.now,
-    },
-    refreshToken: {
-        type: String,
-    },
-});
+    { timestamps: true }
+);
 
 userSchema.pre("save", async function (next) {
     if (!this.isModified("password")) return next();

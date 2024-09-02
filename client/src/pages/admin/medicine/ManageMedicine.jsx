@@ -180,7 +180,7 @@ export default function ManageMedicine() {
                                                     <td className="text-default">
                                                         <div className="d-flex gap-3">
                                                             <Link
-                                                                to={`/edit-store/${line._id}`}
+                                                                to={`/edit-medicine/${line._id}`}
                                                                 className="text-primary"
                                                             >
                                                                 <BsPencil />

@@ -117,12 +117,14 @@ class Controller {
     // description      Fetch generic by active
     // route            GET /api/v1/admin/generic-select
     // access           Private
-    getGenericSelect = asyncHandler(async (req, res) => {
-        const result = await MODEL.Generic.find({ status: "active" });
+    fetchGenericSelect = asyncHandler(async (req, res) => {
+        const result = await MODEL.Generic.find({ status: "active" }, { genericName: 1 });
         if (!result) {
-            throw new ApiError(404, "Active record");
+            throw new ApiError(404, "record not fund");
         }
-        return res.status(200).json(new ApiResponse(200, { data: result }, "Get active generic"));
+        return res
+            .status(200)
+            .json(new ApiResponse(200, { data: result }, "Selected active record"));
     });
 
     // description      Update Generic
@@ -300,6 +302,16 @@ class Controller {
         return res.status(200).json(new ApiResponse(200, category, "All list of category"));
     });
 
+    fetchCategorySelect = asyncHandler(async (req, res) => {
+        const result = await MODEL.Category.find({ status: "active" }, { categoryName: 1 });
+        if (!result) {
+            throw new ApiError(404, "record not found");
+        }
+        return res
+            .status(200)
+            .json(new ApiResponse(200, { data: result }, "Selected active record"));
+    });
+
     // description      Update Category
     // route            PATCH /api/v1/category/update/:id
     // access           Private
@@ -468,6 +480,16 @@ class Controller {
         return res.status(200).json(new ApiResponse(200, brand, "All list of brand"));
     });
 
+    fetchBrandSelect = asyncHandler(async (req, res) => {
+        const result = await MODEL.Brand.find({ status: "active" }, { brandName: 1 });
+        if (!result) {
+            throw new ApiError(404, "record not fund");
+        }
+        return res
+            .status(200)
+            .json(new ApiResponse(200, { data: result }, "Selected active record"));
+    });
+
     // description      Update brand
     // route            PATCH /api/v1/admin/brand/:id
     // access           Private
@@ -617,6 +639,16 @@ class Controller {
             throw new ApiError(400, "Strength not found");
         }
         return res.status(200).json(new ApiResponse(200, strength, "All list of strength"));
+    });
+
+    fetchStrengthSelect = asyncHandler(async (req, res) => {
+        const result = await MODEL.Strength.find({ status: "active" }, { strengthName: 1 });
+        if (!result) {
+            throw new ApiError(404, "record not fund");
+        }
+        return res
+            .status(200)
+            .json(new ApiResponse(200, { data: result }, "Selected active record"));
     });
 
     // description      Update Strength
@@ -773,6 +805,16 @@ class Controller {
             throw new ApiError(400, "Usage not found");
         }
         return res.status(200).json(new ApiResponse(200, usage, "All list of usage"));
+    });
+
+    fetchUsageSelect = asyncHandler(async (req, res) => {
+        const result = await MODEL.Usage.find({ status: "active" }, { usageName: 1 });
+        if (!result) {
+            throw new ApiError(404, "record not fund");
+        }
+        return res
+            .status(200)
+            .json(new ApiResponse(200, { data: result }, "Selected active record"));
     });
 
     // description      Update Usage
@@ -1250,11 +1292,11 @@ class Controller {
     });
 
     fetchMedicineProductSelect = asyncHandler(async (req, res) => {
-        const result = await MODEL.Store.find({ status: "active" }, { storeName: 1 });
+        const result = await MODEL.MedicineProduct.find({ status: "active" }, { genericName: 1 });
         if (!result) {
             throw new ApiError(404, "Active record not found");
         }
-        return res.status(200).json(new ApiResponse(200, { data: result }, "Get active store"));
+        return res.status(200).json(new ApiResponse(200, { data: result }, "Get active record"));
     });
 
     updateMedicineProduct = asyncHandler(async (req, res) => {

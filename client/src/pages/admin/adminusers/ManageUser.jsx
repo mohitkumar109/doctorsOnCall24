@@ -142,7 +142,7 @@ export default function ManageUser() {
                                                     </td>
                                                     <td>
                                                         <span className="text-default">
-                                                            {user.createdAt.split("T")[0]}
+                                                            {user?.createdAt?.split("T")[0]}
                                                         </span>
                                                     </td>
 

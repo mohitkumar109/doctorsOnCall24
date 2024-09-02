@@ -46,7 +46,7 @@ const GenericTable = ({ filteredData, pagination, changeStatus, page, setPage })
 
                                         <td>
                                             <span className="text-default">
-                                                {generic.createdAt.split("T")[0]}
+                                                {generic?.createdAt?.split("T")[0]}
                                             </span>
                                         </td>
                                         <td>

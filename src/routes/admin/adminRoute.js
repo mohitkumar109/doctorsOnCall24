@@ -83,6 +83,14 @@ router.get(
     Middleware.checkPermission("read"),
     AdminMasterController.fetchGenericById
 );
+
+router.get(
+    "/generic-select",
+    Middleware.userAuth,
+    Middleware.checkPermission("read"),
+    AdminMasterController.fetchGenericSelect
+);
+
 router.patch(
     "/generic/:id",
     Middleware.userAuth,
@@ -110,10 +118,36 @@ router.patch(
 
 //Medicine Category
 
-router.post("/category", Middleware.userAuth, AdminMasterController.addCategory);
-router.get("/category", Middleware.userAuth, AdminMasterController.fetchCategory);
-router.get("/category/:id", Middleware.userAuth, AdminMasterController.fetchCategoryById);
-router.patch("/category/:id", Middleware.userAuth, AdminMasterController.updateCategory);
+router.post(
+    "/category",
+    Middleware.userAuth,
+    Middleware.checkPermission("create"),
+    AdminMasterController.addCategory
+);
+router.get(
+    "/category",
+    Middleware.userAuth,
+    Middleware.checkPermission("read"),
+    AdminMasterController.fetchCategory
+);
+router.get(
+    "/category/:id",
+    Middleware.userAuth,
+    Middleware.checkPermission("read"),
+    AdminMasterController.fetchCategoryById
+);
+router.get(
+    "/category-select",
+    Middleware.userAuth,
+    Middleware.checkPermission("read"),
+    AdminMasterController.fetchCategorySelect
+);
+router.patch(
+    "/category/:id",
+    Middleware.userAuth,
+    Middleware.checkPermission("update"),
+    AdminMasterController.updateCategory
+);
 router.delete(
     "/category/:id",
     Middleware.userAuth,
@@ -138,6 +172,12 @@ router.patch(
 router.post("/brand", Middleware.userAuth, AdminMasterController.addBrand);
 router.get("/brand", Middleware.userAuth, AdminMasterController.fetchBrand);
 router.get("/brand/:id", Middleware.userAuth, AdminMasterController.fetchBrandById);
+router.get(
+    "/brand-select",
+    Middleware.userAuth,
+    Middleware.checkPermission("read"),
+    AdminMasterController.fetchBrandSelect
+);
 router.patch("/brand/:id", Middleware.userAuth, AdminMasterController.updateBrand);
 router.patch(
     "/actionOnBrand/:status",
@@ -157,6 +197,12 @@ router.patch(
 router.post("/strength", Middleware.userAuth, AdminMasterController.addStrength);
 router.get("/strength", Middleware.userAuth, AdminMasterController.fetchStrength);
 router.get("/strength/:id", Middleware.userAuth, AdminMasterController.fetchStrengthById);
+router.get(
+    "/strength-select",
+    Middleware.userAuth,
+    Middleware.checkPermission("read"),
+    AdminMasterController.fetchStrengthSelect
+);
 router.patch("/strength/:id", Middleware.userAuth, AdminMasterController.updateStrength);
 router.patch(
     "/actionOnStrength/:status",
@@ -174,6 +220,12 @@ router.patch(
 router.post("/usage", Middleware.userAuth, AdminMasterController.addUsage);
 router.get("/usage", Middleware.userAuth, AdminMasterController.fetchUsage);
 router.get("/usage/:id", Middleware.userAuth, AdminMasterController.fetchUsageById);
+router.get(
+    "/usage-select",
+    Middleware.userAuth,
+    Middleware.checkPermission("read"),
+    AdminMasterController.fetchUsageSelect
+);
 router.patch("/usage/:id", Middleware.userAuth, AdminMasterController.updateUsage);
 router.patch("/actionOnUsage/:status", Middleware.userAuth, AdminMasterController.actionOnUsage);
 router.patch(

@@ -71,7 +71,15 @@ const getCategoryById = (id) => {
     return {
         url: `${BASE_URL}/admin/category/${id}`,
         method: "GET",
-        data: "",
+        data: null,
+    };
+};
+
+const getCategorySelect = () => {
+    return {
+        url: `${BASE_URL}/admin/category-select`,
+        method: "GET",
+        data: null,
     };
 };
 
@@ -125,6 +133,14 @@ const getBrandById = (id) => {
     };
 };
 
+const getBrandSelect = () => {
+    return {
+        url: `${BASE_URL}/admin/brand-select`,
+        method: "GET",
+        data: null,
+    };
+};
+
 const updateBrand = (id, values) => {
     return {
         url: `${BASE_URL}/admin/brand/${id}`,
@@ -162,6 +178,14 @@ const getGeneric = (search, sorting, status, page) => {
 const getGenericById = (id) => {
     return {
         url: `${BASE_URL}/admin/generic/${id}`,
+        method: "GET",
+        data: null,
+    };
+};
+
+const getGenericSelect = () => {
+    return {
+        url: `${BASE_URL}/admin/generic-select`,
         method: "GET",
         data: null,
     };
@@ -209,6 +233,14 @@ const getStrengthById = (id) => {
     };
 };
 
+const getStrengthSelect = () => {
+    return {
+        url: `${BASE_URL}/admin/strength-select`,
+        method: "GET",
+        data: null,
+    };
+};
+
 const updateStrength = (id, values) => {
     return {
         url: `${BASE_URL}/admin/strength/${id}`,
@@ -246,6 +278,14 @@ const getUsage = (search, sorting, status, page) => {
 const getUsageById = (id) => {
     return {
         url: `${BASE_URL}/admin/usage/${id}`,
+        method: "GET",
+        data: null,
+    };
+};
+
+const getUsageSelect = () => {
+    return {
+        url: `${BASE_URL}/admin/usage-select`,
         method: "GET",
         data: null,
     };
@@ -380,6 +420,7 @@ export const apiEnd = {
     adCategory,
     getCategory,
     getCategoryById,
+    getCategorySelect,
     updateCategory,
     actionCategoryOne,
     actionCategoryMulti,
@@ -388,6 +429,7 @@ export const apiEnd = {
     adBrand,
     getBrand,
     getBrandById,
+    getBrandSelect,
     updateBrand,
     actionBrandOne,
 
@@ -395,6 +437,7 @@ export const apiEnd = {
     adGeneric,
     getGeneric,
     getGenericById,
+    getGenericSelect,
     updateGeneric,
     actionGenericOne,
 
@@ -402,6 +445,7 @@ export const apiEnd = {
     adStrength,
     getStrength,
     getStrengthById,
+    getStrengthSelect,
     updateStrength,
     actionStrengthOne,
 
@@ -409,6 +453,7 @@ export const apiEnd = {
     adUsage,
     getUsage,
     getUsageById,
+    getUsageSelect,
     updateUsage,
     actionUsageOne,
 

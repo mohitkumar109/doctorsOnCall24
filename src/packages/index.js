@@ -6,6 +6,7 @@ import bodyParser from "body-parser";
 import helmet from "helmet";
 import mongoose from "mongoose";
 import morgan from "morgan";
+import { StatusCodes } from "http-status-codes";
 import dotenv from "dotenv";
 import request from "request";
 import jwt from "jsonwebtoken";
@@ -24,4 +25,5 @@ export const Dependencies = {
     request,
     jwt,
     Router,
+    StatusCodes,
 };

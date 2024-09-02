@@ -95,7 +95,7 @@ export default function ManageBrand() {
                                                     </td>
                                                     <td>
                                                         <span className="text-default">
-                                                            {brand.createdAt.split("T")[0]}
+                                                            {brand?.createdAt?.split("T")[0]}
                                                         </span>
                                                     </td>
                                                     <td>
