@@ -3,8 +3,10 @@ import { Dependencies } from "../packages/index.js";
 const genericNameSchema = new Dependencies.mongoose.Schema({
     genericName: {
         type: String,
-        required: true,
+        required: [true, "Generic name is required"],
         unique: true,
+        lowercase: true,
+        trim: true,
     },
     checked: {
         type: Boolean,

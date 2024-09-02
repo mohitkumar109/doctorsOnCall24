@@ -1,5 +1,5 @@
 import { Dependencies } from "../../packages/index.js";
-import { asyncHandler, ApiResponse, ApiError } from "../../utils/index.js";
+import { asyncHandler, ApiResponse, ApiError, modifyResponse } from "../../utils/index.js";
 import { Helpers, PAGINATION_LIMIT } from "../../common/index.js";
 import { MODEL } from "../../models/index.js";
 
@@ -73,7 +73,7 @@ class Controller {
         const limit = parseInt(req.query.limit) || PAGINATION_LIMIT;
         const skip = parseInt(req.query.page - 1) * limit;
 
-        const query = await MODEL.Generic.find(filter)
+        const query = await MODEL.Generic.find(filter, { ...modifyResponse, checked: 0 })
             .sort(sortOption)
             .limit(limit)
             .skip(skip)
@@ -133,12 +133,18 @@ class Controller {
         const { genericName, status } = req.body;
 
         if (!Dependencies.mongoose.isValidObjectId(genId)) {
-            throw new ApiError(400, "This is not valid id");
+            throw new ApiError(400, "This is not a valid id");
         }
 
         const exist = await MODEL.Generic.findById(genId);
         if (!exist) {
             throw new ApiError(400, "This Id is not exist in database");
+        }
+
+        // Check if another record with the same genericName exists (excluding the current record)
+        const duplicate = await MODEL.Generic.findOne({ genericName, _id: { $ne: genId } });
+        if (duplicate) {
+            throw new ApiError(400, "Generic name already exists");
         }
 
         const updated = await MODEL.Generic.findByIdAndUpdate(
@@ -253,7 +259,7 @@ class Controller {
         const limit = parseInt(req.query.limit) || PAGINATION_LIMIT;
         const skip = parseInt(req.query.page - 1) * limit;
 
-        const query = await MODEL.Category.find(filter)
+        const query = await MODEL.Category.find(filter, { ...modifyResponse })
             .sort(sortOption)
             .limit(limit)
             .skip(skip)
@@ -308,6 +314,12 @@ class Controller {
         const exist = await MODEL.Category.findById(catId);
         if (!exist) {
             throw new ApiError(400, "This Id is not exist in database");
+        }
+
+        // Check if another record with the same categoryName exists (excluding the current record)
+        const duplicate = await MODEL.Category.findOne({ categoryName, _id: { $ne: catId } });
+        if (duplicate) {
+            throw new ApiError(400, "Category name already exists");
         }
 
         const updated = await MODEL.Category.findByIdAndUpdate(
@@ -416,13 +428,13 @@ class Controller {
         const limit = parseInt(req.query.limit) || PAGINATION_LIMIT;
         const skip = parseInt(req.query.page - 1) * limit;
 
-        const query = await MODEL.Brand.find(filter)
+        const query = await MODEL.Brand.find(filter, { ...modifyResponse })
             .sort(sortOption)
             .limit(limit)
             .skip(skip)
             .populate("createdBy", "fullName")
             .populate("updatedBy", "fullName");
-        const totalResults = await MODEL.Brand.find(filter).countDocuments();
+        const totalResults = await MODEL.Brand.find(filter, { ...modifyResponse }).countDocuments();
         const totalPages = Math.ceil(totalResults / limit);
 
         if (!query) {
@@ -449,7 +461,7 @@ class Controller {
             throw new ApiError(400, "This is not valid id");
         }
 
-        const brand = await MODEL.Brand.findById(brandId);
+        const brand = await MODEL.Brand.findById(brandId, { ...modifyResponse });
         if (!brand) {
             throw new ApiError(400, "Brand not found");
         }
@@ -470,6 +482,12 @@ class Controller {
         const exist = await MODEL.Brand.findById(brandId);
         if (!exist) {
             throw new ApiError(400, "This Id is not exist in database");
+        }
+
+        // Check if another record with the same brandName exists (excluding the current record)
+        const duplicate = await MODEL.Brand.findOne({ brandName, _id: { $ne: brandId } });
+        if (duplicate) {
+            throw new ApiError(400, "Brand name already exists");
         }
 
         const updated = await MODEL.Brand.findByIdAndUpdate(
@@ -615,6 +633,12 @@ class Controller {
         const exist = await MODEL.Strength.findById(strengthId);
         if (!exist) {
             throw new ApiError(400, "This Id is not exist in database");
+        }
+
+        // Check if another record with the same strengthName exists (excluding the current record)
+        const duplicate = await MODEL.Strength.findOne({ strengthName, _id: { $ne: strengthId } });
+        if (duplicate) {
+            throw new ApiError(400, "Strength name already exists");
         }
 
         const updated = await MODEL.Strength.findByIdAndUpdate(
@@ -767,6 +791,12 @@ class Controller {
             throw new ApiError(400, "This Id is not exist in database");
         }
 
+        // Check if another record with the same usageName exists (excluding the current record)
+        const duplicate = await MODEL.Usage.findOne({ usageName, _id: { $ne: usageId } });
+        if (duplicate) {
+            throw new ApiError(400, "Usage name already exists");
+        }
+
         const updated = await MODEL.Usage.findByIdAndUpdate(
             usageId,
             {
@@ -829,9 +859,66 @@ class Controller {
     });
 
     fetchStore = asyncHandler(async (req, res) => {
-        const filter = {};
+        // const filter = {};
+        // const { search, status, sorting } = req.query;
+
+        // if (search) {
+        //     filter.storeName = { $regex: search, $options: "i" };
+        // }
+
+        // if (status) {
+        //     filter.status = status;
+        // }
+
+        // //Sorting
+        // let sortOption = {};
+        // switch (sorting) {
+        //     case "1":
+        //         sortOption.createdAt = -1; // Sort by createdAt field in descending order (latest first)
+        //         break;
+        //     case "2":
+        //         sortOption.createdAt = 1; // Sort by createdAt field in ascending order (oldest first)
+        //         break;
+        //     case "3":
+        //         sortOption.storeName = 1;
+        //         break;
+        //     case "4":
+        //         sortOption.storeName = -1;
+        //         break;
+        //     default:
+        //         sortOption.createdAt = -1;
+        //         break;
+        // }
+
+        // //Pagination
+        // const limit = parseInt(req.query.limit) || PAGINATION_LIMIT;
+        // const skip = parseInt(req.query.page - 1) * limit;
+
+        // const query = await MODEL.Store.find(filter)
+        //     .sort(sortOption)
+        //     .limit(limit)
+        //     .skip(skip)
+        //     .populate("createdBy", "fullName")
+        //     .populate("updatedBy", "fullName")
+        //     .select(
+        //         "-checked -updatedAt -__v -location.state -location.city -location.pin -contactPerson.personName -contactPerson.mobile"
+        //     );
+        // const totalResults = await MODEL.Store.find(filter).countDocuments();
+        // const totalPages = Math.ceil(totalResults / limit);
+
+        // if (!query) {
+        //     throw new ApiError(400, "Store is not found");
+        // }
+
+        // const pagination = {
+        //     totalResult: totalResults,
+        //     totalPages: totalPages,
+        //     currentPage: parseInt(req.query.page),
+        // };
+
         const { search, status, sorting } = req.query;
 
+        let filter = {};
         if (search) {
             filter.storeName = { $regex: search, $options: "i" };
         }
@@ -840,7 +927,7 @@ class Controller {
             filter.status = status;
         }
 
-        //Sorting
+        // Sorting
         let sortOption = {};
         switch (sorting) {
             case "1":
@@ -864,21 +951,60 @@ class Controller {
         const limit = parseInt(req.query.limit) || PAGINATION_LIMIT;
         const skip = parseInt(req.query.page - 1) * limit;
 
-        const query = await MODEL.Store.find(filter)
-            .sort(sortOption)
-            .limit(limit)
-            .skip(skip)
-            .populate("createdBy", "fullName")
-            .populate("updatedBy", "fullName");
-        const totalResults = await MODEL.Store.find(filter).countDocuments();
-        const totalPages = Math.ceil(totalResults / limit);
+        // Aggregation Pipeline
 
-        if (!query) {
-            throw new ApiError(400, "Store is not found");
-        }
+        const pipeline = [
+            { $match: filter },
+            { $sort: sortOption },
+            { $skip: skip },
+            { $limit: limit },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "createdBy",
+                    foreignField: "_id",
+                    as: "createdByUser",
+                },
+            },
+
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "updatedBy",
+                    foreignField: "_id",
+                    as: "updatedByUser",
+                },
+            },
+
+            {
+                $addFields: {
+                    createdByUser: { $arrayElemAt: ["$createdByUser", 0] },
+                    updatedByUser: { $arrayElemAt: ["$updatedByUser", 0] },
+                },
+            },
+            {
+                $project: {
+                    storeName: 1,
+                    status: 1,
+                    createdAt: 1,
+                    "location.address": 1,
+                    "location.phone": 1,
+                    "contactPerson.email": 1,
+                    "createdByUser.fullName": 1,
+                    "updatedByUser.fullName": 1,
+                },
+            },
+        ];
+
+        //Query
+        const query = await MODEL.Store.aggregate(pipeline);
+
+        // Total Items and Pages
+        const totalItems = await MODEL.Store.countDocuments(filter);
+        const totalPages = Math.ceil(totalItems / limit);
 
         const pagination = {
-            totalResult: totalResults,
+            totalItems: totalItems,
             totalPages: totalPages,
             currentPage: parseInt(req.query.page),
         };
@@ -902,7 +1028,7 @@ class Controller {
     });
 
     fetchSelect = asyncHandler(async (req, res) => {
-        const result = await MODEL.Store.find({ status: "active" }).select("storeName");
+        const result = await MODEL.Store.find({ status: "active" }, { storeName: 1 });
         if (!result) {
             throw new ApiError(404, "Active record not found");
         }
@@ -920,6 +1046,12 @@ class Controller {
         const exist = await MODEL.Store.findById(storeId);
         if (!exist) {
             throw new ApiError(400, "This id is not exist in database");
+        }
+
+        // Check if another record with the same storeName exists (excluding the current record)
+        const duplicate = await MODEL.Store.findOne({ storeName, _id: { $ne: storeId } });
+        if (duplicate) {
+            throw new ApiError(400, "Store name already exists");
         }
 
         const updated = await MODEL.Store.findByIdAndUpdate(
@@ -949,6 +1081,226 @@ class Controller {
         const action = ids
             ? Helpers.actionOnMultipleIds(ids.split(","), req.params.status, MODEL.Store)
             : Helpers.actionOnSingleId(req.params.id, req.params.status, MODEL.Store);
+        await action;
+        const successMessage = ids
+            ? `Selected record(s) ${req.params.status} successfully`
+            : `Selected ${req.params.status} successfully`;
+        return res.status(200).json(new ApiResponse(200, {}, successMessage));
+    });
+
+    /*-------------Medicine Product Inventory--------------*/
+
+    addMedicineProduct = asyncHandler(async (req, res) => {
+        const {
+            genericName,
+            categoryName,
+            brandName,
+            strengthName,
+            usageName,
+            quantity,
+            price,
+            expireDate,
+            status,
+        } = req.body;
+
+        if (
+            !genericName ||
+            !categoryName ||
+            !brandName ||
+            !strengthName ||
+            !usageName ||
+            !quantity ||
+            !price ||
+            !expireDate
+        ) {
+            throw new ApiError(404, "All Fields are required for medicine");
+        }
+
+        const medicine = await MODEL.MedicineProduct.create({
+            genericName,
+            categoryName,
+            brandName,
+            strengthName,
+            usageName,
+            quantity,
+            price,
+            expireDate,
+            status: status || "active",
+            createdBy: req?.user?._id,
+        });
+
+        return res
+            .status(201)
+            .json(new ApiResponse(201, medicine, "Medicine created successfully"));
+    });
+
+    fetchMedicineProduct = asyncHandler(async (req, res) => {
+        const { search, status, sorting } = req.query;
+        let filter = {};
+        if (search) {
+            filter.storeName = { $regex: search, $options: "i" };
+        }
+
+        if (status) {
+            filter.status = status;
+        }
+
+        // Sorting
+        let sortOption = {};
+        switch (sorting) {
+            case "1":
+                sortOption.createdAt = -1; // Sort by createdAt field in descending order (latest first)
+                break;
+            case "2":
+                sortOption.createdAt = 1; // Sort by createdAt field in ascending order (oldest first)
+                break;
+            case "3":
+                sortOption.storeName = 1;
+                break;
+            case "4":
+                sortOption.storeName = -1;
+                break;
+            default:
+                sortOption.createdAt = -1;
+                break;
+        }
+
+        //Pagination
+        const limit = parseInt(req.query.limit) || PAGINATION_LIMIT;
+        const skip = parseInt(req.query.page - 1) * limit;
+
+        // Aggregation Pipeline
+
+        const pipeline = [
+            { $match: filter },
+            { $sort: sortOption },
+            { $skip: skip },
+            { $limit: limit },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "createdBy",
+                    foreignField: "_id",
+                    as: "createdByUser",
+                },
+            },
+
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "updatedBy",
+                    foreignField: "_id",
+                    as: "updatedByUser",
+                },
+            },
+
+            {
+                $addFields: {
+                    createdByUser: { $arrayElemAt: ["$createdByUser", 0] },
+                    updatedByUser: { $arrayElemAt: ["$updatedByUser", 0] },
+                },
+            },
+            {
+                $project: {
+                    storeName: 1,
+                    status: 1,
+                    createdAt: 1,
+                    "location.address": 1,
+                    "location.phone": 1,
+                    "contactPerson.email": 1,
+                    "createdByUser.fullName": 1,
+                    "updatedByUser.fullName": 1,
+                },
+            },
+        ];
+
+        //Query
+        const query = await MODEL.Store.aggregate(pipeline);
+
+        // Total Items and Pages
+        const totalItems = await MODEL.Store.countDocuments(filter);
+        const totalPages = Math.ceil(totalItems / limit);
+
+        const pagination = {
+            totalItems: totalItems,
+            totalPages: totalPages,
+            currentPage: parseInt(req.query.page),
+        };
+
+        return res
+            .status(200)
+            .json(new ApiResponse(200, { results: query, pagination }, "All list of store"));
+    });
+
+    fetchMedicineProductById = asyncHandler(async (req, res) => {
+        const storeId = req.params.id;
+        if (!Dependencies.mongoose.isValidObjectId(storeId)) {
+            throw new ApiError(400, "This is not valid id");
+        }
+
+        const store = await MODEL.Store.findById(storeId);
+        if (!store) {
+            throw new ApiError(400, "Store not found");
+        }
+        return res.status(200).json(new ApiResponse(200, store, "Get store"));
+    });
+
+    fetchMedicineProductSelect = asyncHandler(async (req, res) => {
+        const result = await MODEL.Store.find({ status: "active" }, { storeName: 1 });
+        if (!result) {
+            throw new ApiError(404, "Active record not found");
+        }
+        return res.status(200).json(new ApiResponse(200, { data: result }, "Get active store"));
+    });
+
+    updateMedicineProduct = asyncHandler(async (req, res) => {
+        const storeId = req.params.id;
+        const { storeName, phone, address, state, city, pin, personName, email, mobile } = req.body;
+
+        if (!Dependencies.mongoose.isValidObjectId(storeId)) {
+            throw new ApiError(400, "This is not valid id");
+        }
+
+        const exist = await MODEL.Store.findById(storeId);
+        if (!exist) {
+            throw new ApiError(400, "This id is not exist in database");
+        }
+
+        // Check if another record with the same storeName exists (excluding the current record)
+        const duplicate = await MODEL.Store.findOne({ storeName, _id: { $ne: storeId } });
+        if (duplicate) {
+            throw new ApiError(400, "Store name already exists");
+        }
+
+        const updated = await MODEL.Store.findByIdAndUpdate(
+            storeId,
+            {
+                $set: {
+                    storeName,
+                    "location.phone": phone,
+                    "location.address": address,
+                    "location.state": state,
+                    "location.city": city,
+                    "location.pin": pin,
+                    "contactPerson.personName": personName,
+                    "contactPerson.email": email,
+                    "contactPerson.mobile": mobile,
+                    updatedBy: req?.user?._id,
+                },
+            },
+            { new: true }
+        );
+
+        return res
+            .status(200)
+            .json(new ApiResponse(200, updated, "Medicine product updated Successfully!"));
+    });
+
+    actionOnMedicineProduct = asyncHandler(async (req, res) => {
+        const { ids } = req.body;
+        const action = ids
+            ? Helpers.actionOnMultipleIds(ids.split(","), req.params.status, MODEL.MedicineProduct)
+            : Helpers.actionOnSingleId(req.params.id, req.params.status, MODEL.MedicineProduct);
         await action;
         const successMessage = ids
             ? `Selected record(s) ${req.params.status} successfully`

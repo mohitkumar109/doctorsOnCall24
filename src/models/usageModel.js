@@ -3,8 +3,10 @@ import { Dependencies } from "../packages/index.js";
 const usageSchema = new Dependencies.mongoose.Schema({
     usageName: {
         type: String,
-        required: true,
+        required: [true, "Usage name is required"],
         unique: true,
+        lowercase: true,
+        trim: true,
     },
     checked: {
         type: Boolean,

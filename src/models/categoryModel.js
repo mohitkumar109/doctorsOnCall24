@@ -3,8 +3,10 @@ import { Dependencies } from "../packages/index.js";
 const categorySchema = new Dependencies.mongoose.Schema({
     categoryName: {
         type: String,
-        required: true,
+        required: [true, "Category name is required"],
         unique: true,
+        lowercase: true,
+        trim: true,
     },
     checked: {
         type: Boolean,

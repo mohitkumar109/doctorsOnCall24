@@ -105,12 +105,14 @@ export default function ManageStore() {
 
                                                     <td>
                                                         <span className="text-default">
-                                                            {line?.createdBy?.fullName || "None"}
+                                                            {line?.createdByUser?.fullName ||
+                                                                "None"}
                                                         </span>
                                                     </td>
                                                     <td>
                                                         <span className="text-default">
-                                                            {line?.updatedBy?.fullName || "None"}
+                                                            {line?.updatedByUser?.fullName ||
+                                                                "None"}
                                                         </span>
                                                     </td>
                                                     <td>

@@ -1,225 +1,206 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import {
-    BsSpeedometer,
-    BsCapsule,
-    BsTruck,
-    BsBox,
-    BsCart,
-    BsShieldLock,
-    BsTools,
-    BsCardList,
-} from "react-icons/bs";
+import * as BsIcons from "react-icons/bs";
 import { useGlobalContext } from "../context/AppContext";
+
+const menuItems = [
+    {
+        title: "MENU",
+        items: [
+            {
+                icon: <BsIcons.BsSpeedometer className="bi" />,
+                label: "Dashboard",
+                href: "/",
+                visible: ["admin", "user"],
+            },
+            {
+                icon: <BsIcons.BsCapsule className="bi" />,
+                label: "Medicine",
+                href: "#",
+                visible: ["admin"],
+                subItems: [
+                    {
+                        icon: <BsIcons.BsCardList className="bi" />,
+                        label: "Medicine Generic",
+                        href: "/manage-generic",
+                        visible: ["admin"],
+                    },
+                    {
+                        icon: <BsIcons.BsCardList className="bi" />,
+                        label: "Medicine Category",
+                        href: "/manage-category",
+                        visible: ["admin"],
+                    },
+                    {
+                        icon: <BsIcons.BsCardList className="bi" />,
+                        label: "Medicine Brand",
+                        href: "/manage-brand",
+                        visible: ["admin"],
+                    },
+                    {
+                        icon: <BsIcons.BsCardList className="bi" />,
+                        label: "Medicine Strength",
+                        href: "/manage-strength",
+                        visible: ["admin"],
+                    },
+                    {
+                        icon: <BsIcons.BsCardList className="bi" />,
+                        label: "Medicine Usage",
+                        href: "/manage-usage",
+                        visible: ["admin"],
+                    },
+                ],
+            },
+            {
+                icon: <BsIcons.BsTruck className="bi" />,
+                label: "Store",
+                href: "#",
+                visible: ["admin"],
+                subItems: [
+                    {
+                        icon: <BsIcons.BsCardList className="bi" />,
+                        label: "Manage Store",
+                        href: "/manage-store",
+                        visible: ["admin"],
+                    },
+                    {
+                        icon: <BsIcons.BsCardList className="bi" />,
+                        label: "Manage Users",
+                        href: "/manage-user",
+                        visible: ["admin"],
+                    },
+                ],
+            },
+            {
+                icon: <BsIcons.BsBox className="bi" />,
+                label: "Inventory",
+                href: "#",
+                visible: ["admin", "user"],
+                subItems: [
+                    {
+                        icon: <BsIcons.BsCardList className="bi" />,
+                        label: "Add Inventory",
+                        href: "/add-inventory",
+                        visible: ["admin"],
+                    },
+                    {
+                        icon: <BsIcons.BsCardList className="bi" />,
+                        label: "Manage Inventory",
+                        href: "/manage-inventory",
+                        visible: ["admin"],
+                    },
+                    {
+                        icon: <BsIcons.BsCardList className="bi" />,
+                        label: "Receive Inventory History",
+                        href: "/inventory-history",
+                        visible: ["user"],
+                    },
+                ],
+            },
+            {
+                icon: <BsIcons.BsCart className="bi" />,
+                label: "Assign Inventory",
+                href: "#",
+                visible: ["admin"],
+                subItems: [
+                    {
+                        icon: <BsIcons.BsCardList className="bi" />,
+                        label: "Assign to Store",
+                        href: "/assign-store",
+                        visible: ["admin"],
+                    },
+                    {
+                        icon: <BsIcons.BsCardList className="bi" />,
+                        label: "Manage Inventory",
+                        href: "/manage-inventory",
+                        visible: ["admin"],
+                    },
+                ],
+            },
+        ],
+    },
+
+    {
+        title: "OTHER",
+        items: [
+            {
+                icon: <BsIcons.BsTools className="bi" />,
+                label: "Settings",
+                href: "#",
+                visible: ["admin", "user"],
+                subItems: [
+                    {
+                        icon: <BsIcons.BsPeople className="bi" />,
+                        label: "Profile",
+                        href: "/profile",
+                        visible: ["admin", "user"],
+                    },
+                    {
+                        icon: <BsIcons.BsShieldLock className="bi" />,
+                        label: "Change Password",
+                        href: "/change-password",
+                        visible: ["admin", "user"],
+                    },
+                    {
+                        icon: <BsIcons.BsBoxArrowRight className="bi" />,
+                        label: "Logout",
+                        href: "/logout",
+                        visible: ["admin", "user"],
+                    },
+                ],
+            },
+        ],
+    },
+    // ...other menu sections
+];
 
 const Sidebar = () => {
     const { auth, toggle } = useGlobalContext();
-    const [activeDropdown, setActiveDropdown] = useState(null);
+    const [activeSubItems, setActiveSubItems] = useState(null);
 
-    const handleToggle = (dropdown) => {
-        setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
+    const handleSubItemToggle = (subitem) => {
+        setActiveSubItems(activeSubItems === subitem ? null : subitem);
+    };
+
+    const renderMenuItems = (items) => {
+        return items
+            .filter((item) => item.visible.includes(auth))
+            .map((item) => {
+                return (
+                    <li key={item.label}>
+                        <Link
+                            to={item.href || "#"}
+                            className={item.subItems ? "dropdown-toggle" : ""}
+                            onClick={() => item.subItems && handleSubItemToggle(item.label)}
+                        >
+                            {item.icon}
+                            {item.label}
+                        </Link>
+                        {item.subItems && (
+                            <ul
+                                className={`collapse list-unstyled ${
+                                    activeSubItems === item.label && "show"
+                                }`}
+                            >
+                                {renderMenuItems(item.subItems)}
+                            </ul>
+                        )}
+                    </li>
+                );
+            });
     };
 
     return (
         <div className={`sidebar ${toggle && "active"}`}>
             <div className="sidebar-header">Doctor On Call</div>
-            {auth === "admin" && (
-                <ul className="list-unstyled components">
-                    <li>
-                        <Link to="/">
-                            <BsSpeedometer className="bi" />
-                            Dashboard
-                        </Link>
-                    </li>
-
-                    <li>
-                        <Link
-                            to="#"
-                            className="dropdown-toggle"
-                            onClick={() => handleToggle("medicine")}
-                        >
-                            <BsCapsule className="bi" />
-                            Medicine
-                        </Link>
-                        <ul
-                            className={`collapse list-unstyled ${
-                                activeDropdown === "medicine" && "show"
-                            }`}
-                        >
-                            <li>
-                                <Link to="/manage-generic">
-                                    <BsCardList className="bi" />
-                                    Medicine Generic Name
-                                </Link>
-                            </li>
-
-                            <li>
-                                <Link to="/manage-category">
-                                    <BsCardList className="bi" />
-                                    Medicine Category
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/manage-brand">
-                                    <BsCardList className="bi" />
-                                    Medicine Brand
-                                </Link>
-                            </li>
-
-                            <li>
-                                <Link to="/manage-strength">
-                                    <BsCardList className="bi" />
-                                    Medicine Strength
-                                </Link>
-                            </li>
-
-                            <li>
-                                <Link to="/manage-usage">
-                                    <BsCardList className="bi" />
-                                    Medicine Usage
-                                </Link>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <li>
-                        <Link
-                            to="#"
-                            className="dropdown-toggle"
-                            onClick={() => handleToggle("stores")}
-                        >
-                            <BsTruck className="bi" />
-                            Stores
-                        </Link>
-                        <ul
-                            className={`collapse list-unstyled ${
-                                activeDropdown === "stores" && "show"
-                            }`}
-                        >
-                            <li>
-                                <Link to="/manage-store">
-                                    <BsCardList className="bi" />
-                                    Manage Store
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/manage-user">
-                                    <BsCardList className="bi" />
-                                    Manage Staff
-                                </Link>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <li>
-                        <Link
-                            to="#"
-                            className="dropdown-toggle"
-                            onClick={() => handleToggle("inventory")}
-                        >
-                            <BsBox className="bi" />
-                            Inventory
-                        </Link>
-                        <ul
-                            className={`collapse list-unstyled ${
-                                activeDropdown === "inventory" && "show"
-                            }`}
-                        >
-                            <li>
-                                <Link to="#">
-                                    <BsCardList className="bi" />
-                                    Add Inventory
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="#">
-                                    <BsCardList className="bi" />
-                                    Manage Inventory
-                                </Link>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <li>
-                        <Link
-                            to="#"
-                            className="dropdown-toggle"
-                            onClick={() => handleToggle("assign")}
-                        >
-                            <BsCart className="bi" />
-                            Assign Inventory
-                        </Link>
-                        <ul
-                            className={`collapse list-unstyled ${
-                                activeDropdown === "assign" && "show"
-                            }`}
-                        >
-                            <li>
-                                <Link to="#">
-                                    <BsCardList className="bi" />
-                                    Assign to Store
-                                </Link>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <li>
-                        <Link
-                            to="#"
-                            className="dropdown-toggle"
-                            onClick={() => handleToggle("settings")}
-                        >
-                            <BsTools className="bi" />
-                            Settings
-                        </Link>
-                        <ul
-                            className={`collapse list-unstyled ${
-                                activeDropdown === "settings" && "show"
-                            }`}
-                        >
-                            <li>
-                                <Link to="#">
-                                    <BsShieldLock className="bi" />
-                                    Change Password
-                                </Link>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            )}
-
-            {auth === "user" && (
-                <ul className="list-unstyled components">
-                    <li>
-                        <Link to="/">
-                            <BsSpeedometer className="bi" />
-                            Dashboard
-                        </Link>
-                    </li>
-                    <li>
-                        <Link
-                            to="#"
-                            className="dropdown-toggle"
-                            onClick={() => handleToggle("history")}
-                        >
-                            <BsBox className="bi" />
-                            Inventory
-                        </Link>
-                        <ul
-                            className={`collapse list-unstyled ${
-                                activeDropdown === "history" && "show"
-                            }`}
-                        >
-                            <li>
-                                <Link to="#">
-                                    <BsCardList className="bi" />
-                                    Receive Inventory History
-                                </Link>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            )}
+            <ul className="list-unstyled components">
+                {menuItems.map((section) => (
+                    <div key={section.title}>
+                        <span className="section-title m-4 pt-1">{section.title}</span>
+                        {renderMenuItems(section.items)}
+                    </div>
+                ))}
+            </ul>
         </div>
     );
 };

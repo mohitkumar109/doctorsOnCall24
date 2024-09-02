@@ -5,12 +5,15 @@ const userSchema = new Dependencies.mongoose.Schema({
     fullName: {
         type: String,
         required: true,
-        unique: true,
+        lowercase: true,
+        trim: true,
     },
     email: {
         type: String,
-        required: true,
+        required: [true, "email is required"],
         unique: true,
+        lowercase: true,
+        trim: true,
     },
     password: {
         type: String,

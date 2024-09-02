@@ -3,8 +3,10 @@ import { Dependencies } from "../packages/index.js";
 const storeSchema = new Dependencies.mongoose.Schema({
     storeName: {
         type: String,
-        required: true,
+        required: [true, "Store name is required"],
         unique: true,
+        lowercase: true,
+        trim: true,
     },
     location: {
         phone: { type: String },

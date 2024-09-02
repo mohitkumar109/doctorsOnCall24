@@ -22,6 +22,7 @@ const useServices = () => {
                 Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
             };
             const res = await api({ url, method, data, headers });
+
             setData(res.data.data);
         } catch (error) {
             setError(error);
@@ -43,6 +44,7 @@ const useServices = () => {
                 Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
             };
             const res = await api({ url, method, data, headers });
+
             return res.data;
         } catch (error) {
             setError(error);

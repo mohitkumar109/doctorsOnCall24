@@ -3,8 +3,10 @@ import { Dependencies } from "../packages/index.js";
 const brandSchema = new Dependencies.mongoose.Schema({
     brandName: {
         type: String,
-        required: true,
+        required: [true, "Brand name is required"],
         unique: true,
+        lowercase: true,
+        trim: true,
     },
     checked: {
         type: Boolean,
@@ -30,6 +32,11 @@ const brandSchema = new Dependencies.mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+});
+
+brandSchema.pre("findOneAndUpdate", function (next) {
+    this.set({ updatedAt: Date.now() });
+    next();
 });
 
 export const Brand = Dependencies.mongoose.model("Brand", brandSchema);

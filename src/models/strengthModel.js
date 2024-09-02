@@ -3,8 +3,10 @@ import { Dependencies } from "../packages/index.js";
 const strengthOfMedicineSchema = new Dependencies.mongoose.Schema({
     strengthName: {
         type: String,
-        required: true,
+        required: [true, "Strength is required"],
         unique: true,
+        lowercase: true,
+        trim: true,
     },
     checked: {
         type: Boolean,
@@ -30,6 +32,11 @@ const strengthOfMedicineSchema = new Dependencies.mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+});
+
+strengthOfMedicineSchema.pre("findOneAndUpdate", function (next) {
+    this.set({ updatedAt: Date.now() });
+    next();
 });
 
 export const Strength = Dependencies.mongoose.model("StrengthOfMedicine", strengthOfMedicineSchema);

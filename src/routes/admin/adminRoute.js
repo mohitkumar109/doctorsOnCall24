@@ -5,6 +5,7 @@ import Middleware from "../../middlewares/index.js";
 const router = Dependencies.Router();
 
 //admin user
+
 router.post("/login", AdminController.adminLogin);
 router.post(
     "/register",
@@ -63,6 +64,7 @@ router.post(
 );
 
 //Medicine Generic
+
 router.post(
     "/generic",
     Middleware.userAuth,
@@ -107,6 +109,7 @@ router.patch(
 );
 
 //Medicine Category
+
 router.post("/category", Middleware.userAuth, AdminMasterController.addCategory);
 router.get("/category", Middleware.userAuth, AdminMasterController.fetchCategory);
 router.get("/category/:id", Middleware.userAuth, AdminMasterController.fetchCategoryById);
@@ -131,6 +134,7 @@ router.patch(
 );
 
 //Medicine Brand
+
 router.post("/brand", Middleware.userAuth, AdminMasterController.addBrand);
 router.get("/brand", Middleware.userAuth, AdminMasterController.fetchBrand);
 router.get("/brand/:id", Middleware.userAuth, AdminMasterController.fetchBrandById);
@@ -149,6 +153,7 @@ router.patch(
 );
 
 //Medicine Strength
+
 router.post("/strength", Middleware.userAuth, AdminMasterController.addStrength);
 router.get("/strength", Middleware.userAuth, AdminMasterController.fetchStrength);
 router.get("/strength/:id", Middleware.userAuth, AdminMasterController.fetchStrengthById);
@@ -165,6 +170,7 @@ router.patch(
 );
 
 //Medicine Usage
+
 router.post("/usage", Middleware.userAuth, AdminMasterController.addUsage);
 router.get("/usage", Middleware.userAuth, AdminMasterController.fetchUsage);
 router.get("/usage/:id", Middleware.userAuth, AdminMasterController.fetchUsageById);
@@ -176,7 +182,8 @@ router.patch(
     AdminMasterController.actionOnUsage
 );
 
-//Medicine Store
+// Medicine Store
+
 router.post(
     "/store",
     Middleware.userAuth,
@@ -220,6 +227,15 @@ router.patch(
     Middleware.userAuth,
     Middleware.checkPermission("update"),
     AdminMasterController.actionOnStore
+);
+
+// Medicine Product Inventory
+
+router.post(
+    "/medicine",
+    Middleware.userAuth,
+    Middleware.checkPermission("create"),
+    AdminMasterController.addMedicineProduct
 );
 
 export const AdminRoute = router;
