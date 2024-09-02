@@ -1138,7 +1138,7 @@ class Controller {
         const { search, status, sorting } = req.query;
         let filter = {};
         if (search) {
-            filter.storeName = { $regex: search, $options: "i" };
+            filter.genericName = { $regex: search, $options: "i" };
         }
 
         if (status) {
@@ -1155,10 +1155,10 @@ class Controller {
                 sortOption.createdAt = 1; // Sort by createdAt field in ascending order (oldest first)
                 break;
             case "3":
-                sortOption.storeName = 1;
+                sortOption.genericName = 1;
                 break;
             case "4":
-                sortOption.storeName = -1;
+                sortOption.genericName = -1;
                 break;
             default:
                 sortOption.createdAt = -1;
@@ -1202,12 +1202,16 @@ class Controller {
             },
             {
                 $project: {
-                    storeName: 1,
+                    genericName: 1,
+                    categoryName: 1,
+                    brandName: 1,
+                    strengthName: 1,
+                    usageName: 1,
+                    quantity: 1,
+                    price: 1,
+                    expireDate: 1,
                     status: 1,
                     createdAt: 1,
-                    "location.address": 1,
-                    "location.phone": 1,
-                    "contactPerson.email": 1,
                     "createdByUser.fullName": 1,
                     "updatedByUser.fullName": 1,
                 },
@@ -1215,10 +1219,10 @@ class Controller {
         ];
 
         //Query
-        const query = await MODEL.Store.aggregate(pipeline);
+        const query = await MODEL.MedicineProduct.aggregate(pipeline);
 
         // Total Items and Pages
-        const totalItems = await MODEL.Store.countDocuments(filter);
+        const totalItems = await MODEL.MedicineProduct.countDocuments(filter);
         const totalPages = Math.ceil(totalItems / limit);
 
         const pagination = {
@@ -1229,20 +1233,20 @@ class Controller {
 
         return res
             .status(200)
-            .json(new ApiResponse(200, { results: query, pagination }, "All list of store"));
+            .json(new ApiResponse(200, { results: query, pagination }, "Fetch all medicine"));
     });
 
     fetchMedicineProductById = asyncHandler(async (req, res) => {
-        const storeId = req.params.id;
-        if (!Dependencies.mongoose.isValidObjectId(storeId)) {
+        const medicineId = req.params.id;
+        if (!Dependencies.mongoose.isValidObjectId(medicineId)) {
             throw new ApiError(400, "This is not valid id");
         }
 
-        const store = await MODEL.Store.findById(storeId);
-        if (!store) {
-            throw new ApiError(400, "Store not found");
+        const medicine = await MODEL.MedicineProduct.findById(medicineId, { ...modifyResponse });
+        if (!medicine) {
+            throw new ApiError(400, "medicine not found");
         }
-        return res.status(200).json(new ApiResponse(200, store, "Get store"));
+        return res.status(200).json(new ApiResponse(200, medicine, "Get medicine"));
     });
 
     fetchMedicineProductSelect = asyncHandler(async (req, res) => {
@@ -1254,46 +1258,60 @@ class Controller {
     });
 
     updateMedicineProduct = asyncHandler(async (req, res) => {
-        const storeId = req.params.id;
-        const { storeName, phone, address, state, city, pin, personName, email, mobile } = req.body;
+        const medicineId = req.params.id;
+        const {
+            genericName,
+            categoryName,
+            brandName,
+            strengthName,
+            usageName,
+            quantity,
+            price,
+            expireDate,
+            status,
+        } = req.body;
 
-        if (!Dependencies.mongoose.isValidObjectId(storeId)) {
+        if (!Dependencies.mongoose.isValidObjectId(medicineId)) {
             throw new ApiError(400, "This is not valid id");
         }
 
-        const exist = await MODEL.Store.findById(storeId);
+        const exist = await MODEL.MedicineProduct.findById(medicineId);
         if (!exist) {
             throw new ApiError(400, "This id is not exist in database");
         }
 
-        // Check if another record with the same storeName exists (excluding the current record)
-        const duplicate = await MODEL.Store.findOne({ storeName, _id: { $ne: storeId } });
+        // Check if another record with the same genericName ,categoryName exists (excluding the current record)
+        const duplicate = await MODEL.MedicineProduct.findOne({
+            genericName,
+            categoryName,
+            _id: { $ne: medicineId },
+        });
         if (duplicate) {
-            throw new ApiError(400, "Store name already exists");
+            throw new ApiError(400, "Medicine name already exists");
         }
 
-        const updated = await MODEL.Store.findByIdAndUpdate(
-            storeId,
+        const updated = await MODEL.MedicineProduct.findByIdAndUpdate(
+            medicineId,
             {
                 $set: {
-                    storeName,
-                    "location.phone": phone,
-                    "location.address": address,
-                    "location.state": state,
-                    "location.city": city,
-                    "location.pin": pin,
-                    "contactPerson.personName": personName,
-                    "contactPerson.email": email,
-                    "contactPerson.mobile": mobile,
+                    genericName,
+                    categoryName,
+                    brandName,
+                    strengthName,
+                    usageName,
+                    quantity,
+                    price,
+                    expireDate,
+                    status: status || "active",
                     updatedBy: req?.user?._id,
                 },
             },
             { new: true }
         );
-
+        //const data = await MODEL.MedicineProduct.findById(medicineId, { genericName: 1 });
         return res
             .status(200)
-            .json(new ApiResponse(200, updated, "Medicine product updated Successfully!"));
+            .json(new ApiResponse(200, updated, "Medicine product updated successfully!"));
     });
 
     actionOnMedicineProduct = asyncHandler(async (req, res) => {

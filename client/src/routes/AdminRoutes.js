@@ -22,6 +22,9 @@ import AddUsages from "../pages/admin/usages/AddUsages";
 import ManageStore from "../pages/admin/store/ManageStore";
 import AddStore from "../pages/admin/store/AddStore";
 
+import ManageMedicine from "../pages/admin/medicine/ManageMedicine";
+import AddMedicine from "../pages/admin/medicine/AddMedicine";
+
 export default function AdminRoutes() {
     return (
         <Routes>
@@ -54,6 +57,10 @@ export default function AdminRoutes() {
             <Route path="/manage-store" element={<ManageStore />} />
             <Route path="/add-store" element={<AddStore />} />
             <Route path="/edit-store/:id" element={<AddStore />} />
+
+            <Route path="/manage-medicine" element={<ManageMedicine />} />
+            <Route path="/add-medicine" element={<AddMedicine />} />
+            <Route path="/edit-medicine/:id" element={<AddMedicine />} />
         </Routes>
     );
 }

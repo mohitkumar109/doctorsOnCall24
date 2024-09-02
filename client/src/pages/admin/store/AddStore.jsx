@@ -158,7 +158,7 @@ export default function AddStore() {
                                         <option value="RJ">Rajasthan</option>
                                         <option value="PN">Punjab</option>
                                         <option value="MH">Maharashtra</option>
-                                        <option value="UK">Uttarakhand</option>
+                                        <option value="UK">Uttara khand</option>
                                     </select>
                                 </div>
                             </div>

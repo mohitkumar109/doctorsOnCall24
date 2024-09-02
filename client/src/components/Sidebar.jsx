@@ -79,14 +79,8 @@ const menuItems = [
                 subItems: [
                     {
                         icon: <BsIcons.BsCardList className="bi" />,
-                        label: "Add Inventory",
-                        href: "/add-inventory",
-                        visible: ["admin"],
-                    },
-                    {
-                        icon: <BsIcons.BsCardList className="bi" />,
-                        label: "Manage Inventory",
-                        href: "/manage-inventory",
+                        label: "Manage Medicine",
+                        href: "/manage-medicine",
                         visible: ["admin"],
                     },
                     {

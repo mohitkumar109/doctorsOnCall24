@@ -317,6 +317,56 @@ const actionStoreOne = (id, status) => {
     };
 };
 
+//--------------Medicine Products-----------------//
+
+const adMedicine = (values) => {
+    return {
+        url: `${BASE_URL}/admin/medicine/`,
+        method: "POST",
+        data: values,
+    };
+};
+
+const getMedicine = (search, sorting, status, page) => {
+    return {
+        url: `${BASE_URL}/admin/medicine/?search=${search}&sorting=${sorting}&status=${status}&page=${page}`,
+        method: "GET",
+        data: null,
+    };
+};
+
+const getMedicineById = (id) => {
+    return {
+        url: `${BASE_URL}/admin/medicine/${id}`,
+        method: "GET",
+        data: null,
+    };
+};
+
+const getMedicineSelect = () => {
+    return {
+        url: `${BASE_URL}/admin/medicine-select/`,
+        method: "GET",
+        data: null,
+    };
+};
+
+const updateMedicine = (id, values) => {
+    return {
+        url: `${BASE_URL}/admin/medicine/${id}`,
+        method: "PATCH",
+        data: values,
+    };
+};
+
+const actionMedicineOne = (id, status) => {
+    return {
+        url: `${BASE_URL}/admin/actionOnMedicine/${id}/${status}`,
+        method: "PATCH",
+        data: null,
+    };
+};
+
 export const apiEnd = {
     // User function
     userRegister,
@@ -369,4 +419,12 @@ export const apiEnd = {
     getStoreSelect,
     updateStore,
     actionStoreOne,
+
+    //Medicine Products
+    adMedicine,
+    getMedicine,
+    getMedicineById,
+    getMedicineSelect,
+    updateMedicine,
+    actionMedicineOne,
 };

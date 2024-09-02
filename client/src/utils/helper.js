@@ -17,4 +17,9 @@ const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 };
 
-export { capitalizeFirstLetter };
+const indianDateFormat = (dateString) => {
+    const [year, month, day] = dateString.split("T")[0].split("-");
+    return `${day}-${month}-${year}`;
+};
+
+export { capitalizeFirstLetter, indianDateFormat, saveSettings };
