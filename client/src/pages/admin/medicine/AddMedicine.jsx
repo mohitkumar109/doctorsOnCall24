@@ -2,49 +2,63 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import Breadcrumb from "../../../components/Breadcrumb";
+import SelectField from "../../../components/SelectField";
+import InputField from "../../../components/InputField";
 import useService from "../../../hooks/useService";
 import { apiEnd } from "../../../services/adminApi";
-import { indianDateFormat } from "../../../utils/helper";
 
 export default function AddMedicine() {
     const { postData } = useService();
-    const [genericName, setGenericName] = useState("");
-    const [categoryName, setCategoryName] = useState("");
-    const [brandName, setBrandName] = useState("");
-    const [strengthName, setStrengthName] = useState("");
-    const [usageName, setUsageName] = useState("");
-    const [quantity, setQuantity] = useState("");
-    const [price, setPrice] = useState("");
-    const [expireDate, setExpireDate] = useState("");
-    const [status, setStatus] = useState("");
-
-    //fetch select data state
-    const [generic, setGeneric] = useState("");
-    const [category, setCategory] = useState("");
-    const [brand, setBrand] = useState("");
-    const [strength, setStrength] = useState("");
-    const [usage, setUsage] = useState("");
-
     const navigate = useNavigate();
     const { id } = useParams();
 
-    const getMedicineProduct = useCallback(async () => {
+    const [medicineData, setMedicineData] = useState({
+        name: "",
+        genericId: "",
+        categoryId: "",
+        brandId: "",
+        strengthId: "",
+        usageId: "",
+        quantity: "",
+        price: "",
+        expireDate: "",
+        status: "",
+    });
+
+    //fetch select data state
+    const [selectOptions, setSelectOptions] = useState({
+        generic: [],
+        category: [],
+        brand: [],
+        strength: [],
+        usage: [],
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setMedicineData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const getMedicine = useCallback(async () => {
+        if (!id) return;
         try {
             const req = apiEnd.getMedicineById(id);
             const res = await postData(req);
-            console.log(res);
             if (res?.success) {
-                setGenericName(res?.data?.genericName || "");
-                setCategoryName(res?.data?.categoryName || "");
-                setBrandName(res?.data?.brandName || "");
-                setStrengthName(res?.data?.strengthName || "");
-                setUsageName(res?.data?.usageName || "");
-                setQuantity(res?.data?.quantity || "");
-                setPrice(res?.data?.price || "");
-                setExpireDate(res?.data?.expireDate || "");
-                setStatus(res?.data?.status || "");
+                setMedicineData({
+                    name: res.data.name || "",
+                    genericId: res.data.genericId || "",
+                    categoryId: res.data.categoryId || "",
+                    brandId: res.data.brandId || "",
+                    strengthId: res.data.strengthId || "",
+                    usageId: res.data.usageId || "",
+                    quantity: res.data.quantity || "",
+                    price: res.data.price || "",
+                    expireDate: res.data.expireDate?.split("T")[0] || "",
+                    status: res.data.status || "",
+                });
             } else {
-                toast.error(res?.message);
+                toast.error(res.message);
             }
         } catch (error) {
             toast.error("Failed to fetch medicine details.");
@@ -57,65 +71,55 @@ export default function AddMedicine() {
         fetchBrand();
         fetchStrength();
         fetchUsage();
-        if (id) {
-            getMedicineProduct();
-        }
-    }, [id, getMedicineProduct]);
+        getMedicine();
+    }, [id, getMedicine]);
 
     const fetchGeneric = async () => {
         const req = apiEnd.getGenericSelect();
         const res = await postData(req);
-        setGeneric(res?.data);
+        //console.log(res?.data?.data);
+        setSelectOptions((prev) => ({ ...prev, generic: res?.data?.data }));
     };
 
     const fetchCategory = async () => {
         const req = apiEnd.getCategorySelect();
         const res = await postData(req);
-        setCategory(res?.data);
+        setSelectOptions((prev) => ({ ...prev, category: res?.data?.data }));
     };
 
     const fetchBrand = async () => {
         const req = apiEnd.getBrandSelect();
         const res = await postData(req);
-        setBrand(res?.data);
+        setSelectOptions((prev) => ({ ...prev, brand: res?.data?.data }));
     };
 
     const fetchStrength = async () => {
         const req = apiEnd.getStrengthSelect();
         const res = await postData(req);
-        setStrength(res?.data);
+        setSelectOptions((prev) => ({ ...prev, strength: res?.data?.data }));
     };
 
     const fetchUsage = async () => {
         const req = apiEnd.getUsageSelect();
         const res = await postData(req);
-        setUsage(res?.data);
+        setSelectOptions((prev) => ({ ...prev, usage: res?.data?.data }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const data = {
-                genericName,
-                categoryName,
-                brandName,
-                strengthName,
-                usageName,
-                quantity,
-                price,
-                expireDate,
-                status,
-            };
-            const req = id ? apiEnd.updateMedicine(id, data) : apiEnd.adMedicine(data);
+            const req = id
+                ? apiEnd.updateMedicine(id, medicineData)
+                : apiEnd.adMedicine(medicineData);
             const res = await postData(req);
             if (res?.success) {
-                toast.success(res?.message);
+                toast.success(res.message);
                 navigate("/manage-medicine");
             } else {
-                toast.error(res?.message);
+                toast.error(res.message);
             }
         } catch (error) {
-            toast.error(error.res?.data?.message);
+            toast.error(error?.response?.data?.message || "Submission failed.");
         }
     };
 
@@ -138,157 +142,97 @@ export default function AddMedicine() {
                     <div className="card-body">
                         <form className="offset-2 mt-4" onSubmit={handleSubmit}>
                             <div className="row g-4">
-                                <div className="col-sm-5">
-                                    <label htmlFor="generic" className="form-label">
-                                        Generic Name
-                                    </label>
-                                    <select
-                                        name="genericName"
-                                        value={genericName}
-                                        onChange={(e) => setGenericName(e.target.value)}
-                                        className="form-select"
-                                    >
-                                        <option value="">----Select Generic----</option>
-                                        {generic?.data?.map((line, i) => (
-                                            <option value={line?._id} key={i}>
-                                                {line?.genericName}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
+                                <InputField
+                                    name="name"
+                                    value={medicineData?.name}
+                                    onChange={handleChange}
+                                    label="Medicine Name"
+                                    placeholder="Enter Medicine Name...."
+                                />
+                                <SelectField
+                                    label="Generic Name"
+                                    name="genericId"
+                                    value={medicineData.genericId}
+                                    options={selectOptions.generic}
+                                    onChange={handleChange}
+                                    valueKey="_id"
+                                    labelKey="genericName"
+                                />
 
-                                <div className="col-sm-5">
-                                    <label htmlFor="category" className="form-label">
-                                        Category
-                                    </label>
-                                    <select
-                                        name="categoryName"
-                                        value={categoryName}
-                                        onChange={(e) => setCategoryName(e.target.value)}
-                                        className="form-select"
-                                    >
-                                        <option value="">----Select Category----</option>
-                                        {category?.data?.map((line, i) => (
-                                            <option value={line?._id} key={i}>
-                                                {line?.categoryName}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
+                                <SelectField
+                                    label="Category"
+                                    name="categoryId"
+                                    value={medicineData.categoryId}
+                                    options={selectOptions.category}
+                                    onChange={handleChange}
+                                    valueKey="_id"
+                                    labelKey="categoryName"
+                                />
 
-                                <div className="col-sm-5">
-                                    <label htmlFor="brand" className="form-label">
-                                        Brand
-                                    </label>
-                                    <select
-                                        name="brandName"
-                                        value={brandName}
-                                        onChange={(e) => setBrandName(e.target.value)}
-                                        className="form-select"
-                                    >
-                                        <option value="">----Select Brand----</option>
-                                        {brand?.data?.map((line, i) => (
-                                            <option value={line?._id} key={i}>
-                                                {line?.brandName}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
+                                <SelectField
+                                    label="Brand"
+                                    name="brandId"
+                                    value={medicineData.brandId}
+                                    options={selectOptions.brand}
+                                    onChange={handleChange}
+                                    valueKey="_id"
+                                    labelKey="brandName"
+                                />
 
-                                <div className="col-sm-5">
-                                    <label htmlFor="strength" className="form-label">
-                                        Medicine Strength
-                                    </label>
-                                    <select
-                                        name="strengthName"
-                                        value={strengthName}
-                                        onChange={(e) => setStrengthName(e.target.value)}
-                                        className="form-select"
-                                    >
-                                        <option value="">----Select Strength----</option>
-                                        {strength?.data?.map((line, i) => (
-                                            <option value={line?._id} key={i}>
-                                                {line?.strengthName}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
+                                <SelectField
+                                    label="Medicine Strength"
+                                    name="strengthId"
+                                    value={medicineData.strengthId}
+                                    options={selectOptions.strength}
+                                    onChange={handleChange}
+                                    valueKey="_id"
+                                    labelKey="strengthName"
+                                />
 
-                                <div className="col-sm-5">
-                                    <label htmlFor="usage" className="form-label">
-                                        Medicine Usage
-                                    </label>
-                                    <select
-                                        name="usageName"
-                                        value={usageName}
-                                        onChange={(e) => setUsageName(e.target.value)}
-                                        className="form-select"
-                                    >
-                                        <option value="">----Select Usage----</option>
-                                        {usage?.data?.map((line, i) => (
-                                            <option value={line?._id} key={i}>
-                                                {line?.usageName}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
+                                <SelectField
+                                    label="Medicine Usage"
+                                    name="usageId"
+                                    value={medicineData.usageId}
+                                    options={selectOptions.usage}
+                                    onChange={handleChange}
+                                    valueKey="_id"
+                                    labelKey="usageName"
+                                />
 
-                                <div className="col-sm-5">
-                                    <label htmlFor="expireDate" className="form-label">
-                                        Medicine Expire Date
-                                    </label>
-                                    <input
-                                        type="date"
-                                        name="expireDate"
-                                        value={expireDate.split("T")[0]}
-                                        onChange={(e) => setExpireDate(e.target.value)}
-                                        className="form-control"
-                                    />
-                                </div>
+                                <InputField
+                                    type="number"
+                                    name="quantity"
+                                    value={medicineData.quantity}
+                                    onChange={handleChange}
+                                    label="Medicine Quantity"
+                                    placeholder="Quantity in stock"
+                                />
 
-                                <div className="col-sm-5">
-                                    <label htmlFor="quantity" className="form-label">
-                                        Medicine Quantity
-                                    </label>
-                                    <input
-                                        type="number"
-                                        name="quantity"
-                                        value={quantity}
-                                        onChange={(e) => setQuantity(e.target.value)}
-                                        className="form-control"
-                                        placeholder="Medicine Quantity"
-                                    />
-                                </div>
+                                <InputField
+                                    type="number"
+                                    name="price"
+                                    value={medicineData.price}
+                                    onChange={handleChange}
+                                    label="Medicine Price"
+                                    placeholder="Price per unit"
+                                />
 
-                                <div className="col-sm-5">
-                                    <label htmlFor="price" className="form-label">
-                                        Medicine Price
-                                    </label>
-                                    <input
-                                        type="number"
-                                        name="price"
-                                        value={price}
-                                        onChange={(e) => setPrice(e.target.value)}
-                                        className="form-control"
-                                        placeholder="Medicine price"
-                                    />
-                                </div>
+                                <InputField
+                                    type="date"
+                                    name="expireDate"
+                                    value={medicineData.expireDate}
+                                    onChange={handleChange}
+                                    label="Medicine Expire Date"
+                                />
 
-                                <div className="col-sm-5">
-                                    <label htmlFor="status" className="form-label">
-                                        Status
-                                    </label>
-                                    <select
-                                        name="status"
-                                        value={status}
-                                        onChange={(e) => setStatus(e.target.value)}
-                                        className="form-select"
-                                    >
-                                        <option value="">----Select Status----</option>
-                                        <option value="active">Active</option>
-                                        <option value="inactive">Inactive</option>
-                                    </select>
-                                </div>
+                                <SelectField
+                                    label="Status"
+                                    name="status"
+                                    value={medicineData.status}
+                                    options={[{ status: "active" }, { status: "inactive" }]}
+                                    onChange={handleChange}
+                                    labelKey="status"
+                                />
                             </div>
                             <div className="row mb-5 mt-5">
                                 <div className="col-sm-3">

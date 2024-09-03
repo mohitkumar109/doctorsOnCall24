@@ -7,35 +7,44 @@ import { apiEnd } from "../../../services/adminApi";
 
 export default function AddStore() {
     const { postData } = useService();
-    const [storeName, setStoreName] = useState("");
-    const [phone, setPhone] = useState("");
-    const [address, setAddress] = useState("");
-    const [state, setState] = useState("");
-    const [city, setCity] = useState("");
-    const [pin, setPin] = useState("");
-    const [personName, setPersonName] = useState("");
-    const [email, setEmail] = useState("");
-    const [mobile, setMobile] = useState("");
-    const [status, setStatus] = useState("");
     const navigate = useNavigate();
     const { id } = useParams();
+    const [storeData, setStoreData] = useState({
+        storeName: "",
+        phone: "",
+        address: "",
+        state: "",
+        city: "",
+        pin: "",
+        personName: "",
+        email: "",
+        mobile: "",
+        status: "",
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setStoreData((prev) => ({ ...prev, [name]: value }));
+    };
 
     const getStore = useCallback(async () => {
+        if (!id) return;
         try {
             const req = apiEnd.getStoreById(id);
             const res = await postData(req);
-
             if (res?.success) {
-                setStoreName(res?.data?.storeName || "");
-                setPhone(res?.data?.location?.phone || "");
-                setAddress(res?.data?.location?.address || "");
-                setState(res?.data?.location?.state || "");
-                setCity(res?.data?.location?.city || "");
-                setPin(res?.data?.location?.pin || "");
-                setPersonName(res?.data?.contactPerson?.personName || "");
-                setEmail(res?.data?.contactPerson?.email || "");
-                setMobile(res?.data?.contactPerson?.mobile || "");
-                setStatus(res?.data?.status || "");
+                setStoreData({
+                    storeName: res?.data?.storeName || "",
+                    phone: res?.data?.location?.phone || "",
+                    address: res?.data?.location?.address || "",
+                    state: res?.data?.location?.state || "",
+                    city: res?.data?.location?.city || "",
+                    pin: res?.data?.location?.pin || "",
+                    personName: res?.data?.contactPerson?.personName || "",
+                    email: res?.data?.contactPerson?.email || "",
+                    mobile: res?.data?.contactPerson?.mobile || "",
+                    status: res?.data?.status || "",
+                });
             } else {
                 toast.error(res?.message);
             }
@@ -45,27 +54,13 @@ export default function AddStore() {
     }, [id, postData]);
 
     useEffect(() => {
-        if (id) {
-            getStore();
-        }
+        getStore();
     }, [id, getStore]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const data = {
-                storeName,
-                phone,
-                address,
-                state,
-                city,
-                pin,
-                personName,
-                email,
-                mobile,
-                status,
-            };
-            const req = id ? apiEnd.updateStore(id, data) : apiEnd.adStore(data);
+            const req = id ? apiEnd.updateStore(id, storeData) : apiEnd.adStore(storeData);
             const res = await postData(req);
             if (res?.success) {
                 toast.success(res?.message);
@@ -104,8 +99,8 @@ export default function AddStore() {
                                     <input
                                         type="text"
                                         name="storeName"
-                                        value={storeName}
-                                        onChange={(e) => setStoreName(e.target.value)}
+                                        value={storeData.storeName}
+                                        onChange={handleChange}
                                         className="form-control"
                                         placeholder="Enter medicine store name"
                                     />
@@ -119,8 +114,8 @@ export default function AddStore() {
                                     <input
                                         type="text"
                                         name="phone"
-                                        value={phone}
-                                        onChange={(e) => setPhone(e.target.value)}
+                                        value={storeData.phone}
+                                        onChange={handleChange}
                                         className="form-control"
                                         placeholder="Enter store phone number"
                                     />
@@ -134,8 +129,8 @@ export default function AddStore() {
                                     <input
                                         type="text"
                                         name="address"
-                                        value={address}
-                                        onChange={(e) => setAddress(e.target.value)}
+                                        value={storeData.address}
+                                        onChange={handleChange}
                                         className="form-control"
                                         placeholder="Enter address"
                                     />
@@ -148,8 +143,8 @@ export default function AddStore() {
                                 <div className="col-sm-5">
                                     <select
                                         name="state"
-                                        value={state}
-                                        onChange={(e) => setState(e.target.value)}
+                                        value={storeData.state}
+                                        onChange={handleChange}
                                         className="form-select"
                                     >
                                         <option value="">----Select State----</option>
@@ -169,8 +164,8 @@ export default function AddStore() {
                                 <div className="col-sm-5">
                                     <select
                                         name="city"
-                                        value={city}
-                                        onChange={(e) => setCity(e.target.value)}
+                                        value={storeData.city}
+                                        onChange={handleChange}
                                         className="form-select"
                                     >
                                         <option value="">----Select City----</option>
@@ -189,9 +184,9 @@ export default function AddStore() {
                                 <div className="col-sm-5">
                                     <input
                                         type="text"
-                                        name="city"
-                                        value={pin}
-                                        onChange={(e) => setPin(e.target.value)}
+                                        name="pin"
+                                        value={storeData.pin}
+                                        onChange={handleChange}
                                         className="form-control"
                                         placeholder="Enter city"
                                     />
@@ -205,8 +200,8 @@ export default function AddStore() {
                                     <input
                                         type="text"
                                         name="personName"
-                                        value={personName}
-                                        onChange={(e) => setPersonName(e.target.value)}
+                                        value={storeData.personName}
+                                        onChange={handleChange}
                                         className="form-control"
                                         placeholder="Enter contact person name"
                                     />
@@ -220,8 +215,8 @@ export default function AddStore() {
                                     <input
                                         type="text"
                                         name="email"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
+                                        value={storeData.email}
+                                        onChange={handleChange}
                                         className="form-control"
                                         placeholder="Enter contact person email address"
                                     />
@@ -236,8 +231,8 @@ export default function AddStore() {
                                     <input
                                         type="text"
                                         name="mobile"
-                                        value={mobile}
-                                        onChange={(e) => setMobile(e.target.value)}
+                                        value={storeData.mobile}
+                                        onChange={handleChange}
                                         className="form-control"
                                         placeholder="Enter contact person mobile number"
                                     />
@@ -251,8 +246,8 @@ export default function AddStore() {
                                 <div className="col-sm-5">
                                     <select
                                         name="status"
-                                        value={status}
-                                        onChange={(e) => setStatus(e.target.value)}
+                                        value={storeData.status}
+                                        onChange={handleChange}
                                         className="form-select"
                                     >
                                         <option value="">----Select Status----</option>

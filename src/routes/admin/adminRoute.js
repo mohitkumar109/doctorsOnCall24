@@ -287,42 +287,42 @@ router.post(
     "/medicine",
     Middleware.userAuth,
     Middleware.checkPermission("create"),
-    AdminMasterController.addMedicineProduct
+    AdminMasterController.addMedicine
 );
 
 router.get(
     "/medicine",
     Middleware.userAuth,
     Middleware.checkPermission("read"),
-    AdminMasterController.fetchMedicineProduct
+    AdminMasterController.fetchMedicine
 );
 
 router.get(
     "/medicine/:id",
     Middleware.userAuth,
     Middleware.checkPermission("read"),
-    AdminMasterController.fetchMedicineProductById
+    AdminMasterController.fetchMedicineById
 );
 
 router.patch(
     "/medicine/:id",
     Middleware.userAuth,
     Middleware.checkPermission("update"),
-    AdminMasterController.updateMedicineProduct
+    AdminMasterController.updateMedicine
 );
 
 router.patch(
     "/actionOnMedicine/:id/:status",
     Middleware.userAuth,
     Middleware.checkPermission("update"),
-    AdminMasterController.actionOnMedicineProduct
+    AdminMasterController.actionOnMedicine
 );
 
 router.patch(
     "/actionOnMedicine/:status",
     Middleware.userAuth,
     Middleware.checkPermission("update"),
-    AdminMasterController.actionOnMedicineProduct
+    AdminMasterController.actionOnMedicine
 );
 
 export const AdminRoute = router;

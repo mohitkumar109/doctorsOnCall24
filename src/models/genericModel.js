@@ -29,4 +29,4 @@ const genericNameSchema = new Dependencies.mongoose.Schema(
     { timestamps: true }
 );
 
-export const Generic = Dependencies.mongoose.model("GenericName", genericNameSchema);
+export const Generic = Dependencies.mongoose.model("Generic", genericNameSchema);

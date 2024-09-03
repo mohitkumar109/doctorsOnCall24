@@ -39,4 +39,4 @@ strengthOfMedicineSchema.pre("findOneAndUpdate", function (next) {
     next();
 });
 
-export const Strength = Dependencies.mongoose.model("StrengthOfMedicine", strengthOfMedicineSchema);
+export const Strength = Dependencies.mongoose.model("Strength", strengthOfMedicineSchema);

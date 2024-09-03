@@ -5,7 +5,7 @@ import { Brand } from "./brandModel.js";
 import { Strength } from "./strengthModel.js";
 import { Usage } from "./usageModel.js";
 import { Store } from "./storeModel.js";
-import { MedicineProduct } from "./medicineProduct.js";
+import { Medicine } from "./medicineModel.js";
 
 export const MODEL = {
     User,
@@ -15,5 +15,5 @@ export const MODEL = {
     Strength,
     Usage,
     Store,
-    MedicineProduct,
+    Medicine,
 };

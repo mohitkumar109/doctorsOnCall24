@@ -26,6 +26,8 @@ export default function ManageMedicine() {
         setPagination(res?.data?.pagination);
     };
 
+    console.log(pagination);
+
     const changeStatus = async (id, status) => {
         const req = apiEnd.actionMedicineOne(id, status);
         const res = await postData(req, {});
@@ -42,7 +44,7 @@ export default function ManageMedicine() {
     }, [search, sorting, status, page]);
 
     const filteredData = data.filter(
-        (result) => result?.genericName?.toLowerCase().indexOf(search.toLowerCase()) !== -1
+        (result) => result?.name.toLowerCase().indexOf(search.toLowerCase()) !== -1
     );
 
     return (
@@ -65,16 +67,15 @@ export default function ManageMedicine() {
                                 <thead>
                                     <tr>
                                         <th scope="col">S.N</th>
-                                        <th className="col-2">Generic Name</th>
+                                        <th className="col-2">Medicine</th>
+                                        <th className="col-1">Generic</th>
                                         <th className="col-1">Category</th>
                                         <th className="col-1">Brand</th>
                                         <th className="col-1">Strength</th>
                                         <th className="col-1">Usage</th>
+                                        <th className="col-1">Expire Date</th>
                                         <th className="col-1">Quantity</th>
                                         <th className="col-1">Price</th>
-                                        <th className="col-1">Expire Date</th>
-                                        <th className="col-1">CreatedBy</th>
-                                        <th className="col-1">UpdatedBy</th>
                                         <th className="col-1">CreatedAt</th>
                                         <th className="col-1">Status</th>
                                         <th className="col-1">Actions</th>
@@ -88,39 +89,34 @@ export default function ManageMedicine() {
                                                     <td>{index + 1}</td>
                                                     <td>
                                                         <span className="text-default">
-                                                            {line?.genericName}
+                                                            {line?.name}
                                                         </span>
                                                     </td>
                                                     <td>
                                                         <span className="text-default">
-                                                            {line?.categoryName}
+                                                            {line?.generic?.genericName}
                                                         </span>
                                                     </td>
                                                     <td>
                                                         <span className="text-default">
-                                                            {line?.brandName}
+                                                            {line?.category?.categoryName}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span className="text-default">
+                                                            {line?.brand?.brandName}
                                                         </span>
                                                     </td>
 
                                                     <td>
                                                         <span className="text-default">
-                                                            {line?.strengthName}
+                                                            {line?.strength?.strengthName}
                                                         </span>
                                                     </td>
 
                                                     <td>
                                                         <span className="text-default">
-                                                            {line?.usageName}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {line?.quantity}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {line?.price}
+                                                            {line?.usage?.usageName}
                                                         </span>
                                                     </td>
 
@@ -132,16 +128,15 @@ export default function ManageMedicine() {
 
                                                     <td>
                                                         <span className="text-default">
-                                                            {line?.createdByUser?.fullName ||
-                                                                "None"}
+                                                            {line?.quantity}
                                                         </span>
                                                     </td>
                                                     <td>
                                                         <span className="text-default">
-                                                            {line?.updatedByUser?.fullName ||
-                                                                "None"}
+                                                            {line?.price}
                                                         </span>
                                                     </td>
+
                                                     <td>
                                                         <span className="text-default">
                                                             {indianDateFormat(line?.createdAt)}
@@ -204,7 +199,7 @@ export default function ManageMedicine() {
                                     ) : (
                                         <>
                                             <tr>
-                                                <td colSpan="12" className="p-4 text-center">
+                                                <td colSpan="14" className="p-4 text-center">
                                                     No Data Found!
                                                 </td>
                                             </tr>
