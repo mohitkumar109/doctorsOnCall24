@@ -1,5 +1,10 @@
 import { Dependencies } from "../../packages/index.js";
-import { AdminController, AdminMasterController } from "../../controllers/index.js";
+import {
+    AdminController,
+    AdminMasterController,
+    AdminMedicineController,
+    AdminStoreController,
+} from "../../controllers/index.js";
 import Middleware from "../../middlewares/index.js";
 
 const router = Dependencies.Router();
@@ -240,45 +245,45 @@ router.post(
     "/store",
     Middleware.userAuth,
     Middleware.checkPermission("create"),
-    AdminMasterController.addStore
+    AdminStoreController.addStore
 );
 router.get(
     "/store",
     Middleware.userAuth,
     Middleware.checkPermission("read"),
-    AdminMasterController.fetchStore
+    AdminStoreController.fetchStore
 );
 router.get(
     "/store/:id",
     Middleware.userAuth,
     Middleware.checkPermission("read"),
-    AdminMasterController.fetchStoreById
+    AdminStoreController.fetchStoreById
 );
 
 router.get(
     "/store-select/",
     Middleware.userAuth,
     Middleware.checkPermission("read"),
-    AdminMasterController.fetchSelect
+    AdminStoreController.fetchSelect
 );
 
 router.patch(
     "/store/:id",
     Middleware.userAuth,
     Middleware.checkPermission("update"),
-    AdminMasterController.updateStore
+    AdminStoreController.updateStore
 );
 router.patch(
     "/actionOnStore/:status",
     Middleware.userAuth,
     Middleware.checkPermission("update"),
-    AdminMasterController.actionOnStore
+    AdminStoreController.actionOnStore
 );
 router.patch(
     "/actionOnStore/:id/:status",
     Middleware.userAuth,
     Middleware.checkPermission("update"),
-    AdminMasterController.actionOnStore
+    AdminStoreController.actionOnStore
 );
 
 // Medicine Product Inventory
@@ -287,42 +292,42 @@ router.post(
     "/medicine",
     Middleware.userAuth,
     Middleware.checkPermission("create"),
-    AdminMasterController.addMedicine
+    AdminMedicineController.addMedicine
 );
 
 router.get(
     "/medicine",
     Middleware.userAuth,
     Middleware.checkPermission("read"),
-    AdminMasterController.fetchMedicine
+    AdminMedicineController.fetchMedicine
 );
 
 router.get(
     "/medicine/:id",
     Middleware.userAuth,
     Middleware.checkPermission("read"),
-    AdminMasterController.fetchMedicineById
+    AdminMedicineController.fetchMedicineById
 );
 
 router.patch(
     "/medicine/:id",
     Middleware.userAuth,
     Middleware.checkPermission("update"),
-    AdminMasterController.updateMedicine
+    AdminMedicineController.updateMedicine
 );
 
 router.patch(
     "/actionOnMedicine/:id/:status",
     Middleware.userAuth,
     Middleware.checkPermission("update"),
-    AdminMasterController.actionOnMedicine
+    AdminMedicineController.actionOnMedicine
 );
 
 router.patch(
     "/actionOnMedicine/:status",
     Middleware.userAuth,
     Middleware.checkPermission("update"),
-    AdminMasterController.actionOnMedicine
+    AdminMedicineController.actionOnMedicine
 );
 
 export const AdminRoute = router;
