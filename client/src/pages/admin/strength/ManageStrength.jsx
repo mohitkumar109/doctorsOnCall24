@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { BsPencil, BsTrash3Fill } from "react-icons/bs";
 import { toast } from "react-hot-toast";
 import Pagination from "../../../components/Pagination";
 import Filter from "../../../components/Filter";
@@ -8,6 +6,7 @@ import Breadcrumb from "../../../components/Breadcrumb";
 import AddButton from "../../../components/AddButton";
 import useService from "../../../hooks/useService";
 import { apiEnd } from "../../../services/adminApi";
+import StrengthTable from "../../../components/admin/StrengthTable";
 
 export default function ManageStrength() {
     const { postData } = useService();
@@ -65,97 +64,23 @@ export default function ManageStrength() {
                                     <tr>
                                         <th scope="col">SN</th>
                                         <th className="col-6">Strength Name</th>
-                                        <th className="col-2">CreatedBy</th>
-                                        <th className="col-2">UpdatedBy</th>
-                                        <th className="col-2">CreatedAt</th>
-                                        <th className="col-1">Status</th>
-                                        <th className="col-1">Actions</th>
+                                        <th scope="col">CreatedBy</th>
+                                        <th scope="col">UpdatedBy</th>
+                                        <th scope="col">CreatedAt</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {filteredData?.length > 0 ? (
-                                        <>
-                                            {filteredData?.map((strength, index) => (
-                                                <tr key={index}>
-                                                    <td>{index + 1}</td>
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {strength?.strengthName}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {strength?.createdBy?.fullName ||
-                                                                "None"}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {strength?.updatedBy?.fullName ||
-                                                                "None"}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {strength.createdAt.split("T")[0]}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <div className="form-check form-switch">
-                                                            <input
-                                                                type="checkbox"
-                                                                role="switch"
-                                                                id={`flexSwitchCheckChecked-${strength._id}`}
-                                                                checked={
-                                                                    strength.status === "active"
-                                                                }
-                                                                className="form-check-input mt-2"
-                                                                onChange={() =>
-                                                                    changeStatus(
-                                                                        strength._id,
-                                                                        strength.status === "active"
-                                                                            ? "inactive"
-                                                                            : "active"
-                                                                    )
-                                                                }
-                                                            />
-                                                            <span
-                                                                className={`badge ${
-                                                                    strength.status === "active"
-                                                                        ? "bg-success"
-                                                                        : "bg-danger"
-                                                                }`}
-                                                            >
-                                                                {strength.status === "active"
-                                                                    ? "Active"
-                                                                    : "Inactive"}
-                                                            </span>
-                                                        </div>
-                                                    </td>
-                                                    <td className="text-default">
-                                                        <div className="d-flex gap-3">
-                                                            <Link
-                                                                to={`/edit-strength/${strength._id}`}
-                                                                className="text-primary"
-                                                            >
-                                                                <BsPencil />
-                                                            </Link>
-
-                                                            <Link to="#" className="text-danger">
-                                                                <BsTrash3Fill
-                                                                    onClick={() =>
-                                                                        changeStatus(
-                                                                            strength._id,
-                                                                            "delete"
-                                                                        )
-                                                                    }
-                                                                />
-                                                            </Link>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </>
+                                        filteredData?.map((strength, index) => (
+                                            <StrengthTable
+                                                key={index}
+                                                record={strength}
+                                                sn={index}
+                                                changeStatus={changeStatus}
+                                            />
+                                        ))
                                     ) : (
                                         <>
                                             <tr>

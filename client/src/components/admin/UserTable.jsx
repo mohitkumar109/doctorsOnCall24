@@ -1,15 +1,19 @@
-import { Link } from "react-router-dom";
+import React from "react";
 import { BsPencil, BsTrash3Fill } from "react-icons/bs";
-import { capitalizeFirstLetter } from "../../utils/helper";
+import { Link } from "react-router-dom";
 
-const GenericTable = ({ record, sn, changeStatus }) => {
+const UserTable = ({ record, sn, changeStatus }) => {
     return (
         <tr>
             <td>{sn + 1}</td>
-            <td>{capitalizeFirstLetter(record?.genericName)}</td>
+            <td>{record?.fullName}</td>
+            <td>{record?.email}</td>
+            <td>{record?.storeId?.storeName}</td>
+            <td>{record?.role}</td>
             <td>{record?.createdBy?.fullName || "None"}</td>
             <td>{record?.updatedBy?.fullName || "None"}</td>
             <td>{record?.createdAt?.split("T")[0]}</td>
+
             <td>
                 <div className="form-check form-switch">
                     <input
@@ -36,11 +40,11 @@ const GenericTable = ({ record, sn, changeStatus }) => {
             </td>
             <td className="text-default">
                 <div className="d-flex gap-3">
-                    <Link to={`/edit-generic/${record._id}`} className="text-primary">
+                    <Link to={`/edit-record/${record._id}`} className="text-primary">
                         <BsPencil />
                     </Link>
 
-                    <Link to="#" className="text-danger">
+                    <Link className="text-danger">
                         <BsTrash3Fill onClick={() => changeStatus(record._id, "delete")} />
                     </Link>
                 </div>
@@ -49,4 +53,4 @@ const GenericTable = ({ record, sn, changeStatus }) => {
     );
 };
 
-export default GenericTable;
+export default UserTable;

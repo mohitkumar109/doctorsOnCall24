@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { BsPencil, BsTrash3Fill } from "react-icons/bs";
 import { toast } from "react-hot-toast";
 import Pagination from "../../../components/Pagination";
 import Filter from "../../../components/Filter";
@@ -8,6 +6,7 @@ import Breadcrumb from "../../../components/Breadcrumb";
 import AddButton from "../../../components/AddButton";
 import useService from "../../../hooks/useService";
 import { apiEnd } from "../../../services/adminApi";
+import StoreTable from "../../../components/admin/StoreTable";
 
 export default function ManageStore() {
     const { postData } = useService();
@@ -65,123 +64,32 @@ export default function ManageStore() {
                                     <tr>
                                         <th scope="col">SN</th>
                                         <th className="col-3">Store Name</th>
-                                        <th className="col-3">Address</th>
-                                        <th className="col-1">Store Phone</th>
-                                        <th className="col-2">Person Email</th>
-                                        <th className="col-1">CreatedBy</th>
-                                        <th className="col-1">UpdatedBy</th>
-                                        <th className="col-2">CreatedAt</th>
-                                        <th className="col-1">Status</th>
-                                        <th className="col-1">Actions</th>
+                                        <th scope="col">Address</th>
+                                        <th scope="col">Store Phone</th>
+                                        <th scope="col">Person Email</th>
+                                        <th scope="col">CreatedBy</th>
+                                        <th scope="col">UpdatedBy</th>
+                                        <th scope="col">CreatedAt</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {filteredData?.length > 0 ? (
-                                        <>
-                                            {filteredData?.map((line, index) => (
-                                                <tr key={index}>
-                                                    <td>{index + 1}</td>
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {line?.storeName}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {line?.location?.address}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {line?.location?.phone}
-                                                        </span>
-                                                    </td>
-
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {line?.contactPerson?.email}
-                                                        </span>
-                                                    </td>
-
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {line?.createdByUser?.fullName ||
-                                                                "None"}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {line?.updatedByUser?.fullName ||
-                                                                "None"}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {line.createdAt.split("T")[0]}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <div className="form-check form-switch">
-                                                            <input
-                                                                type="checkbox"
-                                                                role="switch"
-                                                                id={`flexSwitchCheckChecked-${line._id}`}
-                                                                checked={line.status === "active"}
-                                                                className="form-check-input mt-2"
-                                                                onChange={() =>
-                                                                    changeStatus(
-                                                                        line._id,
-                                                                        line.status === "active"
-                                                                            ? "inactive"
-                                                                            : "active"
-                                                                    )
-                                                                }
-                                                            />
-                                                            <span
-                                                                className={`badge ${
-                                                                    line.status === "active"
-                                                                        ? "bg-success"
-                                                                        : "bg-danger"
-                                                                }`}
-                                                            >
-                                                                {line.status === "active"
-                                                                    ? "Active"
-                                                                    : "Inactive"}
-                                                            </span>
-                                                        </div>
-                                                    </td>
-                                                    <td className="text-default">
-                                                        <div className="d-flex gap-3">
-                                                            <Link
-                                                                to={`/edit-store/${line._id}`}
-                                                                className="text-primary"
-                                                            >
-                                                                <BsPencil />
-                                                            </Link>
-
-                                                            <Link to="#" className="text-danger">
-                                                                <BsTrash3Fill
-                                                                    onClick={() =>
-                                                                        changeStatus(
-                                                                            line._id,
-                                                                            "delete"
-                                                                        )
-                                                                    }
-                                                                />
-                                                            </Link>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </>
+                                        filteredData?.map((line, index) => (
+                                            <StoreTable
+                                                key={index}
+                                                record={line}
+                                                sn={index}
+                                                changeStatus={changeStatus}
+                                            />
+                                        ))
                                     ) : (
-                                        <>
-                                            <tr>
-                                                <td colSpan="12" className="p-4 text-center">
-                                                    No Data Found!
-                                                </td>
-                                            </tr>
-                                        </>
+                                        <tr>
+                                            <td colSpan="12" className="p-4 text-center">
+                                                No Data Found!
+                                            </td>
+                                        </tr>
                                     )}
                                 </tbody>
                             </table>

@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { BsPencil, BsTrash3Fill } from "react-icons/bs";
 import { toast } from "react-hot-toast";
 import Pagination from "../../../components/Pagination";
 import Filter from "../../../components/Filter";
 import Breadcrumb from "../../../components/Breadcrumb";
 import AddButton from "../../../components/AddButton";
+import UsagesTable from "../../../components/admin/UsagesTable";
 import useService from "../../../hooks/useService";
 import { apiEnd } from "../../../services/adminApi";
 
@@ -65,101 +64,29 @@ export default function ManageUsages() {
                                     <tr>
                                         <th scope="col">SN</th>
                                         <th className="col-6">Usage Name</th>
-                                        <th className="col-2">CreatedBy</th>
-                                        <th className="col-2">UpdatedBy</th>
-                                        <th className="col-2">CreatedAt</th>
-                                        <th className="col-1">Status</th>
-                                        <th className="col-1">Actions</th>
+                                        <th scope="col">CreatedBy</th>
+                                        <th scope="col">UpdatedBy</th>
+                                        <th scope="col">CreatedAt</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {filteredData?.length > 0 ? (
-                                        <>
-                                            {filteredData?.map((usage, index) => (
-                                                <tr key={index}>
-                                                    <td>{index + 1}</td>
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {usage?.usageName}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {usage?.createdBy?.fullName || "None"}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {usage?.updatedBy?.fullName || "None"}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {usage.createdAt.split("T")[0]}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <div className="form-check form-switch">
-                                                            <input
-                                                                type="checkbox"
-                                                                role="switch"
-                                                                id={`flexSwitchCheckChecked-${usage._id}`}
-                                                                checked={usage.status === "active"}
-                                                                className="form-check-input mt-2"
-                                                                onChange={() =>
-                                                                    changeStatus(
-                                                                        usage._id,
-                                                                        usage.status === "active"
-                                                                            ? "inactive"
-                                                                            : "active"
-                                                                    )
-                                                                }
-                                                            />
-                                                            <span
-                                                                className={`badge ${
-                                                                    usage.status === "active"
-                                                                        ? "bg-success"
-                                                                        : "bg-danger"
-                                                                }`}
-                                                            >
-                                                                {usage.status === "active"
-                                                                    ? "Active"
-                                                                    : "Inactive"}
-                                                            </span>
-                                                        </div>
-                                                    </td>
-                                                    <td className="text-default">
-                                                        <div className="d-flex gap-3">
-                                                            <Link
-                                                                to={`/edit-usage/${usage._id}`}
-                                                                className="text-primary"
-                                                            >
-                                                                <BsPencil />
-                                                            </Link>
-
-                                                            <Link to="#" className="text-danger">
-                                                                <BsTrash3Fill
-                                                                    onClick={() =>
-                                                                        changeStatus(
-                                                                            usage._id,
-                                                                            "delete"
-                                                                        )
-                                                                    }
-                                                                />
-                                                            </Link>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </>
+                                        filteredData?.map((usage, index) => (
+                                            <UsagesTable
+                                                key={index}
+                                                record={usage}
+                                                sn={index}
+                                                changeStatus={changeStatus}
+                                            />
+                                        ))
                                     ) : (
-                                        <>
-                                            <tr>
-                                                <td colSpan="12" className="p-4 text-center">
-                                                    No Data Found!
-                                                </td>
-                                            </tr>
-                                        </>
+                                        <tr>
+                                            <td colSpan="12" className="p-4 text-center">
+                                                No Data Found!
+                                            </td>
+                                        </tr>
                                     )}
                                 </tbody>
                             </table>

@@ -5,13 +5,13 @@ const userSchema = new Dependencies.mongoose.Schema(
     {
         fullName: {
             type: String,
-            required: true,
+            required: [true, "Full name is required"],
             lowercase: true,
             trim: true,
         },
         email: {
             type: String,
-            required: [true, "email is required"],
+            required: [true, "Email is required"],
             unique: true,
             lowercase: true,
             trim: true,
@@ -49,7 +49,6 @@ const userSchema = new Dependencies.mongoose.Schema(
             type: Dependencies.mongoose.Schema.Types.ObjectId,
             ref: "Users",
         },
-
         refreshToken: {
             type: String,
         },

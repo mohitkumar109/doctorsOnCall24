@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { BsPencil, BsTrash3Fill } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import Pagination from "../../../components/Pagination";
 import Breadcrumb from "../../../components/Breadcrumb";
 import useServices from "../../../hooks/useService";
 import { apiEnd } from "../../../services/adminApi";
+import UserTable from "../../../components/admin/UserTable";
 
 export default function ManageUser() {
     const { postData } = useServices();
@@ -79,135 +79,34 @@ export default function ManageUser() {
                             <table className="table table-striped table-bordered table-hover">
                                 <thead>
                                     <tr>
-                                        <th scope="col">
-                                            <input
-                                                type="checkbox"
-                                                name="checked"
-                                                className="form-check-input"
-                                            />
-                                        </th>
+                                        <th scope="col">SN</th>
                                         <th className="col-3">Full Name</th>
-                                        <th className="col-3">Email</th>
-                                        <th className="col-2">Selected Store</th>
-                                        <th className="col-1">Role Type</th>
-                                        <th className="col-1">CreatedBy</th>
-                                        <th className="col-1">UpdatedBy</th>
-                                        <th className="col-1">CreatedAt</th>
-                                        <th className="col-1">Status</th>
-                                        <th className="col-1">Actions</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Selected Store</th>
+                                        <th scope="col">Role Type</th>
+                                        <th scope="col">CreatedBy</th>
+                                        <th scope="col">UpdatedBy</th>
+                                        <th scope="col">CreatedAt</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {filteredData?.length > 0 ? (
-                                        <>
-                                            {filteredData?.map((user, index) => (
-                                                <tr key={index}>
-                                                    <td>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="checked"
-                                                            className="form-check-input"
-                                                        />
-                                                    </td>
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {user?.fullName}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {user?.email}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {user?.storeId?.storeName}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {user?.role}
-                                                        </span>
-                                                    </td>
-
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {user?.createdBy?.fullName || "None"}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {user?.updatedBy?.fullName || "None"}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {user?.createdAt?.split("T")[0]}
-                                                        </span>
-                                                    </td>
-
-                                                    <td>
-                                                        <div className="form-check form-switch">
-                                                            <input
-                                                                type="checkbox"
-                                                                role="switch"
-                                                                id={`flexSwitchCheckChecked-${user._id}`}
-                                                                checked={user.status === "active"}
-                                                                className="form-check-input mt-2"
-                                                                onChange={() =>
-                                                                    changeStatus(
-                                                                        user._id,
-                                                                        user.status === "active"
-                                                                            ? "inactive"
-                                                                            : "active"
-                                                                    )
-                                                                }
-                                                            />
-                                                            <span
-                                                                className={`badge ${
-                                                                    user.status === "active"
-                                                                        ? "bg-success"
-                                                                        : "bg-danger"
-                                                                }`}
-                                                            >
-                                                                {user.status === "active"
-                                                                    ? "Active"
-                                                                    : "Inactive"}
-                                                            </span>
-                                                        </div>
-                                                    </td>
-                                                    <td className="text-default">
-                                                        <div className="d-flex gap-3">
-                                                            <Link
-                                                                to={`/edit-user/${user._id}`}
-                                                                className="text-primary"
-                                                            >
-                                                                <BsPencil />
-                                                            </Link>
-
-                                                            <Link className="text-danger">
-                                                                <BsTrash3Fill
-                                                                    onClick={() =>
-                                                                        changeStatus(
-                                                                            user._id,
-                                                                            "delete"
-                                                                        )
-                                                                    }
-                                                                />
-                                                            </Link>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </>
+                                        filteredData?.map((user, index) => (
+                                            <UserTable
+                                                key={index}
+                                                record={user}
+                                                changeStatus={changeStatus}
+                                                sn={index}
+                                            />
+                                        ))
                                     ) : (
-                                        <>
-                                            <tr>
-                                                <td colSpan="12" className="p-4 text-center">
-                                                    No Data Found!
-                                                </td>
-                                            </tr>
-                                        </>
+                                        <tr>
+                                            <td colSpan="12" className="p-4 text-center">
+                                                No Data Found!
+                                            </td>
+                                        </tr>
                                     )}
                                 </tbody>
                             </table>

@@ -330,4 +330,34 @@ router.patch(
     AdminMedicineController.actionOnMedicine
 );
 
+// Medicine Store Inventory
+
+router.post(
+    "/medicine-add-store",
+    Middleware.userAuth,
+    Middleware.checkPermission("create"),
+    AdminStoreController.addStoreInventory
+);
+
+router.get(
+    "/store-inventory-history/:id",
+    Middleware.userAuth,
+    Middleware.checkPermission("create"),
+    AdminStoreController.fetchStoreInventory
+);
+
+router.get(
+    "/store-inventory/:id",
+    Middleware.userAuth,
+    Middleware.checkPermission("create"),
+    AdminStoreController.fetchStoreInventoryById
+);
+
+router.post(
+    "/add-to-storeCart/",
+    Middleware.userAuth,
+    Middleware.checkPermission("create"),
+    AdminStoreController.addStoreCart
+);
+
 export const AdminRoute = router;

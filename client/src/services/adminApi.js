@@ -357,7 +357,7 @@ const actionStoreOne = (id, status) => {
     };
 };
 
-//--------------Medicine Products-----------------//
+//--------------Medicine -----------------//
 
 const adMedicine = (values) => {
     return {
@@ -367,7 +367,15 @@ const adMedicine = (values) => {
     };
 };
 
-const getMedicine = (search, sorting, status, page) => {
+const getMedicine = (search, sorting, status, page, category, generic, brand) => {
+    return {
+        url: `${BASE_URL}/admin/medicine/?search=${search}&sorting=${sorting}&status=${status}&page=${page}&generic=${generic}&category=${category}&brand=${brand}`,
+        method: "GET",
+        data: null,
+    };
+};
+
+const getMedicineAll = (search, sorting, status, page) => {
     return {
         url: `${BASE_URL}/admin/medicine/?search=${search}&sorting=${sorting}&status=${status}&page=${page}`,
         method: "GET",
@@ -403,6 +411,27 @@ const actionMedicineOne = (id, status) => {
     return {
         url: `${BASE_URL}/admin/actionOnMedicine/${id}/${status}`,
         method: "PATCH",
+        data: null,
+    };
+};
+
+//--------------Medicine Assign to Store-----------------//
+
+const adStoreAssignMedicine = (id, values) => {
+    return {
+        url: `${BASE_URL}/admin/medicine-add-store/`,
+        method: "POST",
+        data: {
+            storeId: id,
+            items: values,
+        },
+    };
+};
+
+const getStoreInventory = (sorting, status, page, storeId) => {
+    return {
+        url: `${BASE_URL}/admin/store-inventory-history/${storeId}/?sorting=${sorting}&status=${status}&page=${page}`,
+        method: "GET",
         data: null,
     };
 };
@@ -468,8 +497,13 @@ export const apiEnd = {
     //Medicine Products
     adMedicine,
     getMedicine,
+    getMedicineAll,
     getMedicineById,
     getMedicineSelect,
     updateMedicine,
     actionMedicineOne,
+
+    //Medicine Assign to Store
+    adStoreAssignMedicine,
+    getStoreInventory,
 };

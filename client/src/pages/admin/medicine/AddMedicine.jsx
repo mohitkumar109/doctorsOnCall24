@@ -12,14 +12,14 @@ export default function AddMedicine() {
     const navigate = useNavigate();
     const { id } = useParams();
 
-    const [medicineData, setMedicineData] = useState({
+    const [input, setInput] = useState({
         name: "",
         genericId: "",
         categoryId: "",
         brandId: "",
         strengthId: "",
         usageId: "",
-        quantity: "",
+        stock: "",
         price: "",
         expireDate: "",
         status: "",
@@ -36,7 +36,7 @@ export default function AddMedicine() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setMedicineData((prev) => ({ ...prev, [name]: value }));
+        setInput((prev) => ({ ...prev, [name]: value }));
     };
 
     const getMedicine = useCallback(async () => {
@@ -45,14 +45,14 @@ export default function AddMedicine() {
             const req = apiEnd.getMedicineById(id);
             const res = await postData(req);
             if (res?.success) {
-                setMedicineData({
+                setInput({
                     name: res.data.name || "",
                     genericId: res.data.genericId || "",
                     categoryId: res.data.categoryId || "",
                     brandId: res.data.brandId || "",
                     strengthId: res.data.strengthId || "",
                     usageId: res.data.usageId || "",
-                    quantity: res.data.quantity || "",
+                    stock: res.data.stock || "",
                     price: res.data.price || "",
                     expireDate: res.data.expireDate?.split("T")[0] || "",
                     status: res.data.status || "",
@@ -77,7 +77,6 @@ export default function AddMedicine() {
     const fetchGeneric = async () => {
         const req = apiEnd.getGenericSelect();
         const res = await postData(req);
-        //console.log(res?.data?.data);
         setSelectOptions((prev) => ({ ...prev, generic: res?.data?.data }));
     };
 
@@ -108,9 +107,7 @@ export default function AddMedicine() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const req = id
-                ? apiEnd.updateMedicine(id, medicineData)
-                : apiEnd.adMedicine(medicineData);
+            const req = id ? apiEnd.updateMedicine(id, input) : apiEnd.adMedicine(input);
             const res = await postData(req);
             if (res?.success) {
                 toast.success(res.message);
@@ -144,7 +141,7 @@ export default function AddMedicine() {
                             <div className="row g-4">
                                 <InputField
                                     name="name"
-                                    value={medicineData?.name}
+                                    value={input?.name}
                                     onChange={handleChange}
                                     label="Medicine Name"
                                     placeholder="Enter Medicine Name...."
@@ -152,7 +149,7 @@ export default function AddMedicine() {
                                 <SelectField
                                     label="Generic Name"
                                     name="genericId"
-                                    value={medicineData.genericId}
+                                    value={input.genericId}
                                     options={selectOptions.generic}
                                     onChange={handleChange}
                                     valueKey="_id"
@@ -162,7 +159,7 @@ export default function AddMedicine() {
                                 <SelectField
                                     label="Category"
                                     name="categoryId"
-                                    value={medicineData.categoryId}
+                                    value={input.categoryId}
                                     options={selectOptions.category}
                                     onChange={handleChange}
                                     valueKey="_id"
@@ -172,7 +169,7 @@ export default function AddMedicine() {
                                 <SelectField
                                     label="Brand"
                                     name="brandId"
-                                    value={medicineData.brandId}
+                                    value={input.brandId}
                                     options={selectOptions.brand}
                                     onChange={handleChange}
                                     valueKey="_id"
@@ -182,7 +179,7 @@ export default function AddMedicine() {
                                 <SelectField
                                     label="Medicine Strength"
                                     name="strengthId"
-                                    value={medicineData.strengthId}
+                                    value={input.strengthId}
                                     options={selectOptions.strength}
                                     onChange={handleChange}
                                     valueKey="_id"
@@ -192,7 +189,7 @@ export default function AddMedicine() {
                                 <SelectField
                                     label="Medicine Usage"
                                     name="usageId"
-                                    value={medicineData.usageId}
+                                    value={input.usageId}
                                     options={selectOptions.usage}
                                     onChange={handleChange}
                                     valueKey="_id"
@@ -201,8 +198,8 @@ export default function AddMedicine() {
 
                                 <InputField
                                     type="number"
-                                    name="quantity"
-                                    value={medicineData.quantity}
+                                    name="stock"
+                                    value={input.stock}
                                     onChange={handleChange}
                                     label="Medicine Quantity"
                                     placeholder="Quantity in stock"
@@ -211,7 +208,7 @@ export default function AddMedicine() {
                                 <InputField
                                     type="number"
                                     name="price"
-                                    value={medicineData.price}
+                                    value={input.price}
                                     onChange={handleChange}
                                     label="Medicine Price"
                                     placeholder="Price per unit"
@@ -220,7 +217,7 @@ export default function AddMedicine() {
                                 <InputField
                                     type="date"
                                     name="expireDate"
-                                    value={medicineData.expireDate}
+                                    value={input.expireDate}
                                     onChange={handleChange}
                                     label="Medicine Expire Date"
                                 />
@@ -228,7 +225,7 @@ export default function AddMedicine() {
                                 <SelectField
                                     label="Status"
                                     name="status"
-                                    value={medicineData.status}
+                                    value={input.status}
                                     options={[{ status: "active" }, { status: "inactive" }]}
                                     onChange={handleChange}
                                     labelKey="status"

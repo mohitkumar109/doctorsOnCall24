@@ -1,12 +1,12 @@
+import React from "react";
 import { Link } from "react-router-dom";
 import { BsPencil, BsTrash3Fill } from "react-icons/bs";
-import { capitalizeFirstLetter } from "../../utils/helper";
 
-const GenericTable = ({ record, sn, changeStatus }) => {
+const BrandTable = ({ record, sn, changeStatus }) => {
     return (
         <tr>
             <td>{sn + 1}</td>
-            <td>{capitalizeFirstLetter(record?.genericName)}</td>
+            <td>{record?.brandName}</td>
             <td>{record?.createdBy?.fullName || "None"}</td>
             <td>{record?.updatedBy?.fullName || "None"}</td>
             <td>{record?.createdAt?.split("T")[0]}</td>
@@ -36,7 +36,7 @@ const GenericTable = ({ record, sn, changeStatus }) => {
             </td>
             <td className="text-default">
                 <div className="d-flex gap-3">
-                    <Link to={`/edit-generic/${record._id}`} className="text-primary">
+                    <Link to={`/edit-brand/${record._id}`} className="text-primary">
                         <BsPencil />
                     </Link>
 
@@ -49,4 +49,4 @@ const GenericTable = ({ record, sn, changeStatus }) => {
     );
 };
 
-export default GenericTable;
+export default BrandTable;

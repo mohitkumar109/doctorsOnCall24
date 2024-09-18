@@ -1,15 +1,24 @@
 import { Link } from "react-router-dom";
 import { BsPencil, BsTrash3Fill } from "react-icons/bs";
-import { capitalizeFirstLetter } from "../../utils/helper";
 
-const GenericTable = ({ record, sn, changeStatus }) => {
+const CategoryTable = ({ record, changeStatus, handleCheckboxChange }) => {
     return (
         <tr>
-            <td>{sn + 1}</td>
-            <td>{capitalizeFirstLetter(record?.genericName)}</td>
+            <td>
+                <input
+                    type="checkbox"
+                    name="checked"
+                    checked={record.checked}
+                    onChange={() => {
+                        handleCheckboxChange(record._id);
+                    }}
+                    className="form-check-input"
+                />
+            </td>
+            <td>{record.categoryName}</td>
             <td>{record?.createdBy?.fullName || "None"}</td>
             <td>{record?.updatedBy?.fullName || "None"}</td>
-            <td>{record?.createdAt?.split("T")[0]}</td>
+            <td>{record.createdAt.split("T")[0]}</td>
             <td>
                 <div className="form-check form-switch">
                     <input
@@ -36,7 +45,7 @@ const GenericTable = ({ record, sn, changeStatus }) => {
             </td>
             <td className="text-default">
                 <div className="d-flex gap-3">
-                    <Link to={`/edit-generic/${record._id}`} className="text-primary">
+                    <Link to={`/edit-category/${record._id}`} className="text-primary">
                         <BsPencil />
                     </Link>
 
@@ -49,4 +58,4 @@ const GenericTable = ({ record, sn, changeStatus }) => {
     );
 };
 
-export default GenericTable;
+export default CategoryTable;

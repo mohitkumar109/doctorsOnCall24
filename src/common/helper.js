@@ -1,5 +1,6 @@
 import { Dependencies } from "../packages/index.js";
 import { ApiError } from "../utils/ApiError.js";
+import { MODEL } from "../models/index.js";
 
 let OnConsole = (message, data) => {
     console.log(message);
@@ -50,9 +51,29 @@ function actionOnMultipleIds(ids, status, model) {
     }
 }
 
+async function aggregation(query, model) {
+    try {
+        let data = await model.aggregate(query).collation({ locale: "en", strength: 1 }).exec();
+        return data;
+    } catch (error) {
+        return Promise.reject(error);
+    }
+}
+
+async function getDataLength(query, model) {
+    try {
+        let data = await model.countDocuments(query);
+        return data.length;
+    } catch (error) {
+        return Promise.reject(error);
+    }
+}
+
 export const Helpers = {
     OnConsole,
     capitalize,
     actionOnSingleId,
     actionOnMultipleIds,
+    aggregation,
+    getDataLength,
 };

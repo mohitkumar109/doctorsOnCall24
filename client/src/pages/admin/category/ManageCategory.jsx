@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { BsPencil, BsTrash3Fill } from "react-icons/bs";
-import { Link } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import Pagination from "../../../components/Pagination";
 import Filter from "../../../components/Filter";
@@ -9,6 +7,7 @@ import GroupButton from "../../../components/GroupButton";
 import useService from "../../../hooks/useService";
 import { apiEnd } from "../../../services/adminApi";
 import { Action } from "./CategoryAction";
+import CategoryTable from "../../../components/admin/CategoryTable";
 
 export default function ManageCategory() {
     const { postData } = useService();
@@ -97,104 +96,23 @@ export default function ManageCategory() {
                                             />
                                         </th>
                                         <th className="col-6">Category</th>
-                                        <th className="col-2">CreatedBy</th>
-                                        <th className="col-2">UpdatedBy</th>
-                                        <th className="col-2">CreatedAt</th>
-                                        <th className="col-1">Status</th>
-                                        <th className="col-1">Actions</th>
+                                        <th scope="col">CreatedBy</th>
+                                        <th scope="col">UpdatedBy</th>
+                                        <th scope="col">CreatedAt</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {filteredData?.length > 0 ? (
-                                        <>
-                                            {filteredData.map((cat, index) => (
-                                                <tr key={index}>
-                                                    <td>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="checked"
-                                                            checked={cat.checked}
-                                                            onChange={() => {
-                                                                handleCheckboxChange(cat._id);
-                                                            }}
-                                                            className="form-check-input"
-                                                        />
-                                                    </td>
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {cat.categoryName}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {cat?.createdBy?.fullName || "None"}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {cat?.updatedBy?.fullName || "None"}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {cat.createdAt.split("T")[0]}
-                                                        </span>
-                                                    </td>
-
-                                                    <td>
-                                                        <div className="form-check form-switch">
-                                                            <input
-                                                                type="checkbox"
-                                                                role="switch"
-                                                                id={`flexSwitchCheckChecked-${cat._id}`}
-                                                                checked={cat.status === "active"}
-                                                                className="form-check-input mt-2"
-                                                                onChange={() =>
-                                                                    changeStatus(
-                                                                        cat._id,
-                                                                        cat.status === "active"
-                                                                            ? "inactive"
-                                                                            : "active"
-                                                                    )
-                                                                }
-                                                            />
-                                                            <span
-                                                                className={`badge ${
-                                                                    cat.status === "active"
-                                                                        ? "bg-success"
-                                                                        : "bg-danger"
-                                                                }`}
-                                                            >
-                                                                {cat.status === "active"
-                                                                    ? "Active"
-                                                                    : "Inactive"}
-                                                            </span>
-                                                        </div>
-                                                    </td>
-                                                    <td className="text-default">
-                                                        <div className="d-flex gap-3">
-                                                            <Link
-                                                                to={`/edit-category/${cat._id}`}
-                                                                className="text-primary"
-                                                            >
-                                                                <BsPencil />
-                                                            </Link>
-
-                                                            <Link to="#" className="text-danger">
-                                                                <BsTrash3Fill
-                                                                    onClick={() =>
-                                                                        changeStatus(
-                                                                            cat._id,
-                                                                            "delete"
-                                                                        )
-                                                                    }
-                                                                />
-                                                            </Link>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </>
+                                        filteredData.map((cat, index) => (
+                                            <CategoryTable
+                                                key={index}
+                                                record={cat}
+                                                changeStatus={changeStatus}
+                                                handleCheckboxChange={handleCheckboxChange}
+                                            />
+                                        ))
                                     ) : (
                                         <tr>
                                             <td colSpan="12" className="p-4 text-center">

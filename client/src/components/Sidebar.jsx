@@ -99,14 +99,14 @@ const menuItems = [
                 subItems: [
                     {
                         icon: <BsIcons.BsCardList className="bi" />,
-                        label: "Assign to Store",
-                        href: "/assign-store",
+                        label: "Select Store",
+                        href: "/select-store",
                         visible: ["admin"],
                     },
                     {
                         icon: <BsIcons.BsCardList className="bi" />,
-                        label: "Manage Inventory",
-                        href: "/manage-inventory",
+                        label: "View Store Inventory",
+                        href: "/store-inventory",
                         visible: ["admin"],
                     },
                 ],
@@ -185,8 +185,8 @@ const Sidebar = () => {
     };
 
     return (
-        <div className={`sidebar ${toggle && "active"}`}>
-            <div className="sidebar-header">Doctor On Call</div>
+        <div className={`sidebar accordion ${toggle && "active"}`}>
+            <div className="sidebar-header ps-3">Doctor On Call</div>
             <ul className="list-unstyled components">
                 {menuItems.map((section) => (
                     <div key={section.title}>

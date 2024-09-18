@@ -1,7 +1,8 @@
 import { Dependencies } from "../../packages/index.js";
 import { asyncHandler, ApiResponse, ApiError, modifyResponse } from "../../utils/index.js";
-import { Helpers, PAGINATION_LIMIT } from "../../common/index.js";
+import { Helpers } from "../../common/index.js";
 import { MODEL } from "../../models/index.js";
+import { AdminMasterQueryBuilder } from "../../entity/admin.master.entity.js";
 
 // description    Admin Master Module
 // route          POST /api/v1/admin/
@@ -38,57 +39,17 @@ class Controller {
     // route            GET /api/v1/admin/generic
     // access           Private
     fetchGeneric = asyncHandler(async (req, res) => {
-        const filter = {};
-        const { search, status, sorting } = req.query;
-
-        if (search) {
-            filter.genericName = { $regex: search, $options: "i" };
-        }
-
-        if (status) {
-            filter.status = status;
-        }
-
-        //Sorting
-        let sortOption = {};
-        switch (sorting) {
-            case "1":
-                sortOption.createdAt = -1; // Sort by createdAt field in descending order (latest first)
-                break;
-            case "2":
-                sortOption.createdAt = 1; // Sort by createdAt field in ascending order (oldest first)
-                break;
-            case "3":
-                sortOption.genericName = 1;
-                break;
-            case "4":
-                sortOption.genericName = -1;
-                break;
-            default:
-                sortOption.createdAt = -1;
-                break;
-        }
-
-        //Pagination
-        const limit = parseInt(req.query.limit) || PAGINATION_LIMIT;
-        const skip = parseInt(req.query.page - 1) * limit;
-
-        const query = await MODEL.Generic.find(filter, { ...modifyResponse, checked: 0 })
-            .sort(sortOption)
-            .limit(limit)
-            .skip(skip)
-            .populate("createdBy", "fullName")
-            .populate("updatedBy", "fullName");
-
-        const totalResults = await MODEL.Generic.find(filter).countDocuments();
-        const totalPages = Math.ceil(totalResults / limit);
+        let queryData = AdminMasterQueryBuilder.genericList(req.query);
+        const query = await Helpers.aggregation(queryData, MODEL.Generic);
+        // Total Items and Pages
+        const totalResult = await Helpers.getDataLength(query, MODEL.Generic);
+        const totalPages = Math.ceil(totalResult / parseInt(req.query.limit || 10));
 
         if (!query) {
-            throw new ApiError(400, "Generic name not found");
+            throw new ApiError(400, "Generic name is not found");
         }
-
         const pagination = {
-            totalResult: totalResults,
+            totalResult: totalResult,
             totalPages: totalPages,
             currentPage: parseInt(req.query.page),
         };
@@ -226,57 +187,16 @@ class Controller {
     // route            GET /api/v1/admin/category/
     // access           Private
     fetchCategory = asyncHandler(async (req, res) => {
-        const filter = {};
-        const { search, status, sorting } = req.query;
-
-        if (search) {
-            filter.categoryName = { $regex: search, $options: "i" };
-        }
-
-        if (status) {
-            filter.status = status;
-        }
-
-        //Sorting
-        let sortOption = {};
-        switch (sorting) {
-            case "1":
-                sortOption.createdAt = -1; // Sort by createdAt field in descending order (latest first)
-                break;
-            case "2":
-                sortOption.createdAt = 1; // Sort by createdAt field in ascending order (oldest first)
-                break;
-            case "3":
-                sortOption.categoryName = 1;
-                break;
-            case "4":
-                sortOption.categoryName = -1;
-                break;
-            default:
-                sortOption.createdAt = 1;
-                break;
-        }
-
-        //Pagination
-        const limit = parseInt(req.query.limit) || PAGINATION_LIMIT;
-        const skip = parseInt(req.query.page - 1) * limit;
-
-        const query = await MODEL.Category.find(filter, { ...modifyResponse })
-            .sort(sortOption)
-            .limit(limit)
-            .skip(skip)
-            .populate("createdBy", "fullName")
-            .populate("updatedBy", "fullName");
-
-        const totalResults = await MODEL.Category.find(filter).countDocuments();
-        const totalPages = Math.ceil(totalResults / limit);
-
+        let queryData = AdminMasterQueryBuilder.categoryList(req.query);
+        const query = await Helpers.aggregation(queryData, MODEL.Category);
+        // Total Items and Pages
+        const totalResult = await MODEL.Category.countDocuments(queryData);
+        const totalPages = Math.ceil(totalResult / parseInt(req.query.limit || 10));
         if (!query) {
-            throw new ApiError(400, "Category is not found");
+            throw new ApiError(400, "Category name is not found");
         }
-
         const pagination = {
-            totalResult: totalResults,
+            totalResult: totalResult,
             totalPages: totalPages,
             currentPage: parseInt(req.query.page),
         };
@@ -405,60 +325,19 @@ class Controller {
     // route            GET /api/v1/admin/brand
     // access           Private
     fetchBrand = asyncHandler(async (req, res) => {
-        const filter = {};
-        const { search, status, sorting } = req.query;
-
-        if (search) {
-            filter.brandName = { $regex: search, $options: "i" };
-        }
-
-        if (status) {
-            filter.status = status;
-        }
-
-        //Sorting
-        let sortOption = {};
-        switch (sorting) {
-            case "1":
-                sortOption.createdAt = -1; // Sort by createdAt field in descending order (latest first)
-                break;
-            case "2":
-                sortOption.createdAt = 1; // Sort by createdAt field in ascending order (oldest first)
-                break;
-            case "3":
-                sortOption.brandName = 1;
-                break;
-            case "4":
-                sortOption.brandName = -1;
-                break;
-            default:
-                sortOption.createdAt = -1;
-                break;
-        }
-
-        //Pagination
-        const limit = parseInt(req.query.limit) || PAGINATION_LIMIT;
-        const skip = parseInt(req.query.page - 1) * limit;
-
-        const query = await MODEL.Brand.find(filter, { ...modifyResponse })
-            .sort(sortOption)
-            .limit(limit)
-            .skip(skip)
-            .populate("createdBy", "fullName")
-            .populate("updatedBy", "fullName");
-        const totalResults = await MODEL.Brand.find(filter, { ...modifyResponse }).countDocuments();
-        const totalPages = Math.ceil(totalResults / limit);
-
+        let queryData = AdminMasterQueryBuilder.brandList(req.query);
+        const query = await Helpers.aggregation(queryData, MODEL.Brand);
+        // Total Items and Pages
+        const totalResult = await MODEL.Brand.countDocuments(queryData);
+        const totalPages = Math.ceil(totalResult / parseInt(req.query.limit || 10));
         if (!query) {
             throw new ApiError(400, "Brand name is not found");
         }
-
         const pagination = {
-            totalResult: totalResults,
+            totalResult: totalResult,
             totalPages: totalPages,
             currentPage: parseInt(req.query.page),
         };
-
         return res
             .status(200)
             .json(new ApiResponse(200, { results: query, pagination }, "All list of brand"));
@@ -566,56 +445,16 @@ class Controller {
     // route            GET /api/v1/admin/strength
     // access           Private
     fetchStrength = asyncHandler(async (req, res) => {
-        const filter = {};
-        const { search, status, sorting } = req.query;
-
-        if (search) {
-            filter.strengthName = { $regex: search, $options: "i" };
-        }
-
-        if (status) {
-            filter.status = status;
-        }
-
-        //Sorting
-        let sortOption = {};
-        switch (sorting) {
-            case "1":
-                sortOption.createdAt = -1; // Sort by createdAt field in descending order (latest first)
-                break;
-            case "2":
-                sortOption.createdAt = 1; // Sort by createdAt field in ascending order (oldest first)
-                break;
-            case "3":
-                sortOption.strengthName = 1;
-                break;
-            case "4":
-                sortOption.strengthName = -1;
-                break;
-            default:
-                sortOption.createdAt = -1;
-                break;
-        }
-
-        //Pagination
-        const limit = parseInt(req.query.limit) || PAGINATION_LIMIT;
-        const skip = parseInt(req.query.page - 1) * limit;
-
-        const query = await MODEL.Strength.find(filter)
-            .sort(sortOption)
-            .limit(limit)
-            .skip(skip)
-            .populate("createdBy", "fullName")
-            .populate("updatedBy", "fullName");
-        const totalResults = await MODEL.Strength.find(filter).countDocuments();
-        const totalPages = Math.ceil(totalResults / limit);
-
+        let queryData = AdminMasterQueryBuilder.strengthList(req.query);
+        const query = await Helpers.aggregation(queryData, MODEL.Strength);
+        // Total Items and Pages
+        const totalResult = await MODEL.Strength.countDocuments(queryData);
+        const totalPages = Math.ceil(totalResult / parseInt(req.query.limit || 10));
         if (!query) {
             throw new ApiError(400, "Strength is not found");
         }
-
         const pagination = {
-            totalResult: totalResults,
+            totalResult: totalResult,
             totalPages: totalPages,
             currentPage: parseInt(req.query.page),
         };
@@ -732,56 +571,17 @@ class Controller {
     // route            GET /api/v1/admin/usage
     // access           Private
     fetchUsage = asyncHandler(async (req, res) => {
-        const filter = {};
-        const { search, status, sorting } = req.query;
-
-        if (search) {
-            filter.usageName = { $regex: search, $options: "i" };
-        }
-
-        if (status) {
-            filter.status = status;
-        }
-
-        //Sorting
-        let sortOption = {};
-        switch (sorting) {
-            case "1":
-                sortOption.createdAt = -1; // Sort by createdAt field in descending order (latest first)
-                break;
-            case "2":
-                sortOption.createdAt = 1; // Sort by createdAt field in ascending order (oldest first)
-                break;
-            case "3":
-                sortOption.usageName = 1;
-                break;
-            case "4":
-                sortOption.usageName = -1;
-                break;
-            default:
-                sortOption.createdAt = -1;
-                break;
-        }
-
-        //Pagination
-        const limit = parseInt(req.query.limit) || PAGINATION_LIMIT;
-        const skip = parseInt(req.query.page - 1) * limit;
-
-        const query = await MODEL.Usage.find(filter)
-            .sort(sortOption)
-            .limit(limit)
-            .skip(skip)
-            .populate("createdBy", "fullName")
-            .populate("updatedBy", "fullName");
-        const totalResults = await MODEL.Usage.find(filter).countDocuments();
-        const totalPages = Math.ceil(totalResults / limit);
+        let queryData = AdminMasterQueryBuilder.usageList(req.query);
+        const query = await Helpers.aggregation(queryData, MODEL.Usage);
+        // Total Items and Pages
+        const totalResult = await MODEL.Usage.countDocuments(queryData);
+        const totalPages = Math.ceil(totalResult / parseInt(req.query.limit || 10));
 
         if (!query) {
             throw new ApiError(400, "Usage is not found");
         }
-
         const pagination = {
-            totalResult: totalResults,
+            totalResult: totalResult,
             totalPages: totalPages,
             currentPage: parseInt(req.query.page),
         };

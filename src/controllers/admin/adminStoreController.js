@@ -275,6 +275,256 @@ class Controller {
             : `Selected ${req.params.status} successfully`;
         return res.status(200).json(new ApiResponse(200, {}, successMessage));
     });
+
+    /*------------ Store Inventory-------------*/
+
+    addStoreInventory = asyncHandler(async (req, res) => {
+        const { storeId, items } = req.body;
+
+        if (!storeId) throw new ApiError(401, "All Fields are required");
+
+        if (!items || items.length < 1) {
+            throw new ApiError(401, "No cart items provided");
+        }
+
+        for (const item of items) {
+            const dbMedicine = await MODEL.Medicine.findOne({ _id: item.medicineId });
+            if (!dbMedicine) {
+                throw new ApiError(401, `No medicine with id : ${item.medicineId}`);
+            }
+            if (item.quantity > dbMedicine.stock) {
+                // if quantity is greater throw an error
+                throw new ApiError(
+                    400,
+                    dbMedicine.stock > 0
+                        ? "Only " +
+                          dbMedicine.stock +
+                          " Medicine are remaining. But you are adding " +
+                          item.quantity
+                        : "Medicine is out of stock"
+                );
+            }
+            // Used this code for medicine stock quantity update
+            dbMedicine.$inc("stock", -1 * item.quantity);
+            await dbMedicine.save();
+        }
+
+        const total = items?.reduce((sum, item) => sum + item.totalPrice, 0);
+
+        const newInventory = new MODEL.StoreInventory({
+            storeId,
+            items,
+            totalAmount: total,
+            status: "active",
+            createdBy: req?.user?._id,
+        });
+
+        const savedInventory = await newInventory.save();
+
+        return res
+            .status(201)
+            .json(new ApiResponse(201, savedInventory, "Store Inventory created successfully"));
+    });
+
+    fetchStoreInventory = asyncHandler(async (req, res) => {
+        // const storeInventoryId = req.params.id;
+        // const { search, status, sorting } = req.query;
+
+        // let filter = {};
+        // // if (search) {
+        // //     filter.storeName = { $regex: search, $options: "i" };
+        // // }
+
+        // // Filter by categoryId
+        // if (storeInventoryId) {
+        //     filter.storeId = new Dependencies.mongoose.Types.ObjectId(storeInventoryId);
+        // }
+
+        // if (status) {
+        //     filter.status = status;
+        // }
+
+        // // Sorting
+        // let sortOption = {};
+        // switch (sorting) {
+        //     case "1":
+        //         sortOption.createdAt = -1; // Sort by createdAt field in descending order (latest first)
+        //         break;
+        //     case "2":
+        //         sortOption.createdAt = 1; // Sort by createdAt field in ascending order (oldest first)
+        //         break;
+        //     default:
+        //         sortOption.createdAt = -1;
+        //         break;
+        // }
+
+        // //Pagination
+        // const limit = parseInt(req.query.limit) || PAGINATION_LIMIT;
+        // const skip = parseInt(req.query.page - 1) * limit;
+
+        // const query = await MODEL.StoreInventory.find(filter, { ...modifyResponse, checked: 0 })
+        //     .sort(sortOption)
+        //     .limit(limit)
+        //     .skip(skip)
+        //     .populate("items.medicineId", "name -_id")
+        //     .populate("createdBy", "fullName -_id");
+
+        // // Total Items and Pages
+        // const totalResult = await MODEL.StoreInventory.countDocuments(filter);
+        // const totalPages = Math.ceil(totalResult / limit);
+
+        // const pagination = {
+        //     totalResult: totalResult,
+        //     totalPages: totalPages,
+        //     currentPage: parseInt(req.query.page),
+        // };
+
+        // return res
+        //     .status(200)
+        //     .json(
+        //         new ApiResponse(200, { results: query, pagination }, "All list of store inventory")
+        //     );
+
+        const storeInventoryId = req.params.id;
+        const { search, status, sorting } = req.query;
+
+        let filter = {};
+
+        // Filter by storeInventoryId
+        if (storeInventoryId) {
+            filter.storeId = new Dependencies.mongoose.Types.ObjectId(storeInventoryId);
+        }
+
+        if (status) {
+            filter.status = status;
+        }
+
+        // Sorting
+        let sortOption = {};
+        switch (sorting) {
+            case "1":
+                sortOption.createdAt = -1; // Descending (latest first)
+                break;
+            case "2":
+                sortOption.createdAt = 1; // Ascending (oldest first)
+                break;
+            default:
+                sortOption.createdAt = -1;
+                break;
+        }
+
+        // Pagination
+        const limit = parseInt(req.query.limit) || PAGINATION_LIMIT;
+        const skip = (parseInt(req.query.page) - 1) * limit;
+
+        // Aggregation query with group by orderData
+
+        const pipeline = [
+            { $match: filter },
+
+            {
+                $group: {
+                    _id: "$storeId", // Group by storeId field
+                    items: { $push: "$$ROOT" }, // Push all document data into items array
+                    count: { $sum: 1 }, // Count the number of items per group
+                },
+            },
+
+            { $unwind: "$items" },
+
+            { $sort: sortOption },
+            //{ $skip: skip },
+            { $limit: limit },
+
+            {
+                $lookup: {
+                    from: "medicine", // The medicine collection
+                    localField: "items.medicineId",
+                    foreignField: "_id",
+                    as: "medicineDetails", // Populating medicine details
+                },
+            },
+
+            {
+                $lookup: {
+                    from: "users", // The users collection
+                    localField: "createdBy",
+                    foreignField: "_id",
+                    as: "creatorDetails", // Populating creator details
+                },
+            },
+        ];
+
+        //Query
+        const query = await MODEL.StoreInventory.aggregate(pipeline);
+
+        // Total Items and Pages
+        const totalResult = await MODEL.StoreInventory.countDocuments(filter);
+        const totalPages = Math.ceil(totalResult / limit);
+
+        const pagination = {
+            totalResult: totalResult,
+            totalPages: totalPages,
+            currentPage: parseInt(req.query.page),
+        };
+
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    200,
+                    { results: query, pagination },
+                    "All list of store inventory grouped by orderData"
+                )
+            );
+    });
+
+    fetchStoreInventoryById = asyncHandler(async (req, res) => {
+        const storeInventoryId = req.params.id;
+        if (!Dependencies.mongoose.isValidObjectId(storeInventoryId)) {
+            throw new ApiError(400, "This is not valid id");
+        }
+
+        const storeInventory = await MODEL.StoreInventory.findById(storeInventoryId);
+        if (!storeInventory) {
+            throw new ApiError(400, "Store Inventory not found");
+        }
+        return res
+            .status(200)
+            .json(new ApiResponse(200, storeInventory, "Get Store Inventory Records"));
+    });
+
+    /*------------ Store Cart -----------------*/
+
+    addStoreCart = asyncHandler(async (req, res) => {
+        const { storeId, medicineId, quantity } = req.body;
+        //const cart = await MODEL.StoreCart.findOne({ createdBy: req?.user?._id });
+        let cart = await MODEL.StoreCart.findOne({ storeId: storeId, createdBy: req?.user?._id });
+
+        if (cart) {
+            // If cart exists for user, update it
+            const itemIndex = cart.items.findIndex(
+                (item) => item.medicineId.toString() === medicineId
+            );
+            if (itemIndex !== -1) {
+                // Medicine exists in cart, update the quantity
+                cart.items[itemIndex].quantity += quantity;
+            } else {
+                // Medicine does not exist in cart, add new item
+                cart.items.push({ medicineId: medicineId, quantity });
+            }
+            await cart.save();
+            res.status(200).json(cart);
+        } else {
+            // If no cart exists for user, create a new cart
+            const newCart = await MODEL.StoreCart.create({
+                storeId: storeId,
+                items: [{ medicineId: medicineId, quantity }],
+                createdBy: req?.user?._id,
+            });
+            res.status(201).json(newCart);
+        }
+    });
 }
 
 export const AdminStoreController = new Controller();

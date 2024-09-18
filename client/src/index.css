@@ -129,6 +129,13 @@ li {
     background-color: #e74c3c;
 }
 
+.section-title {
+    padding: 1.75rem 1rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
 /*--------------Model CSS ------------*/
 .modal-overlay {
     position: fixed;

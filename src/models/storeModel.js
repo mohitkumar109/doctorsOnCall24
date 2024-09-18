@@ -21,12 +21,6 @@ const storeSchema = new Dependencies.mongoose.Schema(
             email: { type: String },
             mobile: { type: String },
         },
-        medicine: [
-            {
-                type: Dependencies.mongoose.Schema.Types.ObjectId,
-                ref: "Medicines",
-            },
-        ],
         checked: {
             type: Boolean,
             default: false,

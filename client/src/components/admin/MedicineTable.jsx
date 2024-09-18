@@ -1,15 +1,22 @@
+import React from "react";
 import { Link } from "react-router-dom";
 import { BsPencil, BsTrash3Fill } from "react-icons/bs";
-import { capitalizeFirstLetter } from "../../utils/helper";
+import { indianDateFormat } from "../../utils/helper";
 
-const GenericTable = ({ record, sn, changeStatus }) => {
+const MedicineTable = ({ record, sn, changeStatus }) => {
     return (
         <tr>
             <td>{sn + 1}</td>
-            <td>{capitalizeFirstLetter(record?.genericName)}</td>
-            <td>{record?.createdBy?.fullName || "None"}</td>
-            <td>{record?.updatedBy?.fullName || "None"}</td>
-            <td>{record?.createdAt?.split("T")[0]}</td>
+            <td>{record?.name}</td>
+            <td>{record?.generic?.genericName}</td>
+            <td>{record?.category?.categoryName}</td>
+            <td>{record?.brand?.brandName}</td>
+            <td>{record?.strength?.strengthName}</td>
+            <td>{record?.usage?.usageName}</td>
+            <td>{indianDateFormat(record?.expireDate)}</td>
+            <td>{record?.stock}</td>
+            <td>{record?.price}</td>
+            <td>{indianDateFormat(record?.createdAt)}</td>
             <td>
                 <div className="form-check form-switch">
                     <input
@@ -36,7 +43,7 @@ const GenericTable = ({ record, sn, changeStatus }) => {
             </td>
             <td className="text-default">
                 <div className="d-flex gap-3">
-                    <Link to={`/edit-generic/${record._id}`} className="text-primary">
+                    <Link to={`/edit-medicine/${record._id}`} className="text-primary">
                         <BsPencil />
                     </Link>
 
@@ -49,4 +56,4 @@ const GenericTable = ({ record, sn, changeStatus }) => {
     );
 };
 
-export default GenericTable;
+export default MedicineTable;

@@ -9,15 +9,15 @@ const medicineProductSchema = new Dependencies.mongoose.Schema(
             lowercase: true,
             trim: true,
         },
-        genericId: {
-            type: Dependencies.mongoose.Schema.Types.ObjectId,
-            ref: "Generic",
-            required: [true, "Generic id required"],
-        },
         categoryId: {
             type: Dependencies.mongoose.Schema.Types.ObjectId,
             ref: "Category",
             required: [true, "Category id required"],
+        },
+        genericId: {
+            type: Dependencies.mongoose.Schema.Types.ObjectId,
+            ref: "Generic",
+            required: [true, "Generic id required"],
         },
         brandId: {
             type: Dependencies.mongoose.Schema.Types.ObjectId,
@@ -34,15 +34,15 @@ const medicineProductSchema = new Dependencies.mongoose.Schema(
             ref: "Usage",
             required: [true, "Usage id required"],
         },
-        quantity: {
-            type: Number,
-            required: [true, "Quantity is required"],
-            min: [1, "Quantity must be at least 1"],
-        },
         price: {
             type: Number,
             required: [true, "Price is required"],
             min: [0, "Price must be a positive number"],
+        },
+        stock: {
+            type: Number,
+            required: [true, "Quantity is required"],
+            min: [1, "Quantity must be at least 1"],
         },
         expireDate: {
             type: Date,
@@ -69,3 +69,5 @@ const medicineProductSchema = new Dependencies.mongoose.Schema(
 );
 
 export const Medicine = Dependencies.mongoose.model("Medicine", medicineProductSchema);
+
+export const getMedicineName = (id) => Medicine.findById(id);

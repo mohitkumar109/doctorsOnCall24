@@ -1,6 +1,7 @@
 import { Dependencies } from "../../packages/index.js";
 import { asyncHandler, ApiResponse, ApiError, modifyResponse } from "../../utils/index.js";
-import { Helpers, PAGINATION_LIMIT } from "../../common/index.js";
+import { AdminMasterQueryBuilder } from "../../entity/admin.master.entity.js";
+import { Helpers } from "../../common/index.js";
 import { MODEL } from "../../models/index.js";
 
 class Controller {
@@ -14,7 +15,7 @@ class Controller {
             brandId,
             strengthId,
             usageId,
-            quantity,
+            stock,
             price,
             expireDate,
             status,
@@ -27,7 +28,7 @@ class Controller {
             !brandId ||
             !strengthId ||
             !usageId ||
-            !quantity ||
+            !stock ||
             !price ||
             !expireDate
         ) {
@@ -46,7 +47,7 @@ class Controller {
             brandId,
             strengthId,
             usageId,
-            quantity,
+            stock,
             price,
             expireDate,
             status: status || "active",
@@ -59,149 +60,14 @@ class Controller {
     });
 
     fetchMedicine = asyncHandler(async (req, res) => {
-        const { search, status, sorting } = req.query;
-
-        let filter = {};
-        if (search) {
-            filter.name = { $regex: search, $options: "i" };
-        }
-
-        if (status) {
-            filter.status = status;
-        }
-
-        // Sorting
-        let sortOption = {};
-        switch (sorting) {
-            case "1":
-                sortOption.createdAt = -1; // Sort by createdAt field in descending order (latest first)
-                break;
-            case "2":
-                sortOption.createdAt = 1; // Sort by createdAt field in ascending order (oldest first)
-                break;
-            case "3":
-                sortOption.name = 1;
-                break;
-            case "4":
-                sortOption.name = -1;
-                break;
-            default:
-                sortOption.createdAt = -1;
-                break;
-        }
-
-        //Pagination
-        const limit = parseInt(req.query.limit) || PAGINATION_LIMIT;
-        const skip = parseInt(req.query.page - 1) * limit;
-
-        // Aggregation Pipeline
-
-        const pipeline = [
-            { $match: filter },
-            { $sort: sortOption },
-            { $skip: skip },
-            { $limit: limit },
-
-            {
-                $lookup: {
-                    from: "generics",
-                    localField: "genericId",
-                    foreignField: "_id",
-                    as: "generic",
-                },
-            },
-
-            {
-                $lookup: {
-                    from: "categories",
-                    localField: "categoryId",
-                    foreignField: "_id",
-                    as: "category",
-                },
-            },
-
-            {
-                $lookup: {
-                    from: "brands",
-                    localField: "brandId",
-                    foreignField: "_id",
-                    as: "brand",
-                },
-            },
-
-            {
-                $lookup: {
-                    from: "strengths",
-                    localField: "strengthId",
-                    foreignField: "_id",
-                    as: "strength",
-                },
-            },
-
-            {
-                $lookup: {
-                    from: "usages",
-                    localField: "usageId",
-                    foreignField: "_id",
-                    as: "usage",
-                },
-            },
-
-            {
-                $lookup: {
-                    from: "users",
-                    localField: "createdBy",
-                    foreignField: "_id",
-                    as: "createdByUser",
-                },
-            },
-
-            {
-                $lookup: {
-                    from: "users",
-                    localField: "updatedBy",
-                    foreignField: "_id",
-                    as: "updatedByUser",
-                },
-            },
-
-            {
-                $addFields: {
-                    generic: { $arrayElemAt: ["$generic", 0] },
-                    category: { $arrayElemAt: ["$category", 0] },
-                    brand: { $arrayElemAt: ["$brand", 0] },
-                    strength: { $arrayElemAt: ["$strength", 0] },
-                    usage: { $arrayElemAt: ["$usage", 0] },
-                    createdByUser: { $arrayElemAt: ["$createdByUser", 0] },
-                    updatedByUser: { $arrayElemAt: ["$updatedByUser", 0] },
-                },
-            },
-            {
-                $project: {
-                    name: 1,
-                    quantity: 1,
-                    price: 1,
-                    expireDate: 1,
-                    status: 1,
-                    createdAt: 1,
-                    "generic.genericName": 1,
-                    "category.categoryName": 1,
-                    "brand.brandName": 1,
-                    "strength.strengthName": 1,
-                    "usage.usageName": 1,
-                    "createdByUser.fullName": 1,
-                    "updatedByUser.fullName": 1,
-                },
-            },
-        ];
-
-        //Query
-        const query = await MODEL.Medicine.aggregate(pipeline);
-
+        let queryData = AdminMasterQueryBuilder.medicineList(req.query);
+        const query = await Helpers.aggregation(queryData, MODEL.Medicine);
         // Total Items and Pages
-        const totalResult = await MODEL.Medicine.countDocuments(filter);
-        const totalPages = Math.ceil(totalResult / limit);
-
+        const totalResult = await MODEL.Medicine.countDocuments(queryData);
+        const totalPages = Math.ceil(totalResult / parseInt(req.query.limit || 10));
+        if (!query) {
+            throw new ApiError(400, "Medicine is not found");
+        }
         const pagination = {
             totalResult: totalResult,
             totalPages: totalPages,
@@ -247,7 +113,7 @@ class Controller {
             brandId,
             strengthId,
             usageId,
-            quantity,
+            stock,
             price,
             expireDate,
             status,
@@ -281,7 +147,7 @@ class Controller {
                     brandId,
                     strengthId,
                     usageId,
-                    quantity,
+                    stock,
                     price,
                     expireDate,
                     status: status || "active",
