@@ -467,6 +467,101 @@ export const AdminMasterQueryBuilder = {
         return query;
     },
 
+    storeList: (data) => {
+        let query = [];
+        let match = {};
+
+        if (data.search) {
+            match["storeName"] = { $regex: data.search, $options: "i" };
+        }
+
+        if (data.status) {
+            match["status"] = data.status;
+        }
+
+        query.push({
+            $match: match,
+        });
+
+        switch (data.sorting) {
+            case "1":
+                query.push({
+                    $sort: { createdAt: -1 }, // Sort by createdAt in descending order
+                });
+                break;
+            case "2":
+                query.push({
+                    $sort: { createdAt: 1 }, // Sort by createdAt in ascending order
+                });
+                break;
+            case "3":
+                query.push({
+                    $sort: { storeName: -1 }, // Sort by name in descending order
+                });
+                break;
+            case "4":
+                query.push({
+                    $sort: { storeName: 1 }, // Sort by name in ascending order
+                });
+                break;
+            default:
+                query.push({
+                    $sort: { createdAt: -1 }, // Default sorting by createdAt in descending order
+                });
+                break;
+        }
+
+        query.push({
+            $lookup: {
+                from: "users",
+                localField: "createdBy",
+                foreignField: "_id",
+                as: "createdByUser",
+            },
+        });
+
+        query.push({
+            $lookup: {
+                from: "users",
+                localField: "updatedBy",
+                foreignField: "_id",
+                as: "updatedByUser",
+            },
+        });
+
+        query.push({
+            $addFields: {
+                createdBy: { $arrayElemAt: ["$createdByUser", 0] },
+                updatedBy: { $arrayElemAt: ["$updatedByUser", 0] },
+            },
+        });
+
+        query.push({
+            $project: {
+                storeName: 1,
+                status: 1,
+                createdAt: 1,
+                "location.address": 1,
+                "location.phone": 1,
+                "contactPerson.email": 1,
+                "createdBy.fullName": 1,
+                "updatedBy.fullName": 1,
+            },
+        });
+
+        query.push({
+            $skip: data.limit
+                ? (parseInt(data.page) - 1) * parseInt(data.limit)
+                : (parseInt(data.page) - 1) * PAGINATION_LIMIT,
+        });
+
+        query.push({
+            $limit: data.limit ? parseInt(data.limit) : PAGINATION_LIMIT,
+        });
+
+        return query;
+    },
+
     medicineList: (data) => {
         let query = [];
         let match = {};
@@ -629,6 +724,77 @@ export const AdminMasterQueryBuilder = {
 
         query.push({
             $limit: data.limit ? parseInt(data.limit) : PAGINATION_LIMIT,
+        });
+
+        return query;
+    },
+
+    // Get Store Cart
+    storeCart: (data) => {
+        let query = [];
+        let match = {};
+
+        // Filter by storeId
+        if (data.storeId) {
+            match["storeId"] = new Dependencies.mongoose.Types.ObjectId(data.storeId);
+        }
+
+        // Filter by medicineId
+        if (data.medicineId) {
+            match["medicineId"] = new Dependencies.mongoose.Types.ObjectId(data.medicineId);
+        }
+
+        query.push({ $match: match });
+        query.push({ $unwind: "$items" });
+
+        query.push({
+            $lookup: {
+                from: "medicines",
+                localField: "items.medicineId",
+                foreignField: "_id",
+                as: "medicineProduct",
+            },
+        });
+
+        query.push({
+            $project: {
+                medicine: { $first: "$medicineProduct" },
+                quantity: "$items.quantity",
+            },
+        });
+
+        query.push({
+            $group: {
+                _id: "$_id",
+                items: { $push: "$$ROOT" },
+                cartTotal: { $sum: { $multiply: ["$medicine.price", "$quantity"] } }, // use medicine.price
+                totalItems: { $sum: 1 }, // Total number of unique items
+            },
+        });
+
+        query.push({
+            $lookup: {
+                from: "Users",
+                localField: "createdBy",
+                foreignField: "_id",
+                as: "createdByUser",
+            },
+        });
+
+        query.push({
+            $addFields: {
+                createdBy: { $arrayElemAt: ["$createdByUser", 0] },
+            },
+        });
+
+        query.push({
+            $project: {
+                "items.medicine.name": 1,
+                "items.medicine.price": 1,
+                "items.quantity": 1,
+                cartTotal: 1,
+                totalItems: 1, // Total number of unique items
+            },
         });
 
         return query;

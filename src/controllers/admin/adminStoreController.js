@@ -1,7 +1,8 @@
 import { Dependencies } from "../../packages/index.js";
-import { asyncHandler, ApiResponse, ApiError, modifyResponse } from "../../utils/index.js";
+import { asyncHandler, ApiResponse, ApiError } from "../../utils/index.js";
 import { Helpers, PAGINATION_LIMIT } from "../../common/index.js";
 import { MODEL } from "../../models/index.js";
+import { AdminMasterQueryBuilder } from "../../entity/admin.master.entity.js";
 
 class Controller {
     /*-------------Medicine Store--------------*/
@@ -45,156 +46,20 @@ class Controller {
     });
 
     fetchStore = asyncHandler(async (req, res) => {
-        // const filter = {};
-        // const { search, status, sorting } = req.query;
-
-        // if (search) {
-        //     filter.storeName = { $regex: search, $options: "i" };
-        // }
-
-        // if (status) {
-        //     filter.status = status;
-        // }
-
-        // //Sorting
-        // let sortOption = {};
-        // switch (sorting) {
-        //     case "1":
-        //         sortOption.createdAt = -1; // Sort by createdAt field in descending order (latest first)
-        //         break;
-        //     case "2":
-        //         sortOption.createdAt = 1; // Sort by createdAt field in ascending order (oldest first)
-        //         break;
-        //     case "3":
-        //         sortOption.storeName = 1;
-        //         break;
-        //     case "4":
-        //         sortOption.storeName = -1;
-        //         break;
-        //     default:
-        //         sortOption.createdAt = -1;
-        //         break;
-        // }
-
-        // //Pagination
-        // const limit = parseInt(req.query.limit) || PAGINATION_LIMIT;
-        // const skip = parseInt(req.query.page - 1) * limit;
-
-        // const query = await MODEL.Store.find(filter)
-        //     .sort(sortOption)
-        //     .limit(limit)
-        //     .skip(skip)
-        //     .populate("createdBy", "fullName")
-        //     .populate("updatedBy", "fullName")
-        //     .select(
-        //         "-checked -updatedAt -__v -location.state -location.city -location.pin -contactPerson.personName -contactPerson.mobile"
-        //     );
-        // const totalResults = await MODEL.Store.find(filter).countDocuments();
-        // const totalPages = Math.ceil(totalResults / limit);
-
-        // if (!query) {
-        //     throw new ApiError(400, "Store is not found");
-        // }
-
-        // const pagination = {
-        //     totalResult: totalResults,
-        //     totalPages: totalPages,
-        //     currentPage: parseInt(req.query.page),
-        // };
-
-        const { search, status, sorting } = req.query;
-
-        let filter = {};
-        if (search) {
-            filter.storeName = { $regex: search, $options: "i" };
-        }
-
-        if (status) {
-            filter.status = status;
-        }
-
-        // Sorting
-        let sortOption = {};
-        switch (sorting) {
-            case "1":
-                sortOption.createdAt = -1; // Sort by createdAt field in descending order (latest first)
-                break;
-            case "2":
-                sortOption.createdAt = 1; // Sort by createdAt field in ascending order (oldest first)
-                break;
-            case "3":
-                sortOption.storeName = 1;
-                break;
-            case "4":
-                sortOption.storeName = -1;
-                break;
-            default:
-                sortOption.createdAt = -1;
-                break;
-        }
-
-        //Pagination
-        const limit = parseInt(req.query.limit) || PAGINATION_LIMIT;
-        const skip = parseInt(req.query.page - 1) * limit;
-
-        // Aggregation Pipeline
-
-        const pipeline = [
-            { $match: filter },
-            { $sort: sortOption },
-            { $skip: skip },
-            { $limit: limit },
-            {
-                $lookup: {
-                    from: "users",
-                    localField: "createdBy",
-                    foreignField: "_id",
-                    as: "createdByUser",
-                },
-            },
-
-            {
-                $lookup: {
-                    from: "users",
-                    localField: "updatedBy",
-                    foreignField: "_id",
-                    as: "updatedByUser",
-                },
-            },
-
-            {
-                $addFields: {
-                    createdByUser: { $arrayElemAt: ["$createdByUser", 0] },
-                    updatedByUser: { $arrayElemAt: ["$updatedByUser", 0] },
-                },
-            },
-            {
-                $project: {
-                    storeName: 1,
-                    status: 1,
-                    createdAt: 1,
-                    "location.address": 1,
-                    "location.phone": 1,
-                    "contactPerson.email": 1,
-                    "createdByUser.fullName": 1,
-                    "updatedByUser.fullName": 1,
-                },
-            },
-        ];
-
-        //Query
-        const query = await MODEL.Store.aggregate(pipeline);
-
+        let queryData = AdminMasterQueryBuilder.storeList(req.query);
+        const query = await Helpers.aggregation(queryData, MODEL.Store);
         // Total Items and Pages
-        const totalResult = await MODEL.Store.countDocuments(filter);
-        const totalPages = Math.ceil(totalResult / limit);
+        const totalResult = await Helpers.getDataLength(query, MODEL.Store);
+        const totalPages = Math.ceil(totalResult / parseInt(req.query.limit || 10));
 
+        if (!query) {
+            throw new ApiError(400, "Store is not found");
+        }
         const pagination = {
             totalResult: totalResult,
             totalPages: totalPages,
             currentPage: parseInt(req.query.page),
         };
-
         return res
             .status(200)
             .json(new ApiResponse(200, { results: query, pagination }, "All list of store"));
@@ -311,7 +176,7 @@ class Controller {
 
         const total = items?.reduce((sum, item) => sum + item.totalPrice, 0);
 
-        const newInventory = new MODEL.StoreInventory({
+        const newInventory = new MODEL.StoreCart({
             storeId,
             items,
             totalAmount: total,
@@ -327,70 +192,15 @@ class Controller {
     });
 
     fetchStoreInventory = asyncHandler(async (req, res) => {
-        // const storeInventoryId = req.params.id;
-        // const { search, status, sorting } = req.query;
-
-        // let filter = {};
-        // // if (search) {
-        // //     filter.storeName = { $regex: search, $options: "i" };
-        // // }
-
-        // // Filter by categoryId
-        // if (storeInventoryId) {
-        //     filter.storeId = new Dependencies.mongoose.Types.ObjectId(storeInventoryId);
-        // }
-
-        // if (status) {
-        //     filter.status = status;
-        // }
-
-        // // Sorting
-        // let sortOption = {};
-        // switch (sorting) {
-        //     case "1":
-        //         sortOption.createdAt = -1; // Sort by createdAt field in descending order (latest first)
-        //         break;
-        //     case "2":
-        //         sortOption.createdAt = 1; // Sort by createdAt field in ascending order (oldest first)
-        //         break;
-        //     default:
-        //         sortOption.createdAt = -1;
-        //         break;
-        // }
-
-        // //Pagination
-        // const limit = parseInt(req.query.limit) || PAGINATION_LIMIT;
-        // const skip = parseInt(req.query.page - 1) * limit;
-
-        // const query = await MODEL.StoreInventory.find(filter, { ...modifyResponse, checked: 0 })
-        //     .sort(sortOption)
-        //     .limit(limit)
-        //     .skip(skip)
-        //     .populate("items.medicineId", "name -_id")
-        //     .populate("createdBy", "fullName -_id");
-
-        // // Total Items and Pages
-        // const totalResult = await MODEL.StoreInventory.countDocuments(filter);
-        // const totalPages = Math.ceil(totalResult / limit);
-
-        // const pagination = {
-        //     totalResult: totalResult,
-        //     totalPages: totalPages,
-        //     currentPage: parseInt(req.query.page),
-        // };
-
-        // return res
-        //     .status(200)
-        //     .json(
-        //         new ApiResponse(200, { results: query, pagination }, "All list of store inventory")
-        //     );
-
         const storeInventoryId = req.params.id;
         const { search, status, sorting } = req.query;
 
         let filter = {};
+        // if (search) {
+        //     filter.storeName = { $regex: search, $options: "i" };
+        // }
 
-        // Filter by storeInventoryId
+        // Filter by categoryId
         if (storeInventoryId) {
             filter.storeId = new Dependencies.mongoose.Types.ObjectId(storeInventoryId);
         }
@@ -403,60 +213,26 @@ class Controller {
         let sortOption = {};
         switch (sorting) {
             case "1":
-                sortOption.createdAt = -1; // Descending (latest first)
+                sortOption.createdAt = -1; // Sort by createdAt field in descending order (latest first)
                 break;
             case "2":
-                sortOption.createdAt = 1; // Ascending (oldest first)
+                sortOption.createdAt = 1; // Sort by createdAt field in ascending order (oldest first)
                 break;
             default:
                 sortOption.createdAt = -1;
                 break;
         }
 
-        // Pagination
+        //Pagination
         const limit = parseInt(req.query.limit) || PAGINATION_LIMIT;
-        const skip = (parseInt(req.query.page) - 1) * limit;
+        const skip = parseInt(req.query.page - 1) * limit;
 
-        // Aggregation query with group by orderData
-
-        const pipeline = [
-            { $match: filter },
-
-            {
-                $group: {
-                    _id: "$storeId", // Group by storeId field
-                    items: { $push: "$$ROOT" }, // Push all document data into items array
-                    count: { $sum: 1 }, // Count the number of items per group
-                },
-            },
-
-            { $unwind: "$items" },
-
-            { $sort: sortOption },
-            //{ $skip: skip },
-            { $limit: limit },
-
-            {
-                $lookup: {
-                    from: "medicine", // The medicine collection
-                    localField: "items.medicineId",
-                    foreignField: "_id",
-                    as: "medicineDetails", // Populating medicine details
-                },
-            },
-
-            {
-                $lookup: {
-                    from: "users", // The users collection
-                    localField: "createdBy",
-                    foreignField: "_id",
-                    as: "creatorDetails", // Populating creator details
-                },
-            },
-        ];
-
-        //Query
-        const query = await MODEL.StoreInventory.aggregate(pipeline);
+        const query = await MODEL.StoreInventory.find(filter)
+            .sort(sortOption)
+            .limit(limit)
+            .skip(skip)
+            .populate("items.medicineId", "name -_id")
+            .populate("createdBy", "fullName -_id");
 
         // Total Items and Pages
         const totalResult = await MODEL.StoreInventory.countDocuments(filter);
@@ -471,12 +247,108 @@ class Controller {
         return res
             .status(200)
             .json(
-                new ApiResponse(
-                    200,
-                    { results: query, pagination },
-                    "All list of store inventory grouped by orderData"
-                )
+                new ApiResponse(200, { results: query, pagination }, "All list of store inventory")
             );
+
+        // // const storeInventoryId = req.params.id;
+        // // const { search, status, sorting } = req.query;
+
+        // // let filter = {};
+
+        // // // Filter by storeInventoryId
+        // // if (storeInventoryId) {
+        // //     filter.storeId = new Dependencies.mongoose.Types.ObjectId(storeInventoryId);
+        // // }
+
+        // // if (status) {
+        // //     filter.status = status;
+        // // }
+
+        // // // Sorting
+        // // let sortOption = {};
+        // // switch (sorting) {
+        // //     case "1":
+        // //         sortOption.createdAt = -1; // Descending (latest first)
+        // //         break;
+        // //     case "2":
+        // //         sortOption.createdAt = 1; // Ascending (oldest first)
+        // //         break;
+        // //     default:
+        // //         sortOption.createdAt = -1;
+        // //         break;
+        // // }
+
+        // // // Pagination
+        // // const limit = parseInt(req.query.limit) || PAGINATION_LIMIT;
+        // // const skip = (parseInt(req.query.page) - 1) * limit;
+
+        // // // Aggregation query with group by orderData
+
+        // // // const pipeline = [
+        // // //     { $match: filter },
+
+        // // //     { $sort: sortOption },
+        // // //     //{ $skip: skip },
+        // // //     { $limit: limit },
+
+        // // //     //{ $unwind: "$items" },
+
+        // // //     // {
+        // // //     //     $lookup: {
+        // // //     //         from: "medicines", // The medicine collection
+        // // //     //         localField: "items.medicineId",
+        // // //     //         foreignField: "_id",
+        // // //     //         as: "medicineDetails", // Populating medicine details
+        // // //     //     },
+        // // //     // },
+
+        // // //     {
+        // // //         $lookup: {
+        // // //             from: "users", // The users collection
+        // // //             localField: "createdBy",
+        // // //             foreignField: "_id",
+        // // //             as: "creatorDetails", // Populating creator details
+        // // //         },
+        // // //     },
+
+        // // //     {
+        // // //         $project: {
+        // // //             storeId: 1,
+        // // //             totalAmount: 1,
+        // // //             status: 1,
+        // // //             createdBy: 1,
+        // // //             orderDate: 1,
+        // // //             createdAt: 1,
+        // // //             "items.medicineId": 1,
+        // // //             "items.quantity": 1,
+        // // //             "items.totalPrice": 1,
+        // // //             "medicineDetails.name": 1,
+        // // //         },
+        // // //     },
+        // // // ];
+
+        // // //Query
+        // // const query = await MODEL.StoreInventory.aggregate(pipeline);
+
+        // // // Total Items and Pages
+        // // const totalResult = await MODEL.StoreInventory.countDocuments(filter);
+        // // const totalPages = Math.ceil(totalResult / limit);
+
+        // const pagination = {
+        //     totalResult: totalResult,
+        //     totalPages: totalPages,
+        //     currentPage: parseInt(req.query.page),
+        // };
+
+        // return res
+        //     .status(200)
+        //     .json(
+        //         new ApiResponse(
+        //             200,
+        //             { results: query, pagination },
+        //             "All list of store inventory grouped by orderData"
+        //         )
+        //     );
     });
 
     fetchStoreInventoryById = asyncHandler(async (req, res) => {
@@ -498,14 +370,39 @@ class Controller {
 
     addStoreCart = asyncHandler(async (req, res) => {
         const { storeId, medicineId, quantity } = req.body;
+
+        // See if product that user is adding exist in the db
+        const medicine = await MODEL.Medicine.findById(medicineId);
+        if (!medicine) {
+            throw new ApiError(404, "Medicine does not exits");
+        }
+
+        // If product is there check if the quantity that user is adding is less than or equal to the product's stock
+        if (quantity > medicine.stock) {
+            // if quantity is greater throw an error
+            throw new ApiError(
+                400,
+                medicine.stock > 0
+                    ? "Only " +
+                      medicine.stock +
+                      "medicines are remaining. But you are adding " +
+                      quantity
+                    : "medicine is out of stock"
+            );
+        }
+
         //const cart = await MODEL.StoreCart.findOne({ createdBy: req?.user?._id });
-        let cart = await MODEL.StoreCart.findOne({ storeId: storeId, createdBy: req?.user?._id });
+        const cart = await MODEL.StoreCart.findOne({
+            storeId: storeId,
+            createdBy: req?.user?._id,
+        });
 
         if (cart) {
             // If cart exists for user, update it
-            const itemIndex = cart.items.findIndex(
+            const itemIndex = cart?.items?.findIndex(
                 (item) => item.medicineId.toString() === medicineId
             );
+
             if (itemIndex !== -1) {
                 // Medicine exists in cart, update the quantity
                 cart.items[itemIndex].quantity += quantity;
@@ -514,7 +411,9 @@ class Controller {
                 cart.items.push({ medicineId: medicineId, quantity });
             }
             await cart.save();
-            res.status(200).json(cart);
+            return res
+                .status(201)
+                .json(new ApiResponse(201, cart, "Add To Cart medicine successfully"));
         } else {
             // If no cart exists for user, create a new cart
             const newCart = await MODEL.StoreCart.create({
@@ -522,8 +421,19 @@ class Controller {
                 items: [{ medicineId: medicineId, quantity }],
                 createdBy: req?.user?._id,
             });
-            res.status(201).json(newCart);
+            return res
+                .status(201)
+                .json(new ApiResponse(201, newCart, "Add To Cart medicine successfully"));
         }
+    });
+
+    fetchStoreCart = asyncHandler(async (req, res) => {
+        let queryData = AdminMasterQueryBuilder.storeCart(req.body);
+        const query = await Helpers.aggregation(queryData, MODEL.StoreCart);
+        if (!query) {
+            throw new ApiError(400, "Store Cart is not found");
+        }
+        return res.status(200).json(new ApiResponse(200, query, "Store Cart Medicine"));
     });
 }
 

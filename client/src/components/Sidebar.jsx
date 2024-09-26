@@ -51,29 +51,10 @@ const menuItems = [
                     },
                 ],
             },
-            {
-                icon: <BsIcons.BsTruck className="bi" />,
-                label: "Store",
-                href: "#",
-                visible: ["admin"],
-                subItems: [
-                    {
-                        icon: <BsIcons.BsCardList className="bi" />,
-                        label: "Manage Store",
-                        href: "/manage-store",
-                        visible: ["admin"],
-                    },
-                    {
-                        icon: <BsIcons.BsCardList className="bi" />,
-                        label: "Manage Users",
-                        href: "/manage-user",
-                        visible: ["admin"],
-                    },
-                ],
-            },
+
             {
                 icon: <BsIcons.BsBox className="bi" />,
-                label: "Inventory",
+                label: "Medicine Inventory",
                 href: "#",
                 visible: ["admin", "user"],
                 subItems: [
@@ -91,6 +72,22 @@ const menuItems = [
                     },
                 ],
             },
+
+            {
+                icon: <BsIcons.BsTruck className="bi" />,
+                label: "Stores",
+                href: "#",
+                visible: ["admin"],
+                subItems: [
+                    {
+                        icon: <BsIcons.BsCardList className="bi" />,
+                        label: "Manage Stores",
+                        href: "/manage-store",
+                        visible: ["admin"],
+                    },
+                ],
+            },
+
             {
                 icon: <BsIcons.BsCart className="bi" />,
                 label: "Assign Inventory",
@@ -117,6 +114,20 @@ const menuItems = [
     {
         title: "OTHER",
         items: [
+            {
+                icon: <BsIcons.BsTruck className="bi" />,
+                label: "Users",
+                href: "#",
+                visible: ["admin"],
+                subItems: [
+                    {
+                        icon: <BsIcons.BsCardList className="bi" />,
+                        label: "Manage Users",
+                        href: "/manage-user",
+                        visible: ["admin"],
+                    },
+                ],
+            },
             {
                 icon: <BsIcons.BsTools className="bi" />,
                 label: "Settings",

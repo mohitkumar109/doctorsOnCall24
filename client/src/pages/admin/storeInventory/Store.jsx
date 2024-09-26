@@ -34,7 +34,7 @@ export default function Store() {
         e.preventDefault();
         toast.success("Store selected successfully!");
         const storeId = input?.storeId;
-        navigate(`/add-store-inventory/${storeId}`);
+        navigate(`/add-store-cart/${storeId}`);
     };
 
     return (
@@ -67,7 +67,7 @@ export default function Store() {
                                         onChange={handleChange}
                                         className="form-select"
                                     >
-                                        <option value="">----Select Store Name----</option>
+                                        <option value="">----Select Store----</option>
                                         {data?.map((record, i) => (
                                             <option value={record?._id} key={i}>
                                                 {record?.storeName}

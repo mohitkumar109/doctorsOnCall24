@@ -2,21 +2,16 @@ import { Dependencies } from "../packages/index.js";
 
 const storeCartSchema = new Dependencies.mongoose.Schema({
     storeId: { type: Dependencies.mongoose.Schema.Types.ObjectId, ref: "Store", required: true },
-    items: [
-        {
-            _id: false,
-            medicineId: {
-                type: Dependencies.mongoose.Schema.Types.ObjectId,
-                ref: "Medicine",
-                required: true,
+    items: {
+        type: [
+            {
+                medicineId: { type: Dependencies.mongoose.Schema.Types.ObjectId, ref: "Medicine" },
+                quantity: { type: Number, required: true },
             },
-            quantity: { type: Number, required: true },
-        },
-    ],
-    createdBy: {
-        type: Dependencies.mongoose.Schema.Types.ObjectId,
-        ref: "Users",
+        ],
+        default: [],
     },
+    createdBy: { type: Dependencies.mongoose.Schema.Types.ObjectId, ref: "User" },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
 });

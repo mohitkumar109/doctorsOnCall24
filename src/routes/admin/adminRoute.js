@@ -353,11 +353,20 @@ router.get(
     AdminStoreController.fetchStoreInventoryById
 );
 
+// Store Cart
+
 router.post(
     "/add-to-storeCart/",
     Middleware.userAuth,
     Middleware.checkPermission("create"),
     AdminStoreController.addStoreCart
+);
+
+router.get(
+    "/store-cart/:id",
+    Middleware.userAuth,
+    Middleware.checkPermission("create"),
+    AdminStoreController.fetchStoreCart
 );
 
 export const AdminRoute = router;

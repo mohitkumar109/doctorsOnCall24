@@ -6,6 +6,8 @@ import AddButton from "../../../components/AddButton";
 import MedicineTable from "../../../components/admin/MedicineTable";
 import useService from "../../../hooks/useService";
 import { apiEnd } from "../../../services/adminApi";
+import TableHead from "../../../components/admin/TableHead";
+import { medicineTableHead } from "../../../utils/tableHelper";
 
 export default function ManageMedicine() {
     const { postData } = useService();
@@ -195,23 +197,7 @@ export default function ManageMedicine() {
                         <AddButton buttonLink="/add-medicine" />
                         <div className="table-responsive">
                             <table className="table table-striped table-responsive table-bordered table-hover">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">S.N</th>
-                                        <th className="col-3">Medicine</th>
-                                        <th scope="col">Generic</th>
-                                        <th scope="col">Category</th>
-                                        <th scope="col">Brand</th>
-                                        <th scope="col">Strength</th>
-                                        <th scope="col">Usage</th>
-                                        <th scope="col">Expire Date</th>
-                                        <th scope="col">Quantity</th>
-                                        <th scope="col">Price</th>
-                                        <th scope="col">CreatedAt</th>
-                                        <th scope="col">Status</th>
-                                        <th scope="col">Actions</th>
-                                    </tr>
-                                </thead>
+                                <TableHead headers={medicineTableHead} />
                                 <tbody>
                                     {data?.length > 0 ? (
                                         data?.map((line, index) => (

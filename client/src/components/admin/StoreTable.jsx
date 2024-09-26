@@ -32,8 +32,9 @@ const StoreTable = ({ record, sn, changeStatus }) => {
                         className={`badge ${
                             record.status === "active" ? "bg-success" : "bg-danger"
                         }`}
-                    />
-                    {record.status === "active" ? "Active" : "Inactive"}
+                    >
+                        {record.status === "active" ? "Active" : "Inactive"}
+                    </span>
                 </div>
             </td>
             <td className="text-default">

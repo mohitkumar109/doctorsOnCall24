@@ -2,46 +2,56 @@ import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import Breadcrumb from "../../../components/Breadcrumb";
-import { apiEnd } from "../../../services/adminApi";
+import StoreCartTable from "../../../components/admin/StoreCartTable";
+import TableHead from "../../../components/admin/TableHead";
 import useService from "../../../hooks/useService";
-import { useGlobalContext } from "../../../context/AppContext";
+import { storeCartTable } from "../../../utils/tableHelper";
+import { apiEnd } from "../../../services/adminApi";
 
 export default function StoreCart() {
-    const { cart, setCart, increaseQuantity, decreaseQuantity, removeItemCart } =
-        useGlobalContext();
     const { postData } = useService();
     const { id } = useParams();
-    const [subtotal, setSubtotal] = useState(0);
+    const [data, setData] = useState([]);
 
-    // Load cart from localStorage when initializing the cart state
-    useEffect(() => {
-        const storedCart = localStorage.getItem("cartItems");
-        if (storedCart) {
-            setCart(JSON.parse(storedCart));
+    const fetchStoreCart = async () => {
+        try {
+            const req = apiEnd.getStoreCart(id);
+            const res = await postData(req);
+            if (res?.success) {
+                setData(res?.data);
+            } else {
+                toast.error(res?.message);
+            }
+        } catch (error) {
+            toast.error("Failed to fetch brand details.");
         }
-    }, []);
+    };
 
-    // Calculate subtotal whenever the cart changes
     useEffect(() => {
-        const total = cart.reduce((sum, item) => sum + item.totalPrice, 0);
-        setSubtotal(total);
-    }, [cart]);
+        fetchStoreCart();
+    }, [id]);
 
     const submitCart = async () => {
         try {
-            const req = apiEnd.adStoreAssignMedicine(id, cart);
+            const req = apiEnd.adStoreAssignMedicine();
             const res = await postData(req);
             if (res?.success) {
                 toast.success(res?.message);
-                setCart([]); // Clear cart after submission
-                localStorage.removeItem("cartItems"); // Clear the cart in localStorage
-                window.location = "/select-store";
+                //setCart([]); // Clear cart after submission
+                //localStorage.removeItem("cartItems"); // Clear the cart in localStorage
+                //window.location = "/select-store";
             } else {
                 toast.error(res?.message);
             }
         } catch (error) {
             toast.error(error.res?.data?.message);
         }
+    };
+
+    const renderStoreCartRows = (line) => {
+        return line?.items?.map((record, idx) => (
+            <StoreCartTable record={record} sn={idx} key={idx} />
+        ));
     };
 
     return (
@@ -53,7 +63,7 @@ export default function StoreCart() {
                         <span className="card-title">Store Cart List</span>
                         <div className="d-flex gap-2" style={{ float: "right" }}>
                             <Link
-                                to={`/add-store-inventory/${id}`}
+                                to={`/add-store-cart/${id}`}
                                 className="btn btn-primary btn-sm waves-effect"
                             >
                                 Back
@@ -63,91 +73,10 @@ export default function StoreCart() {
                     <div className="card-body">
                         <div className="table-responsive">
                             <table className="table table-striped table-bordered table-hover">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">S.N</th>
-                                        <th className="col-3">Medicine</th>
-                                        <th scope="col">Price</th>
-                                        <th className="col-2">Quantity</th>
-                                        <th scope="col">Total Amount</th>
-                                        <th scope="col">Actions</th>
-                                    </tr>
-                                </thead>
+                                <TableHead headers={storeCartTable} />
                                 <tbody>
-                                    {cart?.length > 0 ? (
-                                        <>
-                                            {cart?.map((line, index) => (
-                                                <tr key={index}>
-                                                    <td>{index + 1}</td>
-
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {line?.medicineId}
-                                                        </span>
-                                                    </td>
-
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {line?.price}
-                                                        </span>
-                                                    </td>
-
-                                                    <td className="align-middle">
-                                                        <div className="input-group quantity mx-auto">
-                                                            <div className="input-group-btn">
-                                                                <button
-                                                                    type="button"
-                                                                    className="btn btn-sm btn-primary"
-                                                                    onClick={() =>
-                                                                        decreaseQuantity(
-                                                                            line.medicineId
-                                                                        )
-                                                                    }
-                                                                >
-                                                                    -
-                                                                </button>
-                                                            </div>
-                                                            <input
-                                                                type="text"
-                                                                name="qty"
-                                                                value={line?.quantity}
-                                                                className="form-control-sm bg-secondary border-0 text-center"
-                                                                readOnly
-                                                            />
-                                                            <div className="input-group-btn">
-                                                                <button
-                                                                    type="button"
-                                                                    className="btn btn-sm btn-primary"
-                                                                    onClick={() =>
-                                                                        increaseQuantity(
-                                                                            line.medicineId
-                                                                        )
-                                                                    }
-                                                                >
-                                                                    +
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-
-                                                    <td className="align-middle">
-                                                        {line?.totalPrice}
-                                                    </td>
-
-                                                    <td>
-                                                        <button
-                                                            className="btn btn-danger btn-sm"
-                                                            onClick={() =>
-                                                                removeItemCart(line?.medicineId)
-                                                            }
-                                                            style={{ marginLeft: "10px" }}
-                                                        >
-                                                            Remove
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </>
+                                    {data?.length > 0 ? (
+                                        data?.map((line) => renderStoreCartRows(line))
                                     ) : (
                                         <tr>
                                             <td colSpan="14" className="p-4 text-center">
@@ -160,10 +89,12 @@ export default function StoreCart() {
                         </div>
                     </div>
                     {/* Subtotal Section */}
-                    {cart?.length > 0 && (
+                    {data?.length > 0 && (
                         <div className="card-footer">
                             <div className="d-flex gap-2" style={{ float: "right" }}>
-                                <h5 className="text-right me-5 mt-2">Subtotal: ₹{subtotal}</h5>
+                                <h5 className="text-right me-5 mt-2">
+                                    Subtotal: ₹{data.map((total) => total.cartTotal)}
+                                </h5>
                                 <div className="text-right me-5">
                                     <button className="btn btn-success" onClick={submitCart}>
                                         Checkout
