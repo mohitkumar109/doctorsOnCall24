@@ -3,6 +3,11 @@ import { Link } from "react-router-dom";
 import { BsPencil, BsTrash3Fill } from "react-icons/bs";
 
 const StoreTable = ({ record, sn, changeStatus }) => {
+    function handleChangeStatus(id, status) {
+        return () => {
+            changeStatus(id, status);
+        };
+    }
     return (
         <tr>
             <td>{sn + 1}</td>
@@ -21,12 +26,10 @@ const StoreTable = ({ record, sn, changeStatus }) => {
                         id={`flexSwitchCheckChecked-${record._id}`}
                         checked={record.status === "active"}
                         className="form-check-input mt-2"
-                        onChange={() =>
-                            changeStatus(
-                                record._id,
-                                record.status === "active" ? "inactive" : "active"
-                            )
-                        }
+                        onChange={handleChangeStatus(
+                            record._id,
+                            record.status === "active" ? "inactive" : "active"
+                        )}
                     />
                     <span
                         className={`badge ${
@@ -44,7 +47,7 @@ const StoreTable = ({ record, sn, changeStatus }) => {
                     </Link>
 
                     <Link to="#" className="text-danger">
-                        <BsTrash3Fill onClick={() => changeStatus(record._id, "delete")} />
+                        <BsTrash3Fill onClick={handleChangeStatus(record._id, "delete")} />
                     </Link>
                 </div>
             </td>

@@ -1,8 +1,27 @@
 import { Link } from "react-router-dom";
+import { toast } from "react-hot-toast";
 import { BsPencil, BsTrash3Fill } from "react-icons/bs";
 import { capitalizeFirstLetter } from "../../utils/helper";
+import { useActionGenericOneMutation } from "../../redux/api/generic";
 
-const GenericTable = ({ record, sn, changeStatus }) => {
+const GenericTable = ({ record, sn }) => {
+    const [actionGenericOne] = useActionGenericOneMutation();
+    const changeStatus = async (id, status) => {
+        try {
+            let answer = window.confirm(`Are you sure you want to ${status} this category?`);
+            if (!answer) return;
+
+            const res = await actionGenericOne({ id, status }).unwrap();
+            if (res.success) {
+                toast.success(res?.message);
+            } else {
+                toast.error("Failed to change status");
+            }
+        } catch (error) {
+            toast.error("Error changing status");
+        }
+    };
+
     return (
         <tr>
             <td>{sn + 1}</td>

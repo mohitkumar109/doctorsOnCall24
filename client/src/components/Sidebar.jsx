@@ -102,8 +102,8 @@ const menuItems = [
                     },
                     {
                         icon: <BsIcons.BsCardList className="bi" />,
-                        label: "View Store Inventory",
-                        href: "/store-inventory",
+                        label: "Store Inventory",
+                        href: "/select-store-assign/",
                         visible: ["admin"],
                     },
                 ],

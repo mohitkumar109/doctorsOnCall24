@@ -6,6 +6,7 @@ import Breadcrumb from "../../../components/Breadcrumb";
 import useServices from "../../../hooks/useService";
 import { apiEnd } from "../../../services/adminApi";
 import UserTable from "../../../components/admin/UserTable";
+import AddButton from "../../../components/AddButton";
 
 export default function ManageUser() {
     const { postData } = useServices();
@@ -70,11 +71,7 @@ export default function ManageUser() {
                         </div>
                     </div>
                     <div className="card-body">
-                        <div className="btn-group mb-3">
-                            <Link to="/add-user" className="btn btn-primary btn-sm waves-effect">
-                                Add User
-                            </Link>
-                        </div>
+                        <AddButton buttonLink="/add-user" level={"Add User"} />
                         <div className="table-responsive">
                             <table className="table table-striped table-bordered table-hover">
                                 <thead>

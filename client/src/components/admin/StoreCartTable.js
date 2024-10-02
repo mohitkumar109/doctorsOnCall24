@@ -1,6 +1,9 @@
 import React from "react";
+import { useGlobalContext } from "../../context/AppContext";
 
-const StoreCartTable = ({ record, sn, increaseQty, decreaseQty, removeItemCart }) => {
+const StoreCartTable = ({ record, sn, total }) => {
+    const { increaseQty, decreaseQty, removeItemCart } = useGlobalContext();
+
     return (
         <tr>
             <td>{sn + 1}</td>
@@ -36,7 +39,7 @@ const StoreCartTable = ({ record, sn, increaseQty, decreaseQty, removeItemCart }
                 </div>
             </td>
 
-            <td className="align-middle">{record?.medicine?.price * record?.quantity}</td>
+            <td className="align-middle">{total}</td>
 
             <td>
                 <button

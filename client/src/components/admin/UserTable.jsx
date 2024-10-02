@@ -40,7 +40,7 @@ const UserTable = ({ record, sn, changeStatus }) => {
             </td>
             <td className="text-default">
                 <div className="d-flex gap-3">
-                    <Link to={`/edit-record/${record._id}`} className="text-primary">
+                    <Link to={`/edit-user/${record._id}`} className="text-primary">
                         <BsPencil />
                     </Link>
 

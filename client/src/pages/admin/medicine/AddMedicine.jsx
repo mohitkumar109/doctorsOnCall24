@@ -18,6 +18,7 @@ export default function AddMedicine() {
         categoryId: "",
         brandId: "",
         strengthId: "",
+        unitType: "",
         usageId: "",
         stock: "",
         price: "",
@@ -51,6 +52,7 @@ export default function AddMedicine() {
                     categoryId: res.data.categoryId || "",
                     brandId: res.data.brandId || "",
                     strengthId: res.data.strengthId || "",
+                    unitType: res.data.unitType || "",
                     usageId: res.data.usageId || "",
                     stock: res.data.stock || "",
                     price: res.data.price || "",
@@ -184,6 +186,15 @@ export default function AddMedicine() {
                                     onChange={handleChange}
                                     valueKey="_id"
                                     labelKey="strengthName"
+                                />
+
+                                <SelectField
+                                    label="Medicine Units"
+                                    name="unitType"
+                                    value={input.unitType}
+                                    options={[{ unit: "mg" }, { unit: "ml" }, { unit: "kg" }]}
+                                    onChange={handleChange}
+                                    labelKey="unit"
                                 />
 
                                 <SelectField

@@ -1,14 +1,29 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import Breadcrumb from "../../../components/Breadcrumb";
-import { useAddGenericMutation } from "../../../redux/api/generic";
+import { useGetGenericByIdQuery, useUpdateGenericMutation } from "../../../redux/api/generic";
 
-export default function AddGeneric() {
+export default function EditGeneric() {
     const navigate = useNavigate();
+    const { id } = useParams();
     const [generic, setGeneric] = useState("");
     const [status, setStatus] = useState("");
-    const [addGeneric, { isLoading }] = useAddGenericMutation();
+
+    // Query to fetch data when editing an existing record
+    const { data, error, refetch } = useGetGenericByIdQuery(id, {
+        skip: !id, // Don't run if id is undefined (add mode)
+    });
+
+    const [updateGeneric, { isLoading: isUpdating }] = useUpdateGenericMutation();
+
+    useEffect(() => {
+        if (data) {
+            setGeneric(data?.genericName || "");
+            setStatus(data?.status || "");
+        }
+        refetch();
+    }, [data, refetch]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -17,7 +32,11 @@ export default function AddGeneric() {
             return;
         }
         try {
-            const res = await addGeneric({ genericName: generic, status }).unwrap();
+            const res = await updateGeneric({
+                genericId: id,
+                updateData: { genericName: generic, status },
+            }).unwrap();
+
             if (res?.success) {
                 toast.success(res?.message);
                 navigate("/manage-generic");
@@ -30,13 +49,17 @@ export default function AddGeneric() {
         }
     };
 
+    if (error) {
+        return <p>Error loading generic data for editing.</p>;
+    }
+
     return (
         <div className="container-fluid">
-            <Breadcrumb pageName={"Add Generic"} />
+            <Breadcrumb pageName={"Update Generic"} />
             <div className="content-area">
                 <div className="card">
                     <div className="card-header">
-                        <span className="card-title">Add Generic</span>
+                        <span className="card-title">Update</span>
                         <div className="d-flex gap-2" style={{ float: "right" }}>
                             <Link
                                 to="/manage-generic"
@@ -56,6 +79,7 @@ export default function AddGeneric() {
                                     <input
                                         type="text"
                                         name="generic"
+                                        value={generic}
                                         onChange={(e) => setGeneric(e.target.value)}
                                         className="form-control"
                                         placeholder="Enter generic name.."
@@ -70,6 +94,7 @@ export default function AddGeneric() {
                                 <div className="col-sm-5">
                                     <select
                                         name="status"
+                                        value={status}
                                         onChange={(e) => setStatus(e.target.value)}
                                         className="form-select"
                                     >
@@ -83,7 +108,7 @@ export default function AddGeneric() {
                             <div className="row mb-5 mt-5">
                                 <div className="col-sm-5 offset-sm-2">
                                     <button type="submit" className="btn btn-primary me-3">
-                                        {isLoading ? "Please wait..." : "Submit"}
+                                        {isUpdating ? "Please wait..." : "Edit"}
                                     </button>
 
                                     <button

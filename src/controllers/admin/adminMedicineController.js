@@ -1,7 +1,7 @@
 import { Dependencies } from "../../packages/index.js";
 import { asyncHandler, ApiResponse, ApiError, modifyResponse } from "../../utils/index.js";
 import { AdminMasterQueryBuilder } from "../../entity/admin.master.entity.js";
-import { Helpers } from "../../common/index.js";
+import { Helpers, PAGINATION_LIMIT } from "../../common/index.js";
 import { MODEL } from "../../models/index.js";
 
 class Controller {
@@ -14,6 +14,7 @@ class Controller {
             categoryId,
             brandId,
             strengthId,
+            unitType,
             usageId,
             stock,
             price,
@@ -27,6 +28,7 @@ class Controller {
             !categoryId ||
             !brandId ||
             !strengthId ||
+            !unitType ||
             !usageId ||
             !stock ||
             !price ||
@@ -49,6 +51,7 @@ class Controller {
             usageId,
             stock,
             price,
+            unitType,
             expireDate,
             status: status || "active",
             createdBy: req?.user?._id,
@@ -64,7 +67,7 @@ class Controller {
         const query = await Helpers.aggregation(queryData, MODEL.Medicine);
         // Total Items and Pages
         const totalResult = await MODEL.Medicine.countDocuments(queryData);
-        const totalPages = Math.ceil(totalResult / parseInt(req.query.limit || 10));
+        const totalPages = Math.ceil(totalResult / parseInt(req.query.limit || PAGINATION_LIMIT));
         if (!query) {
             throw new ApiError(400, "Medicine is not found");
         }
@@ -115,6 +118,7 @@ class Controller {
             usageId,
             stock,
             price,
+            unitType,
             expireDate,
             status,
         } = req.body;
@@ -149,6 +153,7 @@ class Controller {
                     usageId,
                     stock,
                     price,
+                    unitType,
                     expireDate,
                     status: status || "active",
                     updatedBy: req?.user?._id,

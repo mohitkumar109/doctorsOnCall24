@@ -415,24 +415,6 @@ const actionMedicineOne = (id, status) => {
     };
 };
 
-//-------------Medicine Store Cart------------------------//
-
-const adToStoreCart = (values) => {
-    return {
-        url: `${BASE_URL}/admin/add-to-storeCart/`,
-        method: "POST",
-        data: values,
-    };
-};
-
-const getStoreCart = (storeId) => {
-    return {
-        url: `${BASE_URL}/admin/store-cart/${storeId}`,
-        method: "GET",
-        data: null,
-    };
-};
-
 //--------------Medicine Assign to Store-----------------//
 
 const adStoreAssignMedicine = (id, values) => {
@@ -446,9 +428,9 @@ const adStoreAssignMedicine = (id, values) => {
     };
 };
 
-const getStoreInventory = (sorting, status, page, storeId) => {
+const getStoreInventory = (page, storeId) => {
     return {
-        url: `${BASE_URL}/admin/store-inventory-history/${storeId}/?sorting=${sorting}&status=${status}&page=${page}`,
+        url: `${BASE_URL}/admin/store-inventory/${storeId}/?page=${page}`,
         method: "GET",
         data: null,
     };
@@ -524,8 +506,4 @@ export const apiEnd = {
     //Medicine Assign to Store
     adStoreAssignMedicine,
     getStoreInventory,
-
-    //Store Cart
-    adToStoreCart,
-    getStoreCart,
 };

@@ -2,10 +2,9 @@ import { Dependencies } from "../packages/index.js";
 
 const strengthOfMedicineSchema = new Dependencies.mongoose.Schema({
     strengthName: {
-        type: String,
+        type: Number,
         required: [true, "Strength is required"],
         unique: true,
-        lowercase: true,
         trim: true,
     },
     checked: {

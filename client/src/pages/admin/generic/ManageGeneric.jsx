@@ -1,61 +1,53 @@
-import React, { useState, useEffect } from "react";
-import { toast } from "react-hot-toast";
-import Filter from "../../../components/Filter";
+import React, { useEffect } from "react";
+import FilterTop from "../../../components/FilterTop";
 import AddButton from "../../../components/AddButton";
 import Pagination from "../../../components/Pagination";
 import Breadcrumb from "../../../components/Breadcrumb";
+import Spinner from "../../../components/Spinner";
 import GenericTable from "../../../components/admin/GenericTable";
-import useService from "../../../hooks/useService";
-import { apiEnd } from "../../../services/adminApi";
+import { useDispatch, useSelector } from "react-redux";
+import { setPage, setPagination, setRecords } from "../../../redux/features/generic/genericSlice";
+import { useGetAllGenericQuery } from "../../../redux/api/generic";
 
 export default function ManageGeneric() {
-    const { postData } = useService();
-    const [search, setSearch] = useState("");
-    const [sorting, setSorting] = useState("");
-    const [status, setStatus] = useState("");
-    const [pagination, setPagination] = useState("");
-    const [page, setPage] = useState(1);
-    const [data, setData] = useState([]);
-
-    useEffect(() => {
-        fetchGeneric();
-    }, [search, sorting, status, page]);
-
-    const fetchGeneric = async () => {
-        const req = apiEnd.getGeneric(search, sorting, status, page);
-        const res = await postData(req);
-        setData(res?.data?.results);
-        setPagination(res?.data?.pagination);
-    };
-
-    const changeStatus = async (id, status) => {
-        const req = apiEnd.actionGenericOne(id, status);
-        const res = await postData(req, {});
-        if (res?.success) {
-            toast.success(res.message, { duration: 1000 });
-            fetchGeneric(); // Ensure fetchGeneric is defined
-        } else {
-            toast.error(res?.message || "Failed to delete generic", { duration: 1000 });
-        }
-    };
-
-    const filteredData = data.filter(
-        (result) => result.genericName.toLowerCase().indexOf(search.toLowerCase()) !== -1
+    const dispatch = useDispatch();
+    const { search, sorting, status, page, pagination, records } = useSelector(
+        (state) => state.generic
     );
 
-    // if (loading) {
-    //     return <Spinner />;
-    // }
+    const queryParams = new URLSearchParams({
+        search,
+        sorting,
+        status,
+        page,
+    }).toString();
 
-    // if (error) {
-    //     return <p>{error}</p>;
-    // }
+    const { data, isLoading, error } = useGetAllGenericQuery(queryParams);
+
+    useEffect(() => {
+        if (data) {
+            dispatch(setRecords(data?.results || []));
+            dispatch(setPagination(data?.pagination));
+        }
+    }, [data, dispatch]);
+
+    const handlePageChange = (newPage) => {
+        dispatch(setPage(newPage));
+    };
+
+    if (isLoading) {
+        return <Spinner />;
+    }
+
+    if (error) {
+        return <p>Error loading records.</p>;
+    }
 
     return (
         <div className="container-fluid">
             <Breadcrumb pageName={"Generic"} />
             <div className="content-area">
-                <Filter setSearch={setSearch} setSorting={setSorting} setStatus={setStatus} />
+                <FilterTop />
                 <div className="card">
                     <div className="card-header">
                         <span className="card-title">Generic List</span>
@@ -65,7 +57,7 @@ export default function ManageGeneric() {
                         </div>
                     </div>
                     <div className="card-body">
-                        <AddButton buttonLink="/add-generic" />
+                        <AddButton buttonLink="/add-generic" level={"Add Generic"} />
                         <div className="table-responsive">
                             <table className="table table-striped table-bordered table-hover">
                                 <thead>
@@ -80,14 +72,9 @@ export default function ManageGeneric() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {filteredData?.length > 0 ? (
-                                        filteredData?.map((generic, index) => (
-                                            <GenericTable
-                                                key={index}
-                                                record={generic}
-                                                sn={index}
-                                                changeStatus={changeStatus}
-                                            />
+                                    {records?.length > 0 ? (
+                                        records?.map((generic, index) => (
+                                            <GenericTable sn={index} key={index} record={generic} />
                                         ))
                                     ) : (
                                         <tr>
@@ -102,7 +89,7 @@ export default function ManageGeneric() {
                                 totalResult={pagination.totalResult}
                                 pages={pagination.totalPages}
                                 page={pagination.currentPage}
-                                changePage={setPage}
+                                changePage={handlePageChange}
                             />
                         </div>
                     </div>

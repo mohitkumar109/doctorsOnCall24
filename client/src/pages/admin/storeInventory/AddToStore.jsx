@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { toast } from "react-hot-toast";
 import Pagination from "../../../components/Pagination";
 import Breadcrumb from "../../../components/Breadcrumb";
 import AddButton from "../../../components/AddButton";
@@ -8,9 +7,10 @@ import Filter from "../../../components/Filter";
 import useService from "../../../hooks/useService";
 import { apiEnd } from "../../../services/adminApi";
 import { indianDateFormat } from "../../../utils/helper";
+import { useGlobalContext } from "../../../context/AppContext";
 
 export default function AddToStore() {
-    //const { cart, addToCart } = useGlobalContext();
+    const { cart, setCart, addToCart } = useGlobalContext();
     const { postData } = useService();
     const { id } = useParams();
     const [search, setSearch] = useState("");
@@ -21,8 +21,20 @@ export default function AddToStore() {
     const [data, setData] = useState([]);
     const [qty, setQty] = useState({});
     const [errors, setErrors] = useState({}); // Track quantity errors
-    const [count, setCount] = useState([]);
-    const [cartUpdated, setCartUpdated] = useState(false); // Track cart updates
+
+    // Load cart from localStorage when initializing the cart state
+    useEffect(() => {
+        const storedCart = localStorage.getItem("cartItems");
+        if (storedCart) {
+            setCart(JSON.parse(storedCart));
+        }
+    }, []);
+
+    function handleAddToCart(id, qty, price) {
+        return () => {
+            addToCart(id, qty, price);
+        };
+    }
 
     // Fetch data based on filters and pagination
     const fetchMedicine = async () => {
@@ -38,18 +50,7 @@ export default function AddToStore() {
 
     useEffect(() => {
         fetchMedicine();
-        fetchStoreCart();
-    }, [search, sorting, status, page, cartUpdated]);
-
-    const fetchStoreCart = async () => {
-        const req = apiEnd.getStoreCart(id);
-        const res = await postData(req);
-        //console.log("Cart response:----", res.data);
-        if (res?.data) {
-            setCount(res.data); // Assuming the items array is inside res.data
-        }
-    };
-    const totalCartItems = count.reduce((acc, item) => acc + item.totalItems, 0) || 0;
+    }, [search, sorting, status, page]);
 
     // Handle input change with validation
     const handleInputChange = (medicineId, value, stock) => {
@@ -66,26 +67,6 @@ export default function AddToStore() {
         setErrors((prevErrors) => ({ ...prevErrors, [medicineId]: error }));
     };
 
-    const addToCart = async (medicineId, quantity) => {
-        try {
-            const req = apiEnd.adToStoreCart({
-                storeId: id,
-                medicineId,
-                quantity: parseInt(quantity, 10),
-            });
-            const res = await postData(req);
-            if (res?.success) {
-                toast.success(res?.message);
-                setCartUpdated((prev) => !prev); // Toggle to trigger the effect
-                //window.location = "/select-store";
-            } else {
-                toast.error(res?.message);
-            }
-        } catch (error) {
-            toast.error(error.res?.data?.message);
-        }
-    };
-
     // Helper to render medicine rows
     const renderMedicineRows = () => {
         return data?.map((line, index) => (
@@ -95,7 +76,9 @@ export default function AddToStore() {
                 <td>{line?.generic?.genericName}</td>
                 <td>{line?.category?.categoryName}</td>
                 <td>{line?.brand?.brandName}</td>
-                <td>{line?.strength?.strengthName}</td>
+                <td>
+                    {line?.strength?.strengthName} {line?.unitType}
+                </td>
                 <td>{indianDateFormat(line?.expireDate)}</td>
                 <td>{line?.stock}</td>
                 <td>{line?.price}</td>
@@ -115,7 +98,7 @@ export default function AddToStore() {
                     <button
                         type="button"
                         className="btn btn-primary btn-sm"
-                        onClick={() => addToCart(line._id, qty[line._id], line.price)}
+                        onClick={handleAddToCart(line._id, qty[line._id], line.price)}
                         disabled={!!errors[line._id] || !qty[line._id]} // Disable if there's an error or no quantity
                     >
                         Add to Cart
@@ -136,14 +119,12 @@ export default function AddToStore() {
                         <div className="d-flex gap-2" style={{ float: "right" }}>
                             <Link to={`/store-cart/${id}`} className="btn btn-success">
                                 Cart
-                                <span className="badge text-bg-danger">
-                                    {totalCartItems ? totalCartItems : 0}
-                                </span>
+                                <span className="badge text-bg-danger">{cart.length}</span>
                             </Link>
                         </div>
                     </div>
                     <div className="card-body">
-                        <AddButton buttonLink="/select-store" />
+                        <AddButton buttonLink="/select-store" level={"Back to Store"} />
                         <div className="table-responsive">
                             <table className="table table-striped table-bordered table-hover">
                                 <thead>
@@ -156,7 +137,7 @@ export default function AddToStore() {
                                         <th scope="col">Strength</th>
                                         <th scope="col">Expire Date</th>
                                         <th scope="col">Stock</th>
-                                        <th scope="col">Price</th>
+                                        <th scope="col">Per Unit Price</th>
                                         <th className="col-1">Quantity to Add</th>
                                         <th className="col-1">Actions</th>
                                     </tr>

@@ -44,22 +44,33 @@ const medicineProductSchema = new Dependencies.mongoose.Schema(
             required: [true, "Quantity is required"],
             min: [1, "Quantity must be at least 1"],
         },
+
+        unitType: {
+            type: String,
+            enum: ["mg", "ml", "kg"],
+            default: "unit",
+        },
+
         expireDate: {
             type: Date,
             required: [true, "Expire date is required"],
         },
+
         checked: {
             type: Boolean,
             default: false,
         },
+
         status: {
             type: String,
             default: "active",
         },
+
         createdBy: {
             type: Dependencies.mongoose.Schema.Types.ObjectId,
             ref: "Users",
         },
+
         updatedBy: {
             type: Dependencies.mongoose.Schema.Types.ObjectId,
             ref: "Users",

@@ -32,6 +32,50 @@ const AppProvider = ({ children }) => {
         }
     };
 
+    const addToCart = (medicineId, quantity, price) => {
+        // Convert quantity to a number
+        const parsedQuantity = parseInt(quantity, 10);
+
+        if (isNaN(parsedQuantity) || parsedQuantity <= 0) {
+            toast.error("Please enter a valid quantity");
+            return;
+        }
+
+        setCart((prevCart) => {
+            const existingItemIndex = prevCart.findIndex((item) => item.medicineId === medicineId);
+
+            let updatedCart;
+            if (existingItemIndex !== -1) {
+                // If medicine already exists in the cart, update the quantity
+                updatedCart = prevCart.map((item, index) =>
+                    index === existingItemIndex
+                        ? {
+                              ...item,
+                              quantity: item.quantity + parsedQuantity,
+                              //totalPrice: (item.quantity + parsedQuantity) * price,
+                          }
+                        : item
+                );
+            } else {
+                // If medicine doesn't exist in the cart, add a new entry
+                const newItem = {
+                    medicineId,
+                    quantity: parsedQuantity,
+                    price: parseFloat(price),
+                    //totalPrice: parsedQuantity * price,
+                };
+                updatedCart = [...prevCart, newItem];
+            }
+
+            // Store the updated cart in localStorage
+            localStorage.setItem("cartItems", JSON.stringify(updatedCart));
+
+            return updatedCart;
+        });
+
+        toast.success("Medicine added to cart!");
+    };
+
     const removeItemCart = (medicineId) => {
         // Filter out the item with the matching medicineId from the cart
         const updatedCart = cart?.filter((item) => item.medicineId !== medicineId);
@@ -44,14 +88,14 @@ const AppProvider = ({ children }) => {
     };
 
     // Function to handle increasing the quantity
-    const increaseQuantity = (medicineId) => {
+    const increaseQty = (medicineId) => {
         const updatedCart = cart.map((item) => {
             if (item.medicineId === medicineId) {
                 const newQuantity = item.quantity + 1;
                 return {
                     ...item,
                     quantity: newQuantity,
-                    totalPrice: newQuantity * item.price,
+                    //totalPrice: newQuantity * item.price,
                 };
             }
             return item;
@@ -62,14 +106,14 @@ const AppProvider = ({ children }) => {
     };
 
     // Function to handle decreasing the quantity
-    const decreaseQuantity = (medicineId) => {
+    const decreaseQty = (medicineId) => {
         const updatedCart = cart.map((item) => {
             if (item.medicineId === medicineId && item.quantity > 1) {
                 const newQuantity = item.quantity - 1;
                 return {
                     ...item,
                     quantity: newQuantity,
-                    totalPrice: newQuantity * item.price,
+                    //totalPrice: newQuantity * item.price,
                 };
             }
             return item;
@@ -91,10 +135,11 @@ const AppProvider = ({ children }) => {
                 logout,
                 toggle,
                 setToggle,
+                addToCart,
                 cart,
                 setCart,
-                increaseQuantity,
-                decreaseQuantity,
+                increaseQty,
+                decreaseQty,
                 removeItemCart,
             }}
         >

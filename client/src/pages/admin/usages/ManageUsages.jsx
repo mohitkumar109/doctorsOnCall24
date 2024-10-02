@@ -57,7 +57,7 @@ export default function ManageUsages() {
                         </div>
                     </div>
                     <div className="card-body">
-                        <AddButton buttonLink="/add-usage" />
+                        <AddButton buttonLink="/add-usage" level={"Add Usage"} />
                         <div className="table-responsive">
                             <table className="table table-striped table-bordered table-hover">
                                 <thead>

@@ -57,7 +57,7 @@ export default function ManageBrand() {
                         </div>
                     </div>
                     <div className="card-body">
-                        <AddButton buttonLink="/add-brand" />
+                        <AddButton buttonLink="/add-brand" level={"Add Brand"} />
                         <div className="table-responsive">
                             <table className="table table-striped table-bordered table-hover">
                                 <thead>

@@ -115,7 +115,7 @@ router.patch(
     AdminMasterController.actionOnGeneric
 );
 router.patch(
-    "/actionOnGeneric/:id/:status",
+    "/generic/action/:id/:status",
     Middleware.userAuth,
     Middleware.checkPermission("update"),
     AdminMasterController.actionOnGeneric
@@ -340,13 +340,6 @@ router.post(
 );
 
 router.get(
-    "/store-inventory-history/:id",
-    Middleware.userAuth,
-    Middleware.checkPermission("create"),
-    AdminStoreController.fetchStoreInventory
-);
-
-router.get(
     "/store-inventory/:id",
     Middleware.userAuth,
     Middleware.checkPermission("create"),
@@ -367,6 +360,13 @@ router.get(
     Middleware.userAuth,
     Middleware.checkPermission("create"),
     AdminStoreController.fetchStoreCart
+);
+
+router.get(
+    "/store-medicine/",
+    Middleware.userAuth,
+    Middleware.checkPermission("read"),
+    AdminStoreController.fetchStoreMedicine
 );
 
 export const AdminRoute = router;

@@ -35,6 +35,12 @@ export default function AddBrand() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!brand) {
+            toast.error("Brand name is required !");
+            return;
+        }
+
         try {
             const req = id
                 ? apiEnd.updateBrand(id, { brandName: brand, status })

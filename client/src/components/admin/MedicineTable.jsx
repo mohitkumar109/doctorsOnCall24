@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { BsPencil, BsTrash3Fill } from "react-icons/bs";
 import { indianDateFormat } from "../../utils/helper";
+import moment from "moment";
 
 const MedicineTable = ({ record, sn, changeStatus }) => {
     return (
@@ -11,12 +12,14 @@ const MedicineTable = ({ record, sn, changeStatus }) => {
             <td>{record?.generic?.genericName}</td>
             <td>{record?.category?.categoryName}</td>
             <td>{record?.brand?.brandName}</td>
-            <td>{record?.strength?.strengthName}</td>
+            <td>
+                {record?.strength?.strengthName} {record?.unitType}
+            </td>
             <td>{record?.usage?.usageName}</td>
-            <td>{indianDateFormat(record?.expireDate)}</td>
+            <td>{moment(record?.expireDate).format("DD-MM-YYYY")}</td>
             <td>{record?.stock}</td>
             <td>{record?.price}</td>
-            <td>{indianDateFormat(record?.createdAt)}</td>
+            <td>{moment(record?.createdAt).format("DD-MM-YYYY hh:mm A")}</td>
             <td>
                 <div className="form-check form-switch">
                     <input

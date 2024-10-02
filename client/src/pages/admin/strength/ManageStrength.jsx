@@ -39,10 +39,6 @@ export default function ManageStrength() {
         fetchStrength();
     }, [search, sorting, status, page]);
 
-    const filteredData = data.filter(
-        (result) => result?.strengthName.toLowerCase().indexOf(search.toLowerCase()) !== -1
-    );
-
     return (
         <div className="container-fluid">
             <Breadcrumb pageName={"Strength"} />
@@ -57,13 +53,13 @@ export default function ManageStrength() {
                         </div>
                     </div>
                     <div className="card-body">
-                        <AddButton buttonLink="/add-strength" />
+                        <AddButton buttonLink="/add-strength" level={"Add Strength"} />
                         <div className="table-responsive">
                             <table className="table table-striped table-bordered table-hover">
                                 <thead>
                                     <tr>
                                         <th scope="col">SN</th>
-                                        <th className="col-6">Strength Name</th>
+                                        <th className="col-6">Strength</th>
                                         <th scope="col">CreatedBy</th>
                                         <th scope="col">UpdatedBy</th>
                                         <th scope="col">CreatedAt</th>
@@ -72,8 +68,8 @@ export default function ManageStrength() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {filteredData?.length > 0 ? (
-                                        filteredData?.map((strength, index) => (
+                                    {data?.length > 0 ? (
+                                        data?.map((strength, index) => (
                                             <StrengthTable
                                                 key={index}
                                                 record={strength}

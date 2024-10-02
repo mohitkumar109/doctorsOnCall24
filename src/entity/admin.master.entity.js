@@ -6,12 +6,12 @@ export const AdminMasterQueryBuilder = {
         let query = [];
         let match = {};
 
-        if (data.status) {
-            match["status"] = data.status;
-        }
-
         if (data.search) {
             match["genericName"] = { $regex: data.search, $options: "i" };
+        }
+
+        if (data.status) {
+            match["status"] = data.status;
         }
 
         query.push({
@@ -352,7 +352,7 @@ export const AdminMasterQueryBuilder = {
 
         query.push({
             $project: {
-                categoryName: 1,
+                strengthName: 1,
                 status: 1,
                 "createdBy.fullName": 1,
                 "updatedBy.fullName": 1,
@@ -701,6 +701,7 @@ export const AdminMasterQueryBuilder = {
                 name: 1,
                 stock: 1,
                 price: 1,
+                unitType: 1,
                 expireDate: 1,
                 status: 1,
                 createdAt: 1,
@@ -739,11 +740,6 @@ export const AdminMasterQueryBuilder = {
             match["storeId"] = new Dependencies.mongoose.Types.ObjectId(data.storeId);
         }
 
-        // Filter by medicineId
-        if (data.medicineId) {
-            match["medicineId"] = new Dependencies.mongoose.Types.ObjectId(data.medicineId);
-        }
-
         query.push({ $match: match });
         query.push({ $unwind: "$items" });
 
@@ -760,6 +756,9 @@ export const AdminMasterQueryBuilder = {
             $project: {
                 medicine: { $first: "$medicineProduct" },
                 quantity: "$items.quantity",
+                orderDate: 1, // Include these fields if they exist in the original document
+                orderPrice: 1,
+                status: 1,
             },
         });
 
@@ -767,8 +766,9 @@ export const AdminMasterQueryBuilder = {
             $group: {
                 _id: "$_id",
                 items: { $push: "$$ROOT" },
-                cartTotal: { $sum: { $multiply: ["$medicine.price", "$quantity"] } }, // use medicine.price
-                totalItems: { $sum: 1 }, // Total number of unique items
+                orderDate: { $first: "$orderDate" }, // Include orderDate
+                orderPrice: { $first: "$orderPrice" }, // Include orderPrice if available
+                status: { $first: "$status" },
             },
         });
 
@@ -792,8 +792,10 @@ export const AdminMasterQueryBuilder = {
                 "items.medicine.name": 1,
                 "items.medicine.price": 1,
                 "items.quantity": 1,
-                cartTotal: 1,
-                totalItems: 1, // Total number of unique items
+                orderPrice: 1,
+                totalItems: { $size: "$items" },
+                orderDate: 1,
+                status: 1,
             },
         });
 

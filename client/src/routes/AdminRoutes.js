@@ -12,6 +12,7 @@ import AddBrand from "../pages/admin/brand/AddBrand";
 
 import ManageGeneric from "../pages/admin/generic/ManageGeneric";
 import AddGeneric from "../pages/admin/generic/AddGeneric";
+import EditGeneric from "../pages/admin/generic/EditGeneric";
 
 import ManageStrength from "../pages/admin/strength/ManageStrength";
 import AddStrength from "../pages/admin/strength/AddStrength";
@@ -28,6 +29,9 @@ import AddMedicine from "../pages/admin/medicine/AddMedicine";
 import Store from "../pages/admin/storeInventory/Store";
 import AddToStore from "../pages/admin/storeInventory/AddToStore";
 import StoreCart from "../pages/admin/storeInventory/StoreCart";
+
+import AssignStoreHistory from "../pages/admin/storeInventory/AssignStoreHistory";
+import StoreInventory from "../pages/admin/storeInventory/StoreInventory";
 
 import Test from "../pages/Test";
 
@@ -50,7 +54,7 @@ export default function AdminRoutes() {
 
             <Route path="/manage-generic" element={<ManageGeneric />} />
             <Route path="/add-generic" element={<AddGeneric />} />
-            <Route path="/edit-generic/:id" element={<AddGeneric />} />
+            <Route path="/edit-generic/:id" element={<EditGeneric />} />
 
             <Route path="/manage-strength" element={<ManageStrength />} />
             <Route path="/add-strength" element={<AddStrength />} />
@@ -71,6 +75,9 @@ export default function AdminRoutes() {
             <Route path="/select-store/" element={<Store />} />
             <Route path="/add-store-cart/:id" element={<AddToStore />} />
             <Route path="/store-cart/:id" element={<StoreCart />} />
+
+            <Route path="/select-store-assign/" element={<AssignStoreHistory />} />
+            <Route path="/store-inventory-history/:id" element={<StoreInventory />} />
 
             <Route path="/test/" element={<Test />} />
         </Routes>

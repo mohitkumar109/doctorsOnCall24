@@ -1,6 +1,5 @@
 import { Dependencies } from "../packages/index.js";
 import { ApiError } from "../utils/ApiError.js";
-import { MODEL } from "../models/index.js";
 
 let OnConsole = (message, data) => {
     console.log(message);
@@ -63,7 +62,7 @@ async function aggregation(query, model) {
 async function getDataLength(query, model) {
     try {
         let data = await model.countDocuments(query);
-        return data.length;
+        return data;
     } catch (error) {
         return Promise.reject(error);
     }

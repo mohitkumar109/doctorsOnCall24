@@ -194,7 +194,7 @@ export default function ManageMedicine() {
                         </div>
                     </div>
                     <div className="card-body">
-                        <AddButton buttonLink="/add-medicine" />
+                        <AddButton buttonLink="/add-medicine" level={"Add Medicine"} />
                         <div className="table-responsive">
                             <table className="table table-striped table-responsive table-bordered table-hover">
                                 <TableHead headers={medicineTableHead} />

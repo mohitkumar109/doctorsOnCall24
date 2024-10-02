@@ -8,20 +8,16 @@ const storeInventorySchema = new Dependencies.mongoose.Schema(
             required: true,
         },
 
-        items: {
-            type: [
-                {
-                    _id: false,
-                    medicineId: {
-                        type: Dependencies.mongoose.Schema.Types.ObjectId,
-                        ref: "Medicine",
-                        required: true,
-                    },
-                    quantity: { type: Number, required: true },
+        items: [
+            {
+                medicineId: {
+                    type: Dependencies.mongoose.Schema.Types.ObjectId,
+                    ref: "Medicine",
+                    required: true,
                 },
-            ],
-            default: [],
-        },
+                quantity: { type: Number, required: true },
+            },
+        ],
 
         orderPrice: {
             type: Number,
@@ -35,7 +31,8 @@ const storeInventorySchema = new Dependencies.mongoose.Schema(
 
         status: {
             type: String,
-            default: ["pending", "complete"],
+            enum: ["pending", "complete"],
+            default: "pending",
         },
 
         isPaymentDone: {

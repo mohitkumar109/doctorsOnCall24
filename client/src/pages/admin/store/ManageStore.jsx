@@ -57,7 +57,7 @@ export default function ManageStore() {
                         </div>
                     </div>
                     <div className="card-body">
-                        <AddButton buttonLink="/add-store" />
+                        <AddButton buttonLink="/add-store" level={"Add Store"} />
                         <div className="table-responsive">
                             <table className="table table-striped table-bordered table-hover">
                                 <thead>

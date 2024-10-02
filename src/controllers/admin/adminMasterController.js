@@ -1,6 +1,6 @@
 import { Dependencies } from "../../packages/index.js";
 import { asyncHandler, ApiResponse, ApiError, modifyResponse } from "../../utils/index.js";
-import { Helpers } from "../../common/index.js";
+import { Helpers, PAGINATION_LIMIT } from "../../common/index.js";
 import { MODEL } from "../../models/index.js";
 import { AdminMasterQueryBuilder } from "../../entity/admin.master.entity.js";
 
@@ -43,7 +43,7 @@ class Controller {
         const query = await Helpers.aggregation(queryData, MODEL.Generic);
         // Total Items and Pages
         const totalResult = await Helpers.getDataLength(query, MODEL.Generic);
-        const totalPages = Math.ceil(totalResult / parseInt(req.query.limit || 10));
+        const totalPages = Math.ceil(totalResult / parseInt(req.query.limit || PAGINATION_LIMIT));
 
         if (!query) {
             throw new ApiError(400, "Generic name is not found");
@@ -56,7 +56,7 @@ class Controller {
 
         return res
             .status(200)
-            .json(new ApiResponse(200, { results: query, pagination }, "All List of generic name"));
+            .json(new ApiResponse(200, { results: query, pagination }, "All List of generic"));
     });
 
     // description      Fetch single generic by Id
@@ -191,7 +191,7 @@ class Controller {
         const query = await Helpers.aggregation(queryData, MODEL.Category);
         // Total Items and Pages
         const totalResult = await MODEL.Category.countDocuments(queryData);
-        const totalPages = Math.ceil(totalResult / parseInt(req.query.limit || 10));
+        const totalPages = Math.ceil(totalResult / parseInt(req.query.limit || PAGINATION_LIMIT));
         if (!query) {
             throw new ApiError(400, "Category name is not found");
         }
@@ -329,7 +329,7 @@ class Controller {
         const query = await Helpers.aggregation(queryData, MODEL.Brand);
         // Total Items and Pages
         const totalResult = await MODEL.Brand.countDocuments(queryData);
-        const totalPages = Math.ceil(totalResult / parseInt(req.query.limit || 10));
+        const totalPages = Math.ceil(totalResult / parseInt(req.query.limit || PAGINATION_LIMIT));
         if (!query) {
             throw new ApiError(400, "Brand name is not found");
         }
@@ -449,7 +449,7 @@ class Controller {
         const query = await Helpers.aggregation(queryData, MODEL.Strength);
         // Total Items and Pages
         const totalResult = await MODEL.Strength.countDocuments(queryData);
-        const totalPages = Math.ceil(totalResult / parseInt(req.query.limit || 10));
+        const totalPages = Math.ceil(totalResult / parseInt(req.query.limit || PAGINATION_LIMIT));
         if (!query) {
             throw new ApiError(400, "Strength is not found");
         }
@@ -575,7 +575,7 @@ class Controller {
         const query = await Helpers.aggregation(queryData, MODEL.Usage);
         // Total Items and Pages
         const totalResult = await MODEL.Usage.countDocuments(queryData);
-        const totalPages = Math.ceil(totalResult / parseInt(req.query.limit || 10));
+        const totalPages = Math.ceil(totalResult / parseInt(req.query.limit || PAGINATION_LIMIT));
 
         if (!query) {
             throw new ApiError(400, "Usage is not found");
