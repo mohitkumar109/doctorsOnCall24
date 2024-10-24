@@ -1,19 +1,31 @@
 import { Dependencies } from "../packages/index.js";
 import { ApiError } from "../utils/ApiError.js";
 
-let OnConsole = (message, data) => {
+function OnConsole(message, data) {
     console.log(message);
     if (data) {
-        console.log("***************************");
+        console.log("***************");
         console.log(data);
-        console.log("***************************");
+        console.log("***************");
     }
-};
+}
 
-let capitalize = (s) => {
+function checkFileExists(fileName) {
+    return !!Dependencies.fs.existsSync(fileName);
+}
+
+function capitalize(s) {
     if (typeof s !== "string") return "";
     return s.charAt(0).toUpperCase() + s.slice(1);
-};
+}
+
+function createOrderNumber(val) {
+    const prefix = val; // Prefix for order numbers
+    const timestamp = Date.now(); // Current timestamp in milliseconds
+    const randomNum = Math.floor(Math.random() * 9000 + 1000); // Random number to ensure uniqueness
+    const orderNumber = `${prefix}${timestamp}${randomNum}`;
+    return orderNumber;
+}
 
 function actionOnSingleId(id, status, model) {
     if (!Dependencies.mongoose.isValidObjectId(id)) {
@@ -75,4 +87,6 @@ export const Helpers = {
     actionOnMultipleIds,
     aggregation,
     getDataLength,
+    createOrderNumber,
+    checkFileExists,
 };

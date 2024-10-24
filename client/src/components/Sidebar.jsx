@@ -14,8 +14,22 @@ const menuItems = [
                 visible: ["admin", "user"],
             },
             {
+                icon: <BsIcons.BsTruck className="bi" />,
+                label: "Stores",
+                href: "#",
+                visible: ["admin"],
+                subItems: [
+                    {
+                        icon: <BsIcons.BsCardList className="bi" />,
+                        label: "Manage Stores",
+                        href: "/manage-store",
+                        visible: ["admin"],
+                    },
+                ],
+            },
+            {
                 icon: <BsIcons.BsCapsule className="bi" />,
-                label: "Medicine",
+                label: "Medicine Master",
                 href: "#",
                 visible: ["admin"],
                 subItems: [
@@ -64,6 +78,20 @@ const menuItems = [
                         href: "/manage-medicine",
                         visible: ["admin"],
                     },
+
+                    {
+                        icon: <BsIcons.BsCardList className="bi" />,
+                        label: "Medicine Assign",
+                        href: "/select-store",
+                        visible: ["admin"],
+                    },
+                    {
+                        icon: <BsIcons.BsCardList className="bi" />,
+                        label: "Current Inventory",
+                        href: "/current-inventory",
+                        visible: ["admin"],
+                    },
+
                     {
                         icon: <BsIcons.BsCardList className="bi" />,
                         label: "Receive Inventory History",
@@ -74,36 +102,41 @@ const menuItems = [
             },
 
             {
-                icon: <BsIcons.BsTruck className="bi" />,
-                label: "Stores",
+                icon: <BsIcons.BsCart className="bi" />,
+                label: "Store Inventory",
                 href: "#",
                 visible: ["admin"],
                 subItems: [
                     {
                         icon: <BsIcons.BsCardList className="bi" />,
-                        label: "Manage Stores",
-                        href: "/manage-store",
+                        label: "Store Orders",
+                        href: "/store-orders/",
+                        visible: ["admin"],
+                    },
+                    {
+                        icon: <BsIcons.BsCardList className="bi" />,
+                        label: "Store Medicine",
+                        href: "/select-store-medicine/",
                         visible: ["admin"],
                     },
                 ],
             },
-
             {
                 icon: <BsIcons.BsCart className="bi" />,
-                label: "Assign Inventory",
+                label: "Low Stocks",
                 href: "#",
                 visible: ["admin"],
                 subItems: [
                     {
                         icon: <BsIcons.BsCardList className="bi" />,
-                        label: "Select Store",
-                        href: "/select-store",
+                        label: "Low Stock Reports",
+                        href: "/low-stock-medicine",
                         visible: ["admin"],
                     },
                     {
                         icon: <BsIcons.BsCardList className="bi" />,
-                        label: "Store Inventory",
-                        href: "/select-store-assign/",
+                        label: "Store Low Stock Reports",
+                        href: "/low-stock-medicine",
                         visible: ["admin"],
                     },
                 ],

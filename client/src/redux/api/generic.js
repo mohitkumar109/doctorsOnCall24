@@ -18,18 +18,11 @@ export const genericApiSlice = apiSlice.injectEndpoints({
         }),
 
         addGeneric: builder.mutation({
-            queryFn: async (newGeneric, _queryApi, _extraOptions, baseQuery) => {
-                // Simulate a delay (e.g., 2 seconds)
-                await new Promise((resolve) => setTimeout(resolve, 300));
-                // After the delay, proceed with the actual POST request
-                const result = await baseQuery({
-                    url: `/generic/`,
-                    method: "POST",
-                    body: newGeneric,
-                });
-
-                return result; // Return the result of the API call
-            },
+            query: (newGeneric) => ({
+                url: `/generic/`,
+                method: "POST",
+                body: newGeneric,
+            }),
             keepUnusedDataFor: 5,
             invalidatesTags: ["GetAllGenericTag"],
         }),

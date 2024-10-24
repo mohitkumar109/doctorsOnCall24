@@ -128,7 +128,7 @@ export default function AddMedicine() {
             <div className="content-area">
                 <div className="card">
                     <div className="card-header">
-                        <span className="card-title">{id ? "Update" : "Add Medicine"}</span>
+                        <span className="card-title">{id ? "Update" : "Add"}</span>
                         <div className="d-flex gap-2" style={{ float: "right" }}>
                             <Link
                                 to="/manage-medicine"

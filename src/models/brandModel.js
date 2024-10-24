@@ -1,4 +1,5 @@
 import { Dependencies } from "../packages/index.js";
+const { ObjectId } = Dependencies.mongoose.Schema.Types;
 
 const brandSchema = new Dependencies.mongoose.Schema({
     brandName: {
@@ -17,11 +18,11 @@ const brandSchema = new Dependencies.mongoose.Schema({
         default: "active",
     },
     createdBy: {
-        type: Dependencies.mongoose.Schema.Types.ObjectId,
+        type: ObjectId,
         ref: "Users",
     },
     updatedBy: {
-        type: Dependencies.mongoose.Schema.Types.ObjectId,
+        type: ObjectId,
         ref: "Users",
     },
     createdAt: {

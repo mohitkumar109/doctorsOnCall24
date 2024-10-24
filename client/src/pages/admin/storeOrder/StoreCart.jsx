@@ -86,73 +86,60 @@ export default function StoreCart() {
                                 <TableHead headers={storeCartTable} />
                                 <tbody>
                                     {cart?.length > 0 ? (
-                                        <>
-                                            {cart?.map((line, index) => (
-                                                <tr key={index}>
-                                                    <td>{index + 1}</td>
-
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {line?.medicineId}
-                                                        </span>
-                                                    </td>
-
-                                                    <td>
-                                                        <span className="text-default">
-                                                            {line?.price}
-                                                        </span>
-                                                    </td>
-
-                                                    <td className="align-middle">
-                                                        <div className="input-group quantity mx-auto">
-                                                            <div className="input-group-btn">
-                                                                <button
-                                                                    type="button"
-                                                                    className="btn btn-sm btn-primary"
-                                                                    onClick={handleDecreaseQty(
-                                                                        line?.medicineId
-                                                                    )}
-                                                                >
-                                                                    -
-                                                                </button>
-                                                            </div>
-                                                            <input
-                                                                type="text"
-                                                                name="qty"
-                                                                value={line?.quantity}
-                                                                className="form-control-sm bg-secondary border-0 text-center"
-                                                                readOnly
-                                                            />
-                                                            <div className="input-group-btn">
-                                                                <button
-                                                                    type="button"
-                                                                    className="btn btn-sm btn-primary"
-                                                                    onClick={handleIncreaseQty(
-                                                                        line?.medicineId
-                                                                    )}
-                                                                >
-                                                                    +
-                                                                </button>
-                                                            </div>
+                                        cart?.map((line, index) => (
+                                            <tr key={index}>
+                                                <td>{index + 1}</td>
+                                                <td>{line?.medicineId}</td>
+                                                <td>{line?.price}</td>
+                                                <td className="align-middle">
+                                                    <div className="input-group quantity mx-auto">
+                                                        <div className="input-group-btn">
+                                                            <button
+                                                                type="button"
+                                                                className="btn btn-sm btn-primary"
+                                                                onClick={handleDecreaseQty(
+                                                                    line?.medicine
+                                                                )}
+                                                            >
+                                                                -
+                                                            </button>
                                                         </div>
-                                                    </td>
+                                                        <input
+                                                            type="text"
+                                                            name="qty"
+                                                            value={line?.quantity}
+                                                            className="form-control-sm bg-secondary border-0 text-center"
+                                                            readOnly
+                                                        />
+                                                        <div className="input-group-btn">
+                                                            <button
+                                                                type="button"
+                                                                className="btn btn-sm btn-primary"
+                                                                onClick={handleIncreaseQty(
+                                                                    line?.medicine
+                                                                )}
+                                                            >
+                                                                +
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </td>
 
-                                                    <td className="align-middle">
-                                                        {(line?.quantity * line?.price).toFixed(2)}
-                                                    </td>
+                                                <td className="align-middle">
+                                                    {(line?.quantity * line?.price).toFixed(2)}
+                                                </td>
 
-                                                    <td>
-                                                        <button
-                                                            className="btn btn-danger btn-sm"
-                                                            onClick={handleRemove(line?.medicineId)}
-                                                            style={{ marginLeft: "10px" }}
-                                                        >
-                                                            Remove
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </>
+                                                <td>
+                                                    <button
+                                                        className="btn btn-danger btn-sm"
+                                                        onClick={handleRemove(line?.medicine)}
+                                                        style={{ marginLeft: "10px" }}
+                                                    >
+                                                        Remove
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))
                                     ) : (
                                         <tr>
                                             <td colSpan="14" className="p-4 text-center">

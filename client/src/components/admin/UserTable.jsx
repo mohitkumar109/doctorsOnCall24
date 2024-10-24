@@ -1,6 +1,7 @@
 import React from "react";
-import { BsPencil, BsTrash3Fill } from "react-icons/bs";
 import { Link } from "react-router-dom";
+import { BsPencil, BsTrash3Fill } from "react-icons/bs";
+import moment from "moment";
 
 const UserTable = ({ record, sn, changeStatus }) => {
     return (
@@ -12,8 +13,7 @@ const UserTable = ({ record, sn, changeStatus }) => {
             <td>{record?.role}</td>
             <td>{record?.createdBy?.fullName || "None"}</td>
             <td>{record?.updatedBy?.fullName || "None"}</td>
-            <td>{record?.createdAt?.split("T")[0]}</td>
-
+            <td>{moment(record?.createdAt).format("DD-MM-YYYY , hh:mm a")}</td>
             <td>
                 <div className="form-check form-switch">
                     <input

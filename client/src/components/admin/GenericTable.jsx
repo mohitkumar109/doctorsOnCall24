@@ -26,8 +26,8 @@ const GenericTable = ({ record, sn }) => {
         <tr>
             <td>{sn + 1}</td>
             <td>{capitalizeFirstLetter(record?.genericName)}</td>
-            <td>{record?.createdBy?.fullName || "None"}</td>
-            <td>{record?.updatedBy?.fullName || "None"}</td>
+            <td>{record?.createdBy || "None"}</td>
+            <td>{record?.updatedBy || "None"}</td>
             <td>{record?.createdAt?.split("T")[0]}</td>
             <td>
                 <div className="form-check form-switch">
@@ -39,28 +39,28 @@ const GenericTable = ({ record, sn }) => {
                         className="form-check-input mt-2"
                         onChange={() =>
                             changeStatus(
-                                record._id,
-                                record.status === "active" ? "inactive" : "active"
+                                record?._id,
+                                record?.status === "active" ? "inactive" : "active"
                             )
                         }
                     />
                     <span
                         className={`badge ${
-                            record.status === "active" ? "bg-success" : "bg-danger"
+                            record?.status === "active" ? "bg-success" : "bg-danger"
                         }`}
                     >
-                        {record.status === "active" ? "Active" : "Inactive"}
+                        {record?.status === "active" ? "Active" : "Inactive"}
                     </span>
                 </div>
             </td>
             <td className="text-default">
                 <div className="d-flex gap-3">
-                    <Link to={`/edit-generic/${record._id}`} className="text-primary">
+                    <Link to={`/edit-generic/${record?._id}`} className="text-primary">
                         <BsPencil />
                     </Link>
 
                     <Link to="#" className="text-danger">
-                        <BsTrash3Fill onClick={() => changeStatus(record._id, "delete")} />
+                        <BsTrash3Fill onClick={() => changeStatus(record?._id, "delete")} />
                     </Link>
                 </div>
             </td>

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import Breadcrumb from "../../../components/Breadcrumb";
-import AddButton from "../../../components/AddButton";
 import useService from "../../../hooks/useService";
 import { apiEnd } from "../../../services/adminApi";
+import AddButton from "../../../components/AddButton";
 
-export default function AssignStoreHistory() {
+export default function Store() {
     const { postData } = useService();
     const navigate = useNavigate();
     const [data, setData] = useState([]);
@@ -21,7 +21,7 @@ export default function AssignStoreHistory() {
 
     useEffect(() => {
         getStore();
-    }, [postData]);
+    }, []);
 
     const getStore = async () => {
         const req = apiEnd.getStoreSelect();
@@ -36,7 +36,7 @@ export default function AssignStoreHistory() {
         const storeId = input?.storeId;
         if (storeId) {
             toast.success("Store selected successfully!");
-            navigate(`/store-inventory-history/${storeId}`);
+            navigate(`/add-store-cart/${storeId}`);
         }
     };
 
@@ -55,7 +55,7 @@ export default function AssignStoreHistory() {
                         <form className="offset-2 mt-4" onSubmit={handleSubmit}>
                             <div className="row mb-4">
                                 <label htmlFor="state" className="col-sm-2 col-form-label">
-                                    Select Store to Assign
+                                    Store to Assign Medicine
                                 </label>
 
                                 <div className="col-sm-5">
@@ -65,7 +65,7 @@ export default function AssignStoreHistory() {
                                         onChange={handleChange}
                                         className="form-select"
                                     >
-                                        <option value="">----Select Store Name----</option>
+                                        <option value="">----Select Store----</option>
                                         {data?.map((record, i) => (
                                             <option value={record?._id} key={i}>
                                                 {record?.storeName}
@@ -78,7 +78,7 @@ export default function AssignStoreHistory() {
                             <div className="row mb-5 mt-5">
                                 <div className="col-sm-5 offset-sm-2">
                                     <button type="submit" className="btn btn-primary me-3">
-                                        View Inventory
+                                        Next
                                     </button>
                                 </div>
                             </div>

@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { apiEnd } from "../../../services/adminApi";
 import Pagination from "../../../components/Pagination";
 import Breadcrumb from "../../../components/Breadcrumb";
 import useServices from "../../../hooks/useService";
-import { apiEnd } from "../../../services/adminApi";
 import UserTable from "../../../components/admin/UserTable";
 import AddButton from "../../../components/AddButton";
 
@@ -35,7 +34,7 @@ export default function ManageUser() {
     };
 
     const filteredData = data?.filter(
-        (result) => result.fullName.toLowerCase().indexOf(search.toLowerCase()) !== -1
+        (result) => result?.fullName.toLowerCase().indexOf(search.toLowerCase()) !== -1
     );
 
     return (
@@ -93,9 +92,9 @@ export default function ManageUser() {
                                         filteredData?.map((user, index) => (
                                             <UserTable
                                                 key={index}
+                                                sn={index}
                                                 record={user}
                                                 changeStatus={changeStatus}
-                                                sn={index}
                                             />
                                         ))
                                     ) : (

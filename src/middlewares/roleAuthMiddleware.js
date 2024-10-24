@@ -11,24 +11,20 @@ export const checkPermission = (requiredPermission) => {
         try {
             const userRole = req.user.role; // Ensure this is correctly populated, e.g., from JWT or session
 
-            if (!userRole) {
-                return res.status(401).json({ message: "Unauthorized: No role assigned" });
-            }
+            if (!userRole) throw new ApiError(401, "Unauthorized: No role assigned");
 
             const permissions = roles[userRole];
 
-            if (!permissions) {
-                return res.status(403).json({ message: "Forbidden: Invalid role" });
-            }
+            if (!permissions) throw new ApiError(403, "Forbidden: Invalid role");
 
             if (permissions.includes(requiredPermission)) {
                 return next(); // User has permission, proceed
             } else {
-                return res.status(403).json({ message: "Forbidden: Insufficient permissions" });
+                throw new ApiError(403, "Forbidden: Insufficient permissions");
             }
         } catch (error) {
-            console.error("RBAC Error:", error);
-            return res.status(500).json({ message: "Internal Server Error" });
+            //console.error("RBAC Error:", error);
+            throw new ApiError(500, "Internal Server Error");
         }
     };
 };

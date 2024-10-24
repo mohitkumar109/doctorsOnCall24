@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { BsSortAlphaDown, BsSortAlphaUpAlt, BsArrowUp, BsArrowDown } from "react-icons/bs";
 import FilterTop from "../../../components/FilterTop";
 import AddButton from "../../../components/AddButton";
 import Pagination from "../../../components/Pagination";
@@ -6,7 +7,13 @@ import Breadcrumb from "../../../components/Breadcrumb";
 import Spinner from "../../../components/Spinner";
 import GenericTable from "../../../components/admin/GenericTable";
 import { useDispatch, useSelector } from "react-redux";
-import { setPage, setPagination, setRecords } from "../../../redux/features/generic/genericSlice";
+import {
+    setPage,
+    setPagination,
+    setRecords,
+    setSorting,
+    setStatus,
+} from "../../../redux/features/generic/genericSlice";
 import { useGetAllGenericQuery } from "../../../redux/api/generic";
 
 export default function ManageGeneric() {
@@ -22,7 +29,7 @@ export default function ManageGeneric() {
         page,
     }).toString();
 
-    const { data, isLoading, error } = useGetAllGenericQuery(queryParams);
+    const { data, isLoading } = useGetAllGenericQuery(queryParams);
 
     useEffect(() => {
         if (data) {
@@ -35,12 +42,16 @@ export default function ManageGeneric() {
         dispatch(setPage(newPage));
     };
 
-    if (isLoading) {
-        return <Spinner />;
+    function handleSort(sortKey) {
+        dispatch(setSorting(sortKey)); // Update sorting criteria
     }
 
-    if (error) {
-        return <p>Error loading records.</p>;
+    function handleStatus(statusKey) {
+        dispatch(setStatus(statusKey));
+    }
+
+    if (isLoading) {
+        return <Spinner />;
     }
 
     return (
@@ -63,11 +74,41 @@ export default function ManageGeneric() {
                                 <thead>
                                     <tr>
                                         <th scope="col">S.N</th>
-                                        <th className="col-6">Generic Name</th>
+                                        <th className="col-6">
+                                            Generic Name
+                                            <BsSortAlphaDown
+                                                onClick={() => handleSort("4")}
+                                                style={{ cursor: "pointer" }}
+                                            />
+                                            <BsSortAlphaUpAlt
+                                                onClick={() => handleSort("3")}
+                                                style={{ cursor: "pointer" }}
+                                            />
+                                        </th>
                                         <th className="col-2">CreatedBy</th>
                                         <th className="col-2">UpdatedBy</th>
-                                        <th className="col-2">CreatedAt</th>
-                                        <th className="col-1">Status</th>
+                                        <th className="col-2">
+                                            CreatedAt
+                                            <BsArrowDown
+                                                onClick={() => handleSort("2")}
+                                                style={{ cursor: "pointer" }}
+                                            />
+                                            <BsArrowUp
+                                                onClick={() => handleSort("1")}
+                                                style={{ cursor: "pointer" }}
+                                            />
+                                        </th>
+                                        <th className="col-1">
+                                            Status
+                                            <BsArrowDown
+                                                onClick={() => handleStatus("active")}
+                                                style={{ cursor: "pointer" }}
+                                            />
+                                            <BsArrowUp
+                                                onClick={() => handleStatus("inactive")}
+                                                style={{ cursor: "pointer" }}
+                                            />
+                                        </th>
                                         <th className="col-1">Actions</th>
                                     </tr>
                                 </thead>

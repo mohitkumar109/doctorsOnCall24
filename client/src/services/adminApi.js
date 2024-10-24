@@ -415,11 +415,19 @@ const actionMedicineOne = (id, status) => {
     };
 };
 
+const getMedicineInventory = () => {
+    return {
+        url: `${BASE_URL}/admin/medicine-inventory/`,
+        method: "GET",
+        data: null,
+    };
+};
+
 //--------------Medicine Assign to Store-----------------//
 
 const adStoreAssignMedicine = (id, values) => {
     return {
-        url: `${BASE_URL}/admin/medicine-add-store/`,
+        url: `${BASE_URL}/admin/store-order/`,
         method: "POST",
         data: {
             storeId: id,
@@ -428,9 +436,25 @@ const adStoreAssignMedicine = (id, values) => {
     };
 };
 
-const getStoreInventory = (page, storeId) => {
+const getStoreOrderByStoreId = (fromDate, page, storeId) => {
     return {
-        url: `${BASE_URL}/admin/store-inventory/${storeId}/?page=${page}`,
+        url: `${BASE_URL}/admin/store-order/?fromDate=${fromDate}&page=${page}&storeId=${storeId}`,
+        method: "GET",
+        data: null,
+    };
+};
+
+const getStoreOrderItemsByOrderId = function (orderId, page) {
+    return {
+        url: `${BASE_URL}/admin/store-order-items/?orderId=${orderId}&page=${page}`,
+        method: "GET",
+        data: null,
+    };
+};
+
+const getStoreMedicine = function (storeId, page) {
+    return {
+        url: `${BASE_URL}/admin/store-medicine/?storeId=${storeId}&page=${page}`,
         method: "GET",
         data: null,
     };
@@ -502,8 +526,11 @@ export const apiEnd = {
     getMedicineSelect,
     updateMedicine,
     actionMedicineOne,
+    getMedicineInventory,
 
     //Medicine Assign to Store
     adStoreAssignMedicine,
-    getStoreInventory,
+    getStoreOrderByStoreId,
+    getStoreOrderItemsByOrderId,
+    getStoreMedicine,
 };

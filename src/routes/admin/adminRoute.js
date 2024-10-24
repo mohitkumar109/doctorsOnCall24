@@ -330,37 +330,49 @@ router.patch(
     AdminMedicineController.actionOnMedicine
 );
 
-// Medicine Store Inventory
-
-router.post(
-    "/medicine-add-store",
+router.get(
+    "/medicine-inventory/",
     Middleware.userAuth,
     Middleware.checkPermission("create"),
-    AdminStoreController.addStoreInventory
+    AdminMedicineController.fetchMedicineStatistics
+);
+
+// Medicine Store Orders
+
+router.post(
+    "/store-order",
+    Middleware.userAuth,
+    Middleware.checkPermission("create"),
+    AdminStoreController.createStoreOrder
 );
 
 router.get(
-    "/store-inventory/:id",
+    "/store-order/",
     Middleware.userAuth,
-    Middleware.checkPermission("create"),
-    AdminStoreController.fetchStoreInventoryById
-);
-
-// Store Cart
-
-router.post(
-    "/add-to-storeCart/",
-    Middleware.userAuth,
-    Middleware.checkPermission("create"),
-    AdminStoreController.addStoreCart
+    Middleware.checkPermission("read"),
+    AdminStoreController.fetchStoreOrder
 );
 
 router.get(
-    "/store-cart/:id",
+    "/store-order-items/",
     Middleware.userAuth,
     Middleware.checkPermission("create"),
-    AdminStoreController.fetchStoreCart
+    AdminStoreController.fetchStoreOrderItems
 );
+
+// router.get(
+//     "/store-medicine/",
+//     Middleware.userAuth,
+//     Middleware.checkPermission("read"),
+//     AdminStoreController.fetchStoreMedicine
+// );
+
+// router.get(
+//     "/store-medicine/:id",
+//     Middleware.userAuth,
+//     Middleware.checkPermission("read"),
+//     AdminStoreController.fetchStoreMedicine
+// );
 
 router.get(
     "/store-medicine/",

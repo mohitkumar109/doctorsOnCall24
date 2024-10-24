@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import moment from "moment";
 import Pagination from "../../../components/Pagination";
 import Breadcrumb from "../../../components/Breadcrumb";
 import AddButton from "../../../components/AddButton";
 import Filter from "../../../components/Filter";
 import useService from "../../../hooks/useService";
 import { apiEnd } from "../../../services/adminApi";
-import { indianDateFormat } from "../../../utils/helper";
 import { useGlobalContext } from "../../../context/AppContext";
 
 export default function AddToStore() {
@@ -67,39 +67,45 @@ export default function AddToStore() {
         setErrors((prevErrors) => ({ ...prevErrors, [medicineId]: error }));
     };
 
+    const medicineData = data?.filter(function (items) {
+        return items.status === "active";
+    });
+
     // Helper to render medicine rows
     const renderMedicineRows = () => {
-        return data?.map((line, index) => (
+        return medicineData?.map((line, index) => (
             <tr key={line._id}>
                 <td>{index + 1}</td>
                 <td>{line?.name}</td>
-                <td>{line?.generic?.genericName}</td>
-                <td>{line?.category?.categoryName}</td>
-                <td>{line?.brand?.brandName}</td>
+                <td>{line?.generic}</td>
+                <td>{line?.category}</td>
+                <td>{line?.brand}</td>
                 <td>
-                    {line?.strength?.strengthName} {line?.unitType}
+                    {line?.strength} {line?.unitType}
                 </td>
-                <td>{indianDateFormat(line?.expireDate)}</td>
+                <td>{moment(line?.expireDate).format("DD-MM-YYYY , hh:mm a")}</td>
                 <td>{line?.stock}</td>
                 <td>{line?.price}</td>
                 <td>
                     <input
                         type="text"
                         name="qty"
-                        value={qty[line._id] || ""}
-                        onChange={(e) => handleInputChange(line._id, e.target.value, line.stock)}
+                        value={qty[line?._id] || ""}
+                        onChange={(e) => handleInputChange(line?._id, e.target.value, line?.stock)}
                         className="form-control"
                         placeholder="Enter quantity"
                     />
-                    {errors[line._id] && <small className="text-danger">{errors[line._id]}</small>}
+                    {errors[line?._id] && (
+                        <small className="text-danger">{errors[line?._id]}</small>
+                    )}
                 </td>
 
                 <td>
                     <button
                         type="button"
                         className="btn btn-primary btn-sm"
-                        onClick={handleAddToCart(line._id, qty[line._id], line.price)}
-                        disabled={!!errors[line._id] || !qty[line._id]} // Disable if there's an error or no quantity
+                        onClick={handleAddToCart(line?._id, qty[line?._id], line?.price)}
+                        disabled={!!errors[line?._id] || !qty[line?._id]} // Disable if there's an error or no quantity
                     >
                         Add to Cart
                     </button>
@@ -119,7 +125,7 @@ export default function AddToStore() {
                         <div className="d-flex gap-2" style={{ float: "right" }}>
                             <Link to={`/store-cart/${id}`} className="btn btn-success">
                                 Cart
-                                <span className="badge text-bg-danger">{cart.length}</span>
+                                <span className="badge text-bg-danger">{cart?.length}</span>
                             </Link>
                         </div>
                     </div>
@@ -143,7 +149,7 @@ export default function AddToStore() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {data.length > 0 ? (
+                                    {medicineData?.length > 0 ? (
                                         renderMedicineRows()
                                     ) : (
                                         <tr>
@@ -156,9 +162,9 @@ export default function AddToStore() {
                             </table>
                         </div>
                         <Pagination
-                            totalResult={pagination.totalResult}
-                            pages={pagination.totalPages}
-                            page={pagination.currentPage}
+                            totalResult={pagination?.totalResult}
+                            pages={pagination?.totalPages}
+                            page={pagination?.currentPage}
                             changePage={setPage}
                         />
                     </div>

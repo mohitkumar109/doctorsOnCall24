@@ -1,4 +1,5 @@
 import { Dependencies } from "../packages/index.js";
+const { ObjectId } = Dependencies.mongoose.Schema.Types;
 
 const storeSchema = new Dependencies.mongoose.Schema(
     {
@@ -29,21 +30,12 @@ const storeSchema = new Dependencies.mongoose.Schema(
             type: String,
             default: "active",
         },
-
-        medicine: [
-            {
-                type: Dependencies.mongoose.Schema.Types.ObjectId,
-                ref: "Medicine",
-                required: true,
-            },
-        ],
-
         createdBy: {
-            type: Dependencies.mongoose.Schema.Types.ObjectId,
+            type: ObjectId,
             ref: "Users",
         },
         updatedBy: {
-            type: Dependencies.mongoose.Schema.Types.ObjectId,
+            type: ObjectId,
             ref: "Users",
         },
     },

@@ -66,8 +66,8 @@ export const AdminMasterQueryBuilder = {
 
         query.push({
             $addFields: {
-                createdBy: { $arrayElemAt: ["$createdByUser", 0] },
-                updatedBy: { $arrayElemAt: ["$updatedByUser", 0] },
+                createdBy: { $arrayElemAt: ["$createdByUser.fullName", 0] },
+                updatedBy: { $arrayElemAt: ["$updatedByUser.fullName", 0] },
             },
         });
 
@@ -75,8 +75,8 @@ export const AdminMasterQueryBuilder = {
             $project: {
                 genericName: 1,
                 status: 1,
-                "createdBy.fullName": 1,
-                "updatedBy.fullName": 1,
+                createdBy: 1,
+                updatedBy: 1,
                 updatedAt: 1,
                 createdAt: 1,
             },
@@ -159,8 +159,8 @@ export const AdminMasterQueryBuilder = {
 
         query.push({
             $addFields: {
-                createdBy: { $arrayElemAt: ["$createdByUser", 0] },
-                updatedBy: { $arrayElemAt: ["$updatedByUser", 0] },
+                createdBy: { $arrayElemAt: ["$createdByUser.fullName", 0] },
+                updatedBy: { $arrayElemAt: ["$updatedByUser.fullName", 0] },
             },
         });
 
@@ -168,8 +168,8 @@ export const AdminMasterQueryBuilder = {
             $project: {
                 categoryName: 1,
                 status: 1,
-                "createdBy.fullName": 1,
-                "updatedBy.fullName": 1,
+                createdBy: 1,
+                updatedBy: 1,
                 updatedAt: 1,
                 createdAt: 1,
             },
@@ -252,8 +252,8 @@ export const AdminMasterQueryBuilder = {
 
         query.push({
             $addFields: {
-                createdBy: { $arrayElemAt: ["$createdByUser", 0] },
-                updatedBy: { $arrayElemAt: ["$updatedByUser", 0] },
+                createdBy: { $arrayElemAt: ["$createdByUser.fullName", 0] },
+                updatedBy: { $arrayElemAt: ["$updatedByUser.fullName", 0] },
             },
         });
 
@@ -261,8 +261,8 @@ export const AdminMasterQueryBuilder = {
             $project: {
                 brandName: 1,
                 status: 1,
-                "createdBy.fullName": 1,
-                "updatedBy.fullName": 1,
+                createdBy: 1,
+                updatedBy: 1,
                 updatedAt: 1,
                 createdAt: 1,
             },
@@ -345,8 +345,8 @@ export const AdminMasterQueryBuilder = {
 
         query.push({
             $addFields: {
-                createdBy: { $arrayElemAt: ["$createdByUser", 0] },
-                updatedBy: { $arrayElemAt: ["$updatedByUser", 0] },
+                createdBy: { $arrayElemAt: ["$createdByUser.fullName", 0] },
+                updatedBy: { $arrayElemAt: ["$updatedByUser.fullName", 0] },
             },
         });
 
@@ -354,8 +354,8 @@ export const AdminMasterQueryBuilder = {
             $project: {
                 strengthName: 1,
                 status: 1,
-                "createdBy.fullName": 1,
-                "updatedBy.fullName": 1,
+                createdBy: 1,
+                updatedBy: 1,
                 updatedAt: 1,
                 createdAt: 1,
             },
@@ -438,8 +438,8 @@ export const AdminMasterQueryBuilder = {
 
         query.push({
             $addFields: {
-                createdBy: { $arrayElemAt: ["$createdByUser", 0] },
-                updatedBy: { $arrayElemAt: ["$updatedByUser", 0] },
+                createdBy: { $arrayElemAt: ["$createdByUser.fullName", 0] },
+                updatedBy: { $arrayElemAt: ["$updatedByUser.fullName", 0] },
             },
         });
 
@@ -447,8 +447,8 @@ export const AdminMasterQueryBuilder = {
             $project: {
                 usageName: 1,
                 status: 1,
-                "createdBy.fullName": 1,
-                "updatedBy.fullName": 1,
+                createdBy: 1,
+                updatedBy: 1,
                 updatedAt: 1,
                 createdAt: 1,
             },
@@ -531,8 +531,8 @@ export const AdminMasterQueryBuilder = {
 
         query.push({
             $addFields: {
-                createdBy: { $arrayElemAt: ["$createdByUser", 0] },
-                updatedBy: { $arrayElemAt: ["$updatedByUser", 0] },
+                createdBy: { $arrayElemAt: ["$createdByUser.fullName", 0] },
+                updatedBy: { $arrayElemAt: ["$updatedByUser.fullName", 0] },
             },
         });
 
@@ -544,8 +544,8 @@ export const AdminMasterQueryBuilder = {
                 "location.address": 1,
                 "location.phone": 1,
                 "contactPerson.email": 1,
-                "createdBy.fullName": 1,
-                "updatedBy.fullName": 1,
+                createdBy: 1,
+                updatedBy: 1,
             },
         });
 
@@ -576,17 +576,17 @@ export const AdminMasterQueryBuilder = {
 
         // Filter by genericId
         if (data.generic) {
-            match["genericId"] = new Dependencies.mongoose.Types.ObjectId(data.generic);
+            match["genericId"] = new Dependencies.mongoose.Types.ObjectId(data?.generic);
         }
 
         // Filter by categoryId
         if (data.category) {
-            match["categoryId"] = new Dependencies.mongoose.Types.ObjectId(data.category);
+            match["categoryId"] = new Dependencies.mongoose.Types.ObjectId(data?.category);
         }
 
         // Filter by brandId
         if (data.brand) {
-            match["brandId"] = new Dependencies.mongoose.Types.ObjectId(data.brand);
+            match["brandId"] = new Dependencies.mongoose.Types.ObjectId(data?.brand);
         }
 
         query.push({
@@ -686,13 +686,13 @@ export const AdminMasterQueryBuilder = {
 
         query.push({
             $addFields: {
-                generic: { $arrayElemAt: ["$generic", 0] },
-                category: { $arrayElemAt: ["$category", 0] },
-                brand: { $arrayElemAt: ["$brand", 0] },
-                strength: { $arrayElemAt: ["$strength", 0] },
-                usage: { $arrayElemAt: ["$usage", 0] },
-                createdBy: { $arrayElemAt: ["$createdByUser", 0] },
-                updatedBy: { $arrayElemAt: ["$updatedByUser", 0] },
+                generic: { $arrayElemAt: ["$generic.genericName", 0] },
+                category: { $arrayElemAt: ["$category.categoryName", 0] },
+                brand: { $arrayElemAt: ["$brand.brandName", 0] },
+                strength: { $arrayElemAt: ["$strength.strengthName", 0] },
+                usage: { $arrayElemAt: ["$usage.usageName", 0] },
+                createdBy: { $arrayElemAt: ["$createdByUser.fullName", 0] },
+                updatedBy: { $arrayElemAt: ["$updatedByUser.fullName", 0] },
             },
         });
 
@@ -705,13 +705,13 @@ export const AdminMasterQueryBuilder = {
                 expireDate: 1,
                 status: 1,
                 createdAt: 1,
-                generic: { _id: 1, genericName: 1 },
-                category: { _id: 1, categoryName: 1 },
-                brand: { _id: 1, brandName: 1 },
-                strength: { _id: 1, strengthName: 1 },
-                usage: { _id: 1, usageName: 1 },
-                "createdBy.fullName": 1,
-                "updatedBy.fullName": 1,
+                generic: 1,
+                category: 1,
+                brand: 1,
+                strength: 1,
+                usage: 1,
+                createdBy: 1,
+                updatedBy: 1,
                 updatedAt: 1,
                 createdAt: 1,
             },
@@ -730,8 +730,196 @@ export const AdminMasterQueryBuilder = {
         return query;
     },
 
-    // Get Store Cart
-    storeCart: (data) => {
+    storeOrder: (data) => {
+        let query = [];
+        let match = {};
+
+        // Filter by storeId
+        if (data.storeId) {
+            match["storeId"] = new Dependencies.mongoose.Types.ObjectId(data.storeId);
+        }
+
+        // Check if fromDate is provided
+        if (data.fromDate) {
+            const fromDate = new Date(data.fromDate);
+
+            // Set the time to 00:00:00.000 for the start of the day
+            const startOfFromDate = new Date(fromDate.setHours(0, 0, 0, 0));
+            // Set the time to 23:59:59.999 for the end of the day
+            const endOfFromDate = new Date(fromDate.setHours(23, 59, 59, 999));
+
+            // Match orderDt between the start and end of the given fromDate
+            match["orderDt"] = {
+                $gte: startOfFromDate,
+                $lt: endOfFromDate,
+            };
+        }
+
+        query.push({ $match: match });
+
+        query.push({
+            $sort: { orderDt: -1 }, // Sort by createdAt in ascending order
+        });
+
+        query.push({
+            $lookup: {
+                from: "stores",
+                localField: "storeId",
+                foreignField: "_id",
+                as: "stores",
+            },
+        });
+
+        query.push({
+            $lookup: {
+                from: "users",
+                localField: "createdBy",
+                foreignField: "_id",
+                as: "createdByUser",
+            },
+        });
+
+        query.push({
+            $addFields: {
+                store: { $arrayElemAt: ["$stores.storeName", 0] },
+                createdBy: { $arrayElemAt: ["$createdByUser.fullName", 0] },
+            },
+        });
+
+        query.push({
+            $project: {
+                _id: 1,
+                store: 1,
+                orderId: 1,
+                orderPrice: 1,
+                orderDt: 1,
+                status: 1,
+                createdBy: 1,
+            },
+        });
+
+        const limit = data.limit ? parseInt(data.limit) : PAGINATION_LIMIT;
+        const skip = (parseInt(data.page) - 1) * limit;
+
+        query.push({ $skip: skip });
+        query.push({ $limit: limit });
+
+        return query;
+    },
+
+    storeOrderItems: (data) => {
+        let query = [];
+        let match = {};
+
+        // Filter by storeId
+        if (data.orderId) match["orderId"] = data?.orderId;
+
+        query.push({ $match: match });
+
+        query.push({
+            $unwind: {
+                path: "$items",
+            },
+        });
+
+        query.push({
+            $lookup: {
+                from: "medicines",
+                localField: "items.medicine",
+                foreignField: "_id",
+                as: "medicine",
+            },
+        });
+
+        query.push({
+            $unwind: "$medicine",
+        });
+
+        query.push({
+            $lookup: {
+                from: "generics",
+                localField: "medicine.genericId",
+                foreignField: "_id",
+                as: "generics",
+            },
+        });
+
+        query.push({
+            $lookup: {
+                from: "categories",
+                localField: "medicine.categoryId",
+                foreignField: "_id",
+                as: "category",
+            },
+        });
+
+        query.push({
+            $lookup: {
+                from: "brands",
+                localField: "medicine.brandId",
+                foreignField: "_id",
+                as: "brands",
+            },
+        });
+
+        query.push({
+            $lookup: {
+                from: "usages",
+                localField: "medicine.usageId",
+                foreignField: "_id",
+                as: "usages",
+            },
+        });
+
+        query.push({
+            $lookup: {
+                from: "strengths",
+                localField: "medicine.strengthId",
+                foreignField: "_id",
+                as: "strengths",
+            },
+        });
+
+        query.push({
+            $addFields: {
+                generic: { $arrayElemAt: ["$generics.genericName", 0] },
+                brand: { $arrayElemAt: ["$brands.brandName", 0] },
+                category: { $arrayElemAt: ["$category.categoryName", 0] },
+                usage: { $arrayElemAt: ["$usages.usageName", 0] },
+                strength: { $arrayElemAt: ["$strengths.strengthName", 0] },
+                grandTotal: {
+                    $sum: {
+                        $multiply: ["$items.quantity", "$medicine.price"],
+                    },
+                },
+            },
+        });
+
+        query.push({
+            $project: {
+                _id: 1,
+                medicineName: "$medicine.name",
+                price: "$medicine.price",
+                quantity: "$items.quantity",
+                grandTotal: 1,
+                category: 1,
+                generic: 1,
+                brand: 1,
+                usage: 1,
+                strength: 1,
+            },
+        });
+
+        //const limit = data.limit ? parseInt(data.limit) : PAGINATION_LIMIT;
+        //const skip = (parseInt(data.page) - 1) * limit;
+
+        //query.push({ $skip: skip });
+        //query.push({ $limit: limit });
+
+        return query;
+    },
+
+    storeMedicine: (data) => {
         let query = [];
         let match = {};
 
@@ -741,63 +929,98 @@ export const AdminMasterQueryBuilder = {
         }
 
         query.push({ $match: match });
-        query.push({ $unwind: "$items" });
 
         query.push({
             $lookup: {
                 from: "medicines",
-                localField: "items.medicineId",
+                localField: "medicineId",
                 foreignField: "_id",
-                as: "medicineProduct",
+                as: "medicine",
             },
         });
 
         query.push({
-            $project: {
-                medicine: { $first: "$medicineProduct" },
-                quantity: "$items.quantity",
-                orderDate: 1, // Include these fields if they exist in the original document
-                orderPrice: 1,
-                status: 1,
-            },
+            $unwind: "$medicine",
         });
 
         query.push({
-            $group: {
-                _id: "$_id",
-                items: { $push: "$$ROOT" },
-                orderDate: { $first: "$orderDate" }, // Include orderDate
-                orderPrice: { $first: "$orderPrice" }, // Include orderPrice if available
-                status: { $first: "$status" },
+            $lookup: {
+                from: "generics",
+                localField: "medicine.genericId",
+                foreignField: "_id",
+                as: "generics",
             },
         });
 
         query.push({
             $lookup: {
-                from: "Users",
-                localField: "createdBy",
+                from: "brands",
+                localField: "medicine.brandId",
                 foreignField: "_id",
-                as: "createdByUser",
+                as: "brands",
+            },
+        });
+
+        query.push({
+            $lookup: {
+                from: "categories",
+                localField: "medicine.categoryId",
+                foreignField: "_id",
+                as: "category",
+            },
+        });
+
+        query.push({
+            $lookup: {
+                from: "usages",
+                localField: "medicine.usageId",
+                foreignField: "_id",
+                as: "usages",
+            },
+        });
+
+        query.push({
+            $lookup: {
+                from: "strengths",
+                localField: "medicine.strengthId",
+                foreignField: "_id",
+                as: "strengths",
             },
         });
 
         query.push({
             $addFields: {
-                createdBy: { $arrayElemAt: ["$createdByUser", 0] },
+                generic: { $arrayElemAt: ["$generics.genericName", 0] },
+                brand: { $arrayElemAt: ["$brands.brandName", 0] },
+                category: { $arrayElemAt: ["$category.categoryName", 0] },
+                usage: { $arrayElemAt: ["$usages.usageName", 0] },
+                strength: { $arrayElemAt: ["$strengths.strengthName", 0] },
             },
         });
 
         query.push({
             $project: {
-                "items.medicine.name": 1,
-                "items.medicine.price": 1,
-                "items.quantity": 1,
-                orderPrice: 1,
-                totalItems: { $size: "$items" },
-                orderDate: 1,
-                status: 1,
+                _id: 1,
+                medicine: "$medicine.name",
+                price: "$medicine.price",
+                quantity: 1,
+                expireDate: "$medicine.expireDate",
+                unitType: "$medicine.unitType",
+                generic: 1,
+                category: 1,
+                brand: 1,
+                strength: 1,
+                usage: 1,
+                createdBy: "$createdBy.fullName",
+                createdAt: 1,
             },
         });
+
+        const limit = data.limit ? parseInt(data.limit) : PAGINATION_LIMIT;
+        const skip = (parseInt(data.page) - 1) * limit;
+
+        query.push({ $skip: skip });
+        query.push({ $limit: limit });
 
         return query;
     },

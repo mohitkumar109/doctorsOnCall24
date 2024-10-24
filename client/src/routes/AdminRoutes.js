@@ -25,13 +25,17 @@ import AddStore from "../pages/admin/store/AddStore";
 
 import ManageMedicine from "../pages/admin/medicine/ManageMedicine";
 import AddMedicine from "../pages/admin/medicine/AddMedicine";
+import MedicineInventory from "../pages/admin/medicine/MedicineInventory";
 
-import Store from "../pages/admin/storeInventory/Store";
-import AddToStore from "../pages/admin/storeInventory/AddToStore";
-import StoreCart from "../pages/admin/storeInventory/StoreCart";
+import Store from "../pages/admin/storeOrder/Store";
+import AddToStore from "../pages/admin/storeOrder/AddToStore";
+import StoreCart from "../pages/admin/storeOrder/StoreCart";
 
-import AssignStoreHistory from "../pages/admin/storeInventory/AssignStoreHistory";
-import StoreInventory from "../pages/admin/storeInventory/StoreInventory";
+import StoreOrder from "../pages/admin/storeOrder/StoreOrder";
+import StoreOrderDetails from "../pages/admin/storeOrder/StoreOrderDetails";
+
+import SelectStore from "../pages/admin/storeMedicine/SelectStore";
+import StoreMedicine from "../pages/admin/storeMedicine/StoreMedicine";
 
 import Test from "../pages/Test";
 
@@ -71,13 +75,17 @@ export default function AdminRoutes() {
             <Route path="/manage-medicine" element={<ManageMedicine />} />
             <Route path="/add-medicine" element={<AddMedicine />} />
             <Route path="/edit-medicine/:id" element={<AddMedicine />} />
+            <Route path="/current-inventory/" element={<MedicineInventory />} />
 
             <Route path="/select-store/" element={<Store />} />
             <Route path="/add-store-cart/:id" element={<AddToStore />} />
             <Route path="/store-cart/:id" element={<StoreCart />} />
 
-            <Route path="/select-store-assign/" element={<AssignStoreHistory />} />
-            <Route path="/store-inventory-history/:id" element={<StoreInventory />} />
+            <Route path="/store-orders/" element={<StoreOrder />} />
+            <Route path="/store-orders/:id" element={<StoreOrderDetails />} />
+
+            <Route path="/select-store-medicine/" element={<SelectStore />} />
+            <Route path="/store-medicine/:id" element={<StoreMedicine />} />
 
             <Route path="/test/" element={<Test />} />
         </Routes>

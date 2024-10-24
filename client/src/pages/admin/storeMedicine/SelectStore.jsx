@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import Breadcrumb from "../../../components/Breadcrumb";
 import useService from "../../../hooks/useService";
 import { apiEnd } from "../../../services/adminApi";
 import AddButton from "../../../components/AddButton";
 
-export default function Store() {
+export default function SelectStore() {
     const { postData } = useService();
     const navigate = useNavigate();
     const [data, setData] = useState([]);
@@ -36,7 +36,7 @@ export default function Store() {
         const storeId = input?.storeId;
         if (storeId) {
             toast.success("Store selected successfully!");
-            navigate(`/add-store-cart/${storeId}`);
+            navigate(`/store-medicine/${storeId}`);
         }
     };
 

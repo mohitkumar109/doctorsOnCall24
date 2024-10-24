@@ -2,7 +2,7 @@ import { Dependencies } from "../../packages/index.js";
 import { asyncHandler, ApiResponse, ApiError, modifyResponse } from "../../utils/index.js";
 import { Helpers, PAGINATION_LIMIT } from "../../common/index.js";
 import { MODEL } from "../../models/index.js";
-import { AdminMasterQueryBuilder } from "../../entity/admin.master.entity.js";
+import { AdminMasterQueryBuilder } from "../../entity/adminEntity.js";
 
 // description    Admin Master Module
 // route          POST /api/v1/admin/
@@ -15,14 +15,10 @@ class Controller {
     // access           Private
     addGeneric = asyncHandler(async (req, res) => {
         const { genericName, status } = req.body;
-        if (!genericName) {
-            throw new ApiError(404, "Generic name is required");
-        }
+        if (!genericName) throw new ApiError(404, "Generic name is required");
 
         const generic = await MODEL.Generic.findOne({ genericName });
-        if (generic) {
-            throw new ApiError(400, "Generic name is already exits");
-        }
+        if (generic) throw new ApiError(400, "Generic name is already exits");
 
         const createdGeneric = await MODEL.Generic.create({
             genericName,
@@ -45,9 +41,8 @@ class Controller {
         const totalResult = await Helpers.getDataLength(query, MODEL.Generic);
         const totalPages = Math.ceil(totalResult / parseInt(req.query.limit || PAGINATION_LIMIT));
 
-        if (!query) {
-            throw new ApiError(400, "Generic name is not found");
-        }
+        if (!query) throw new ApiError(400, "Generic name is not found");
+
         const pagination = {
             totalResult: totalResult,
             totalPages: totalPages,
@@ -64,14 +59,12 @@ class Controller {
     // access           Private
     fetchGenericById = asyncHandler(async (req, res) => {
         const genId = req.params.id;
-        if (!Dependencies.mongoose.isValidObjectId(genId)) {
+        if (!Dependencies.mongoose.isValidObjectId(genId))
             throw new ApiError(400, "This is not valid id");
-        }
 
         const generic = await MODEL.Generic.findById(genId);
-        if (!generic) {
-            throw new ApiError(400, "Generic name not found");
-        }
+        if (!generic) throw new ApiError(400, "Generic name not found");
+
         return res.status(200).json(new ApiResponse(200, generic, "All List of generic"));
     });
 
@@ -80,9 +73,8 @@ class Controller {
     // access           Private
     fetchGenericSelect = asyncHandler(async (req, res) => {
         const result = await MODEL.Generic.find({ status: "active" }, { genericName: 1 });
-        if (!result) {
-            throw new ApiError(404, "record not fund");
-        }
+        if (!result) throw new ApiError(404, "record not fund");
+
         return res
             .status(200)
             .json(new ApiResponse(200, { data: result }, "Selected active record"));
@@ -95,20 +87,15 @@ class Controller {
         const genId = req.params.id;
         const { genericName, status } = req.body;
 
-        if (!Dependencies.mongoose.isValidObjectId(genId)) {
+        if (!Dependencies.mongoose.isValidObjectId(genId))
             throw new ApiError(400, "This is not a valid id");
-        }
 
         const exist = await MODEL.Generic.findById(genId);
-        if (!exist) {
-            throw new ApiError(400, "This Id is not exist in database");
-        }
+        if (!exist) throw new ApiError(400, "This Id is not exist in database");
 
         // Check if another record with the same genericName exists (excluding the current record)
         const duplicate = await MODEL.Generic.findOne({ genericName, _id: { $ne: genId } });
-        if (duplicate) {
-            throw new ApiError(400, "Generic name already exists");
-        }
+        if (duplicate) throw new ApiError(400, "Generic name already exists");
 
         const updated = await MODEL.Generic.findByIdAndUpdate(
             genId,
@@ -142,14 +129,12 @@ class Controller {
     // access           Private
     deleteGeneric = asyncHandler(async (req, res) => {
         const genId = req.params.id;
-        if (!Dependencies.mongoose.isValidObjectId(genId)) {
+        if (!Dependencies.mongoose.isValidObjectId(genId))
             throw new ApiError(400, "This is not valid id");
-        }
 
         const exist = await MODEL.Generic.findById(genId);
-        if (!exist) {
-            throw new ApiError(400, "This Id is not exist in database");
-        }
+        if (!exist) throw new ApiError(400, "This Id is not exist in database");
+
         const deleted = await MODEL.Generic.findByIdAndDelete(genId);
         return res.status(200).json(new ApiResponse(200, deleted, "Deleted Successfully"));
     });
@@ -161,14 +146,10 @@ class Controller {
     // access           Private
     addCategory = asyncHandler(async (req, res) => {
         const { categoryName, status } = req.body;
-        if (!categoryName) {
-            throw new ApiError(404, "Medicine category is required");
-        }
+        if (!categoryName) throw new ApiError(404, "Medicine category is required");
 
         const category = await MODEL.Category.findOne({ categoryName });
-        if (category) {
-            throw new ApiError(400, "category name is already exits");
-        }
+        if (category) throw new ApiError(400, "category name is already exits");
 
         const createdCategory = await MODEL.Category.create({
             categoryName,
@@ -192,9 +173,8 @@ class Controller {
         // Total Items and Pages
         const totalResult = await MODEL.Category.countDocuments(queryData);
         const totalPages = Math.ceil(totalResult / parseInt(req.query.limit || PAGINATION_LIMIT));
-        if (!query) {
-            throw new ApiError(400, "Category name is not found");
-        }
+        if (!query) throw new ApiError(400, "Category name is not found");
+
         const pagination = {
             totalResult: totalResult,
             totalPages: totalPages,
@@ -211,22 +191,19 @@ class Controller {
     // access           Private
     fetchCategoryById = asyncHandler(async (req, res) => {
         const catId = req.params.id;
-        if (!Dependencies.mongoose.isValidObjectId(catId)) {
+        if (!Dependencies.mongoose.isValidObjectId(catId))
             throw new ApiError(400, "This is not valid id");
-        }
 
         const category = await MODEL.Category.findById(catId);
-        if (!category) {
-            throw new ApiError(400, "Category not found");
-        }
+        if (!category) throw new ApiError(400, "Category not found");
+
         return res.status(200).json(new ApiResponse(200, category, "All list of category"));
     });
 
     fetchCategorySelect = asyncHandler(async (req, res) => {
         const result = await MODEL.Category.find({ status: "active" }, { categoryName: 1 });
-        if (!result) {
-            throw new ApiError(404, "record not found");
-        }
+        if (!result) throw new ApiError(404, "record not found");
+
         return res
             .status(200)
             .json(new ApiResponse(200, { data: result }, "Selected active record"));
@@ -239,20 +216,15 @@ class Controller {
         const catId = req.params.id;
         const { categoryName, status } = req.body;
 
-        if (!Dependencies.mongoose.isValidObjectId(catId)) {
+        if (!Dependencies.mongoose.isValidObjectId(catId))
             throw new ApiError(400, "This is not valid id");
-        }
 
         const exist = await MODEL.Category.findById(catId);
-        if (!exist) {
-            throw new ApiError(400, "This Id is not exist in database");
-        }
+        if (!exist) throw new ApiError(400, "This Id is not exist in database");
 
         // Check if another record with the same categoryName exists (excluding the current record)
         const duplicate = await MODEL.Category.findOne({ categoryName, _id: { $ne: catId } });
-        if (duplicate) {
-            throw new ApiError(400, "Category name already exists");
-        }
+        if (duplicate) throw new ApiError(400, "Category name already exists");
 
         const updated = await MODEL.Category.findByIdAndUpdate(
             catId,
@@ -272,14 +244,12 @@ class Controller {
     // access           Private
     deleteCategory = asyncHandler(async (req, res) => {
         const catId = req.params.id;
-        if (!Dependencies.mongoose.isValidObjectId(catId)) {
+        if (!Dependencies.mongoose.isValidObjectId(catId))
             throw new ApiError(400, "This is not valid id");
-        }
 
         const exist = await MODEL.Category.findById(catId);
-        if (!exist) {
-            throw new ApiError(400, "This Id is not exist in database");
-        }
+        if (!exist) throw new ApiError(400, "This Id is not exist in database");
+
         const deleted = await MODEL.Category.findByIdAndDelete(catId);
         return res.status(200).json(new ApiResponse(200, deleted, "Deleted Successfully"));
     });
@@ -382,7 +352,7 @@ class Controller {
 
         const exist = await MODEL.Brand.findById(brandId);
         if (!exist) {
-            throw new ApiError(400, "This Id is not exist in database");
+            throw new ApiError(400, "Brand with this id dose not exist");
         }
 
         // Check if another record with the same brandName exists (excluding the current record)

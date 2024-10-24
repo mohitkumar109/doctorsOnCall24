@@ -1,9 +1,9 @@
 import { useGlobalContext } from "../context/AppContext";
-import AdminRoutes from "../routes/AdminRoutes";
-import AuthRoutes from "../routes/AuthRoutes";
-import UserRoutes from "../routes/UserRoutes";
-import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
+import Sidebar from "../components/Sidebar";
+import AuthRoutes from "../routes/AuthRoutes";
+import AdminRoutes from "../routes/AdminRoutes";
+import UserRoutes from "../routes/UserRoutes";
 
 export default function Layout() {
     const { auth, toggle } = useGlobalContext();

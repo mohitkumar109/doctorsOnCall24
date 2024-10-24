@@ -7,9 +7,8 @@ export const adminAuth = asyncHandler(async (req, _, next) => {
     const token =
         req.cookies?.accessToken || (req.header("Authorization") || "").replace("Bearer ", "");
 
-    if (!token) {
-        throw new ApiError(401, "Unauthorized Request");
-    }
+    if (!token) throw new ApiError(401, "Unauthorized Request");
+
     try {
         const decodeToken = Dependencies.jwt.verify(token, config.accessTokenSecret);
 
@@ -23,10 +22,7 @@ export const adminAuth = asyncHandler(async (req, _, next) => {
         // Log the user information (avoid logging sensitive information in production)
         //console.log("Authenticated User:", user);
 
-        if (!admin) {
-            throw new ApiError(401, "Invalid Access Token");
-        }
-
+        if (!admin) throw new ApiError(401, "Invalid Access Token");
         req.admin = admin;
         next();
     } catch (error) {

@@ -1,5 +1,6 @@
 import { Dependencies } from "./packages/index.js";
 import { config } from "./common/index.js";
+import { bootstrapStatus } from "./service/index.js";
 
 const app = Dependencies.express();
 

@@ -6,8 +6,8 @@ const StrengthTable = ({ record, sn, changeStatus }) => {
         <tr>
             <td>{sn + 1}</td>
             <td>{record?.strengthName}</td>
-            <td>{record?.createdBy?.fullName || "None"}</td>
-            <td>{record?.updatedBy?.fullName || "None"}</td>
+            <td>{record?.createdBy || "None"}</td>
+            <td>{record?.updatedBy || "None"}</td>
             <td>{record.createdAt.split("T")[0]}</td>
             <td>
                 <div className="form-check form-switch">

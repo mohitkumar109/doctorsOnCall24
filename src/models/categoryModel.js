@@ -1,4 +1,5 @@
 import { Dependencies } from "../packages/index.js";
+const { ObjectId } = Dependencies.mongoose.Schema.Types;
 
 const categorySchema = new Dependencies.mongoose.Schema(
     {
@@ -18,11 +19,11 @@ const categorySchema = new Dependencies.mongoose.Schema(
             default: "active",
         },
         createdBy: {
-            type: Dependencies.mongoose.Schema.Types.ObjectId,
+            type: ObjectId,
             ref: "Users",
         },
         updatedBy: {
-            type: Dependencies.mongoose.Schema.Types.ObjectId,
+            type: ObjectId,
             ref: "Users",
         },
     },

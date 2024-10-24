@@ -15,8 +15,8 @@ const StoreTable = ({ record, sn, changeStatus }) => {
             <td>{record?.location?.address}</td>
             <td>{record?.location?.phone}</td>
             <td>{record?.contactPerson?.email}</td>
-            <td>{record?.createdByUser?.fullName || "None"}</td>
-            <td>{record?.updatedByUser?.fullName || "None"}</td>
+            <td>{record?.createdByUser || "None"}</td>
+            <td>{record?.updatedByUser || "None"}</td>
             <td>{record.createdAt.split("T")[0]}</td>
             <td>
                 <div className="form-check form-switch">

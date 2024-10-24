@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { useState, useEffect, createContext, useContext } from "react";
 import { toast } from "react-hot-toast";
 import useService from "../hooks/useService";
 import { apiEnd } from "../services/adminApi";
@@ -32,7 +32,7 @@ const AppProvider = ({ children }) => {
         }
     };
 
-    const addToCart = (medicineId, quantity, price) => {
+    const addToCart = (medicine, quantity, price) => {
         // Convert quantity to a number
         const parsedQuantity = parseInt(quantity, 10);
 
@@ -42,7 +42,7 @@ const AppProvider = ({ children }) => {
         }
 
         setCart((prevCart) => {
-            const existingItemIndex = prevCart.findIndex((item) => item.medicineId === medicineId);
+            const existingItemIndex = prevCart.findIndex((item) => item.medicine === medicine);
 
             let updatedCart;
             if (existingItemIndex !== -1) {
@@ -59,7 +59,7 @@ const AppProvider = ({ children }) => {
             } else {
                 // If medicine doesn't exist in the cart, add a new entry
                 const newItem = {
-                    medicineId,
+                    medicine,
                     quantity: parsedQuantity,
                     price: parseFloat(price),
                     //totalPrice: parsedQuantity * price,
@@ -76,9 +76,9 @@ const AppProvider = ({ children }) => {
         toast.success("Medicine added to cart!");
     };
 
-    const removeItemCart = (medicineId) => {
+    const removeItemCart = (medicine) => {
         // Filter out the item with the matching medicineId from the cart
-        const updatedCart = cart?.filter((item) => item.medicineId !== medicineId);
+        const updatedCart = cart?.filter((item) => item.medicine !== medicine);
         if (updatedCart.length === cart.length) {
             toast.error("Item not found in the cart!");
         }
@@ -88,9 +88,9 @@ const AppProvider = ({ children }) => {
     };
 
     // Function to handle increasing the quantity
-    const increaseQty = (medicineId) => {
+    const increaseQty = (medicine) => {
         const updatedCart = cart.map((item) => {
-            if (item.medicineId === medicineId) {
+            if (item.medicine === medicine) {
                 const newQuantity = item.quantity + 1;
                 return {
                     ...item,
@@ -106,9 +106,9 @@ const AppProvider = ({ children }) => {
     };
 
     // Function to handle decreasing the quantity
-    const decreaseQty = (medicineId) => {
+    const decreaseQty = (medicine) => {
         const updatedCart = cart.map((item) => {
-            if (item.medicineId === medicineId && item.quantity > 1) {
+            if (item.medicine === medicine && item.quantity > 1) {
                 const newQuantity = item.quantity - 1;
                 return {
                     ...item,

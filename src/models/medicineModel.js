@@ -1,4 +1,5 @@
 import { Dependencies } from "../packages/index.js";
+const { ObjectId } = Dependencies.mongoose.Schema.Types;
 
 const medicineProductSchema = new Dependencies.mongoose.Schema(
     {
@@ -9,40 +10,47 @@ const medicineProductSchema = new Dependencies.mongoose.Schema(
             lowercase: true,
             trim: true,
         },
+
         categoryId: {
-            type: Dependencies.mongoose.Schema.Types.ObjectId,
+            type: ObjectId,
             ref: "Category",
             required: [true, "Category id required"],
         },
+
         genericId: {
-            type: Dependencies.mongoose.Schema.Types.ObjectId,
+            type: ObjectId,
             ref: "Generic",
             required: [true, "Generic id required"],
         },
+
         brandId: {
-            type: Dependencies.mongoose.Schema.Types.ObjectId,
+            type: ObjectId,
             ref: "Brand",
             required: [true, "Brand id required"],
         },
+
         strengthId: {
-            type: Dependencies.mongoose.Schema.Types.ObjectId,
+            type: ObjectId,
             ref: "Strength",
             required: [true, "Strength id required"],
         },
+
         usageId: {
-            type: Dependencies.mongoose.Schema.Types.ObjectId,
+            type: ObjectId,
             ref: "Usage",
             required: [true, "Usage id required"],
         },
+
         price: {
             type: Number,
             required: [true, "Price is required"],
             min: [0, "Price must be a positive number"],
         },
+
         stock: {
             type: Number,
             required: [true, "Quantity is required"],
-            min: [1, "Quantity must be at least 1"],
+            //min: [5, "Quantity must be at least 1"],
         },
 
         unitType: {
@@ -67,12 +75,12 @@ const medicineProductSchema = new Dependencies.mongoose.Schema(
         },
 
         createdBy: {
-            type: Dependencies.mongoose.Schema.Types.ObjectId,
+            type: ObjectId,
             ref: "Users",
         },
 
         updatedBy: {
-            type: Dependencies.mongoose.Schema.Types.ObjectId,
+            type: ObjectId,
             ref: "Users",
         },
     },

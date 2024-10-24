@@ -9,6 +9,8 @@ import morgan from "morgan";
 import dotenv from "dotenv";
 import request from "request";
 import jwt from "jsonwebtoken";
+import moment from "moment";
+import fs from "fs";
 import { Router } from "express";
 import { StatusCodes } from "http-status-codes";
 
@@ -24,6 +26,8 @@ export const Dependencies = {
     dotenv,
     request,
     jwt,
+    fs,
+    moment,
     Router,
     StatusCodes,
 };

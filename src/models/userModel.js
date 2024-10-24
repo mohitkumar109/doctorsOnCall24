@@ -1,5 +1,6 @@
 import { Dependencies } from "../packages/index.js";
 import { config } from "../common/index.js";
+const { ObjectId } = Dependencies.mongoose.Schema.Types;
 
 const userSchema = new Dependencies.mongoose.Schema(
     {
@@ -9,6 +10,7 @@ const userSchema = new Dependencies.mongoose.Schema(
             lowercase: true,
             trim: true,
         },
+
         email: {
             type: String,
             required: [true, "Email is required"],
@@ -16,39 +18,47 @@ const userSchema = new Dependencies.mongoose.Schema(
             lowercase: true,
             trim: true,
         },
+
         password: {
             type: String,
             required: true,
         },
+
         mobile: {
             type: Number,
-            required: true,
         },
+
         role: {
             type: String,
             enum: ["admin", "manager", "user"],
             default: "user",
         },
+
         storeId: {
-            type: Dependencies.mongoose.Schema.Types.ObjectId,
+            type: ObjectId,
             ref: "Store",
         },
+
         checked: {
             type: Boolean,
             default: false,
         },
+
         status: {
             type: String,
             default: "active",
         },
+
         createdBy: {
-            type: Dependencies.mongoose.Schema.Types.ObjectId,
+            type: ObjectId,
             ref: "Users",
         },
+
         updatedBy: {
-            type: Dependencies.mongoose.Schema.Types.ObjectId,
+            type: ObjectId,
             ref: "Users",
         },
+
         refreshToken: {
             type: String,
         },

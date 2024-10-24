@@ -39,8 +39,8 @@ export default function ManageBrand() {
         fetchBrand();
     }, [search, sorting, status, page]);
 
-    const filteredData = data.filter(
-        (result) => result.brandName.toLowerCase().indexOf(search.toLowerCase()) !== -1
+    const filteredData = data?.filter(
+        (result) => result?.brandName.toLowerCase().indexOf(search.toLowerCase()) !== -1
     );
 
     return (
