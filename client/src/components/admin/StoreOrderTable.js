@@ -1,6 +1,5 @@
-import React from "react";
 import { Link } from "react-router-dom";
-import { BsEye, BsTrash3Fill } from "react-icons/bs";
+import { BsEye } from "react-icons/bs";
 import moment from "moment-timezone";
 
 const StoreOrderTable = ({ sn, record }) => {
@@ -16,10 +15,6 @@ const StoreOrderTable = ({ sn, record }) => {
                 <div className="d-flex gap-3">
                     <Link to={`/store-orders/${record?.orderId}`} className="text-primary">
                         <BsEye />
-                    </Link>
-
-                    <Link to="#" className="text-danger">
-                        <BsTrash3Fill />
                     </Link>
                 </div>
             </td>

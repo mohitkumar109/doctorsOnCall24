@@ -9,7 +9,7 @@ const store = configureStore({
         generic: genericReducer,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(apiSlice.middleware),
-    devTools: true,
+    //devTools: true,
 });
 setupListeners(store.dispatch);
 export default store;

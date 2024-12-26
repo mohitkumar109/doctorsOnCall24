@@ -593,6 +593,7 @@ class Controller {
     updateUsage = asyncHandler(async (req, res) => {
         const usageId = req.params.id;
         const { usageName, status } = req.body;
+        if (!usageName) throw new ApiError(404, "Usage is required");
 
         if (!Dependencies.mongoose.isValidObjectId(usageId)) {
             throw new ApiError(400, "This is not valid id");

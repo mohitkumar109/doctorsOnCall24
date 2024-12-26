@@ -1,47 +1,56 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { toast } from "react-hot-toast";
 import Pagination from "../../../components/Pagination";
 import Filter from "../../../components/Filter";
 import Breadcrumb from "../../../components/Breadcrumb";
 import AddButton from "../../../components/AddButton";
-import useService from "../../../hooks/useService";
-import { apiEnd } from "../../../services/adminApi";
 import BrandTable from "../../../components/admin/BrandTable";
+import BrandApi from "../../../services/BrandApi";
+import Spinner from "../../../components/Spinner";
 
 export default function ManageBrand() {
-    const { postData } = useService();
     const [search, setSearch] = useState("");
     const [sorting, setSorting] = useState("");
     const [status, setStatus] = useState("");
     const [page, setPage] = useState(1);
     const [pagination, setPagination] = useState("");
     const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const apiInstance = useMemo(() => new BrandApi(), []);
 
-    const fetchBrand = async () => {
-        const req = apiEnd.getBrand(search, sorting, status, page);
-        const res = await postData(req);
-        setData(res?.data?.results);
-        setPagination(res?.data?.pagination);
+    const fetchAPI = async () => {
+        try {
+            const res = await apiInstance.getBrandAPI(search, sorting, status, page);
+            setData(res?.data?.results);
+            setPagination(res?.data?.pagination);
+        } catch (error) {
+            console.log("Error fetching data:", error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const changeStatus = async (id, status) => {
-        const req = apiEnd.actionBrandOne(id, status);
-        const res = await postData(req, {});
+        const res = await apiInstance.actionBrandOneAPI(id, status);
         if (res?.success) {
             toast.success(res.message, { duration: 1000 });
-            fetchBrand(); // Ensure fetchBrand is defined
+            fetchAPI(); // Ensure fetchBrand is defined
         } else {
             toast.error(res?.message || "Failed to delete brand", { duration: 1000 });
         }
     };
 
     useEffect(() => {
-        fetchBrand();
-    }, [search, sorting, status, page]);
+        fetchAPI();
+    }, [apiInstance, search, sorting, status, page]);
 
     const filteredData = data?.filter(
         (result) => result?.brandName.toLowerCase().indexOf(search.toLowerCase()) !== -1
     );
+
+    if (loading) {
+        return <Spinner />;
+    }
 
     return (
         <div className="container-fluid">
@@ -92,9 +101,9 @@ export default function ManageBrand() {
                             </table>
                         </div>
                         <Pagination
-                            totalResult={pagination.totalResult}
-                            pages={pagination.totalPages}
-                            page={pagination.currentPage}
+                            totalResult={pagination?.totalResult}
+                            pages={pagination?.totalPages}
+                            page={pagination?.currentPage}
                             changePage={setPage}
                         />
                     </div>

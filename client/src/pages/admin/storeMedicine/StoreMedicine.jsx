@@ -59,11 +59,10 @@ export default function StoreMedicine() {
                     <div className="card-header">
                         <span className="card-title">Store Medicine List</span>
                         <div className="d-flex gap-2" style={{ float: "right" }}>
-                            <AddButton buttonLink="/select-store" level={"Back"} />
+                            <AddButton buttonLink="/select-store-medicine/" level={"Back"} />
                         </div>
                     </div>
                     <div className="card-body">
-                        <AddButton buttonLink="/select-store" level={"Sale"} />
                         <div className="table-responsive">
                             <table className="table table-striped table-bordered table-hover">
                                 <thead>

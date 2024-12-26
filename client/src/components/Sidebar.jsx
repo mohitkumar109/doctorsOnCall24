@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import * as BsIcons from "react-icons/bs";
 import { useGlobalContext } from "../context/AppContext";
 
@@ -22,7 +22,7 @@ const menuItems = [
                     {
                         icon: <BsIcons.BsCardList className="bi" />,
                         label: "Manage Stores",
-                        href: "/manage-store",
+                        href: "manage-store",
                         visible: ["admin"],
                     },
                 ],
@@ -36,31 +36,31 @@ const menuItems = [
                     {
                         icon: <BsIcons.BsCardList className="bi" />,
                         label: "Medicine Generic",
-                        href: "/manage-generic",
+                        href: "manage-generic",
                         visible: ["admin"],
                     },
                     {
                         icon: <BsIcons.BsCardList className="bi" />,
                         label: "Medicine Category",
-                        href: "/manage-category",
+                        href: "manage-category",
                         visible: ["admin"],
                     },
                     {
                         icon: <BsIcons.BsCardList className="bi" />,
                         label: "Medicine Brand",
-                        href: "/manage-brand",
+                        href: "manage-brand",
                         visible: ["admin"],
                     },
                     {
                         icon: <BsIcons.BsCardList className="bi" />,
                         label: "Medicine Strength",
-                        href: "/manage-strength",
+                        href: "manage-strength",
                         visible: ["admin"],
                     },
                     {
                         icon: <BsIcons.BsCardList className="bi" />,
                         label: "Medicine Usage",
-                        href: "/manage-usage",
+                        href: "manage-usage",
                         visible: ["admin"],
                     },
                 ],
@@ -75,27 +75,34 @@ const menuItems = [
                     {
                         icon: <BsIcons.BsCardList className="bi" />,
                         label: "Manage Medicine",
-                        href: "/manage-medicine",
+                        href: "manage-medicine",
                         visible: ["admin"],
                     },
 
                     {
                         icon: <BsIcons.BsCardList className="bi" />,
                         label: "Medicine Assign",
-                        href: "/select-store",
+                        href: "select-store",
                         visible: ["admin"],
                     },
                     {
                         icon: <BsIcons.BsCardList className="bi" />,
                         label: "Current Inventory",
-                        href: "/current-inventory",
+                        href: "current-inventory",
+                        visible: ["admin"],
+                    },
+
+                    {
+                        icon: <BsIcons.BsCardList className="bi" />,
+                        label: "Low Stock Reports",
+                        href: "low-stock-medicine",
                         visible: ["admin"],
                     },
 
                     {
                         icon: <BsIcons.BsCardList className="bi" />,
                         label: "Receive Inventory History",
-                        href: "/inventory-history",
+                        href: "inventory-history",
                         visible: ["user"],
                     },
                 ],
@@ -110,33 +117,19 @@ const menuItems = [
                     {
                         icon: <BsIcons.BsCardList className="bi" />,
                         label: "Store Orders",
-                        href: "/store-orders/",
+                        href: "store-orders/",
                         visible: ["admin"],
                     },
                     {
                         icon: <BsIcons.BsCardList className="bi" />,
                         label: "Store Medicine",
-                        href: "/select-store-medicine/",
-                        visible: ["admin"],
-                    },
-                ],
-            },
-            {
-                icon: <BsIcons.BsCart className="bi" />,
-                label: "Low Stocks",
-                href: "#",
-                visible: ["admin"],
-                subItems: [
-                    {
-                        icon: <BsIcons.BsCardList className="bi" />,
-                        label: "Low Stock Reports",
-                        href: "/low-stock-medicine",
+                        href: "select-store-medicine/",
                         visible: ["admin"],
                     },
                     {
                         icon: <BsIcons.BsCardList className="bi" />,
                         label: "Store Low Stock Reports",
-                        href: "/low-stock-medicine",
+                        href: "low-stock-medicine",
                         visible: ["admin"],
                     },
                 ],
@@ -156,7 +149,7 @@ const menuItems = [
                     {
                         icon: <BsIcons.BsCardList className="bi" />,
                         label: "Manage Users",
-                        href: "/manage-user",
+                        href: "manage-user",
                         visible: ["admin"],
                     },
                 ],
@@ -170,19 +163,19 @@ const menuItems = [
                     {
                         icon: <BsIcons.BsPeople className="bi" />,
                         label: "Profile",
-                        href: "/profile",
+                        href: "profile",
                         visible: ["admin", "user"],
                     },
                     {
                         icon: <BsIcons.BsShieldLock className="bi" />,
                         label: "Change Password",
-                        href: "/change-password",
+                        href: "change-password",
                         visible: ["admin", "user"],
                     },
                     {
                         icon: <BsIcons.BsBoxArrowRight className="bi" />,
                         label: "Logout",
-                        href: "/logout",
+                        href: "logout",
                         visible: ["admin", "user"],
                     },
                 ],
@@ -194,6 +187,7 @@ const menuItems = [
 
 const Sidebar = () => {
     const { auth, toggle } = useGlobalContext();
+    const location = useLocation();
     const [activeSubItems, setActiveSubItems] = useState(null);
 
     const handleSubItemToggle = (subitem) => {
@@ -208,6 +202,9 @@ const Sidebar = () => {
                     <li key={item.label}>
                         <Link
                             to={item.href || "#"}
+                            style={{
+                                color: location.pathname.includes(item.href) ? "green" : "white",
+                            }}
                             className={item.subItems ? "dropdown-toggle" : ""}
                             onClick={() => item.subItems && handleSubItemToggle(item.label)}
                         >
@@ -217,7 +214,7 @@ const Sidebar = () => {
                         {item.subItems && (
                             <ul
                                 className={`collapse list-unstyled ${
-                                    activeSubItems === item.label && "show"
+                                    activeSubItems === item.label ? "show" : ""
                                 }`}
                             >
                                 {renderMenuItems(item.subItems)}
@@ -230,7 +227,7 @@ const Sidebar = () => {
 
     return (
         <div className={`sidebar accordion ${toggle && "active"}`}>
-            <div className="sidebar-header ps-3">Doctor On Call</div>
+            <div className="sidebar-header ps-3">Medicine Store</div>
             <ul className="list-unstyled components">
                 {menuItems.map((section) => (
                     <div key={section.title}>

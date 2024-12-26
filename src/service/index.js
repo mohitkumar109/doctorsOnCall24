@@ -1,5 +1,5 @@
 import { Dependencies } from "../packages/index.js";
-import { config, Helpers } from "../common/index.js";
+import { config } from "../common/index.js";
 import * as Seeder from "../service/seederAdmin.js";
 
 export const bootstrapStatus = {

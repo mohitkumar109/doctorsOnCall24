@@ -149,11 +149,11 @@ export default function AddStore() {
                                     >
                                         <option value="">----Select State----</option>
                                         <option value="TP">Tripura</option>
-                                        <option value="TN">Tamil Nadu</option>
+                                        <option value="TN">Tamil</option>
                                         <option value="RJ">Rajasthan</option>
                                         <option value="PN">Punjab</option>
                                         <option value="MH">Maharashtra</option>
-                                        <option value="UK">Uttara khand</option>
+                                        <option value="UK">Utt khand</option>
                                     </select>
                                 </div>
                             </div>

@@ -26,6 +26,7 @@ import AddStore from "../pages/admin/store/AddStore";
 import ManageMedicine from "../pages/admin/medicine/ManageMedicine";
 import AddMedicine from "../pages/admin/medicine/AddMedicine";
 import MedicineInventory from "../pages/admin/medicine/MedicineInventory";
+import LowStockMedicine from "../pages/admin/medicine/LowStockMedicine";
 
 import Store from "../pages/admin/storeOrder/Store";
 import AddToStore from "../pages/admin/storeOrder/AddToStore";
@@ -44,50 +45,51 @@ export default function AdminRoutes() {
         <Routes>
             <Route path="/" element={<Dashboard />} />
 
-            <Route path="/manage-user" element={<ManageUser />} />
-            <Route path="/add-user" element={<AddUser />} />
-            <Route path="/edit-user/:id" element={<AddUser />} />
+            <Route path="manage-user" element={<ManageUser />} />
+            <Route path="add-user" element={<AddUser />} />
+            <Route path="edit-user/:id" element={<AddUser />} />
 
-            <Route path="/manage-category" element={<ManageCategory />} />
-            <Route path="/add-category" element={<AddCategory />} />
-            <Route path="/edit-category/:id" element={<AddCategory />} />
+            <Route path="manage-category" element={<ManageCategory />} />
+            <Route path="add-category" element={<AddCategory />} />
+            <Route path="edit-category/:id" element={<AddCategory />} />
 
-            <Route path="/manage-brand" element={<ManageBrand />} />
-            <Route path="/add-brand" element={<AddBrand />} />
-            <Route path="/edit-brand/:id" element={<AddBrand />} />
+            <Route path="manage-brand" element={<ManageBrand />} />
+            <Route path="add-brand" element={<AddBrand />} />
+            <Route path="edit-brand/:id" element={<AddBrand />} />
 
-            <Route path="/manage-generic" element={<ManageGeneric />} />
-            <Route path="/add-generic" element={<AddGeneric />} />
-            <Route path="/edit-generic/:id" element={<EditGeneric />} />
+            <Route path="manage-generic" element={<ManageGeneric />} />
+            <Route path="add-generic" element={<AddGeneric />} />
+            <Route path="edit-generic/:id" element={<EditGeneric />} />
 
-            <Route path="/manage-strength" element={<ManageStrength />} />
-            <Route path="/add-strength" element={<AddStrength />} />
-            <Route path="/edit-strength/:id" element={<AddStrength />} />
+            <Route path="manage-strength" element={<ManageStrength />} />
+            <Route path="add-strength" element={<AddStrength />} />
+            <Route path="edit-strength/:id" element={<AddStrength />} />
 
-            <Route path="/manage-usage" element={<ManageUsages />} />
-            <Route path="/add-usage" element={<AddUsages />} />
-            <Route path="/edit-usage/:id" element={<AddUsages />} />
+            <Route path="manage-usage" element={<ManageUsages />} />
+            <Route path="add-usage" element={<AddUsages />} />
+            <Route path="edit-usage/:id" element={<AddUsages />} />
 
-            <Route path="/manage-store" element={<ManageStore />} />
-            <Route path="/add-store" element={<AddStore />} />
-            <Route path="/edit-store/:id" element={<AddStore />} />
+            <Route path="manage-store" element={<ManageStore />} />
+            <Route path="add-store" element={<AddStore />} />
+            <Route path="edit-store/:id" element={<AddStore />} />
 
-            <Route path="/manage-medicine" element={<ManageMedicine />} />
-            <Route path="/add-medicine" element={<AddMedicine />} />
-            <Route path="/edit-medicine/:id" element={<AddMedicine />} />
-            <Route path="/current-inventory/" element={<MedicineInventory />} />
+            <Route path="manage-medicine" element={<ManageMedicine />} />
+            <Route path="add-medicine" element={<AddMedicine />} />
+            <Route path="edit-medicine/:id" element={<AddMedicine />} />
+            <Route path="current-inventory" element={<MedicineInventory />} />
+            <Route path="low-stock-medicine" element={<LowStockMedicine />} />
 
-            <Route path="/select-store/" element={<Store />} />
-            <Route path="/add-store-cart/:id" element={<AddToStore />} />
-            <Route path="/store-cart/:id" element={<StoreCart />} />
+            <Route path="select-store" element={<Store />} />
+            <Route path="add-store-cart/:id" element={<AddToStore />} />
+            <Route path="store-cart/:id" element={<StoreCart />} />
 
-            <Route path="/store-orders/" element={<StoreOrder />} />
-            <Route path="/store-orders/:id" element={<StoreOrderDetails />} />
+            <Route path="store-orders" element={<StoreOrder />} />
+            <Route path="store-orders/:id" element={<StoreOrderDetails />} />
 
-            <Route path="/select-store-medicine/" element={<SelectStore />} />
-            <Route path="/store-medicine/:id" element={<StoreMedicine />} />
+            <Route path="select-store-medicine" element={<SelectStore />} />
+            <Route path="store-medicine/:id" element={<StoreMedicine />} />
 
-            <Route path="/test/" element={<Test />} />
+            <Route path="test" element={<Test />} />
         </Routes>
     );
 }

@@ -35,6 +35,12 @@ export default function AddUsages() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!usage) {
+            toast.error("Usage name is required!");
+            return;
+        }
+
         try {
             const req = id
                 ? apiEnd.updateUsage(id, { usageName: usage, status })

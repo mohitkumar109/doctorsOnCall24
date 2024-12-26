@@ -1,7 +1,7 @@
 import { Dependencies } from "../packages/index.js";
-import { MODEL } from "../models/index.js";
 import { asyncHandler, ApiError } from "../utils/index.js";
 import { config } from "../common/index.js";
+import { MODEL } from "../models/index.js";
 
 export const adminAuth = asyncHandler(async (req, _, next) => {
     const token =

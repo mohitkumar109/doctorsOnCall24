@@ -7,27 +7,20 @@ import UserRoutes from "../routes/UserRoutes";
 
 export default function Layout() {
     const { auth, toggle } = useGlobalContext();
+
+    if (!auth) {
+        return <AuthRoutes />;
+    }
+
+    const isAdmin = auth === "admin";
+
     return (
         <>
-            {!auth ? (
-                <AuthRoutes />
-            ) : auth === "admin" ? (
-                <>
-                    <Sidebar />
-                    <div className={`content ${toggle && "active"}`}>
-                        <Header />
-                        <AdminRoutes />
-                    </div>
-                </>
-            ) : (
-                <>
-                    <Sidebar />
-                    <div className={`content ${toggle && "active"}`}>
-                        <Header />
-                        <UserRoutes />
-                    </div>
-                </>
-            )}
+            <Sidebar />
+            <div className={`content ${toggle && "active"}`}>
+                <Header />
+                {isAdmin ? <AdminRoutes /> : <UserRoutes />}
+            </div>
         </>
     );
 }

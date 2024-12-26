@@ -7,6 +7,7 @@ import AddButton from "../../../components/AddButton";
 import UsagesTable from "../../../components/admin/UsagesTable";
 import useService from "../../../hooks/useService";
 import { apiEnd } from "../../../services/adminApi";
+import UsagesTables from "../../../components/admin/UsagesTables";
 
 export default function ManageUsages() {
     const { postData } = useService();
@@ -20,8 +21,8 @@ export default function ManageUsages() {
     const fetchUsage = async () => {
         const req = apiEnd.getUsage(search, sorting, status, page);
         const res = await postData(req);
-        setData(res?.data?.results);
-        setPagination(res?.data?.pagination);
+        setData(res?.data?.results || []);
+        setPagination(res?.data?.pagination || { totalPages: 0, currentPage: 0, totalResult: 0 });
     };
 
     const changeStatus = async (id, status) => {
@@ -58,7 +59,13 @@ export default function ManageUsages() {
                     </div>
                     <div className="card-body">
                         <AddButton buttonLink="/add-usage" level={"Add Usage"} />
-                        <div className="table-responsive">
+                        <UsagesTables
+                            data={data}
+                            changeStatus={changeStatus}
+                            pagination={pagination}
+                        />
+
+                        {/* <div className="table-responsive">
                             <table className="table table-striped table-bordered table-hover">
                                 <thead>
                                     <tr>
@@ -96,7 +103,7 @@ export default function ManageUsages() {
                             pages={pagination.totalPages}
                             page={pagination.currentPage}
                             changePage={setPage}
-                        />
+                        /> */}
                     </div>
                 </div>
             </div>

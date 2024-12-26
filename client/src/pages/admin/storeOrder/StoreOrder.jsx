@@ -114,7 +114,7 @@ export default function StoreOrder() {
                                         <th className="col-5">Order ID</th>
                                         <th scope="col">Order Amount</th>
                                         <th scope="col">Order Date</th>
-                                        <th scope="col">Order Status</th>
+                                        <th className="col-1">Order Status</th>
                                         <th scope="col">Action</th>
                                     </tr>
                                 </thead>

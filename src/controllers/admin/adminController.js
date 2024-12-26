@@ -141,10 +141,11 @@ class Controller {
         if (req.user.role === "admin") {
             // Admin can view all users
             const users = await MODEL.User.find({ role: { $ne: "admin" } })
+                .select("-refreshToken -password -updatedAt -__v")
                 .populate("createdBy", "fullName")
                 .populate("updatedBy", "fullName")
-                .populate("storeId", "storeName")
-                .select("-refreshToken -password -updatedAt -__v");
+                .populate("storeId", "storeName");
+
             if (!users) {
                 throw new ApiError(400, "User not found");
             }
