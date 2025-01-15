@@ -1,31 +1,27 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import Breadcrumb from "../../../components/Breadcrumb";
-import useService from "../../../hooks/useService";
-import { apiEnd } from "../../../services/adminApi";
+import BrandApi from "../../../services/BrandApi";
 
 export default function AddBrand() {
-    const { postData } = useService();
+    const navigate = useNavigate();
     const [brand, setBrand] = useState("");
     const [status, setStatus] = useState("");
-    const navigate = useNavigate();
     const { id } = useParams();
+    const apiInstance = useMemo(() => new BrandApi(), []);
 
     const getBrand = useCallback(async () => {
         try {
-            const req = apiEnd.getBrandById(id);
-            const res = await postData(req);
+            const res = await apiInstance.getBrandByIdAPI(id);
             if (res?.success) {
                 setBrand(res?.data?.brandName || "");
                 setStatus(res?.data?.status || "");
-            } else {
-                toast.error(res?.message);
             }
         } catch (error) {
             toast.error("Failed to fetch brand details.");
         }
-    }, [id, postData]);
+    }, [apiInstance, id]);
 
     useEffect(() => {
         if (id) {
@@ -42,11 +38,10 @@ export default function AddBrand() {
         }
 
         try {
-            const req = id
-                ? apiEnd.updateBrand(id, { brandName: brand, status })
-                : apiEnd.adBrand({ brandName: brand, status });
+            const res = id
+                ? await apiInstance.updateBrandAPI(id, { brandName: brand, status })
+                : await apiInstance.addBrandAPI({ brandName: brand, status });
 
-            const res = await postData(req);
             if (res?.success) {
                 toast.success(res?.message);
                 navigate("/manage-brand");
