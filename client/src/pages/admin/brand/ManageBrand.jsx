@@ -16,6 +16,7 @@ export default function ManageBrand() {
     const [pagination, setPagination] = useState("");
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
+
     const apiInstance = useMemo(() => new BrandApi(), []);
 
     const fetchAPI = async () => {
@@ -57,6 +58,7 @@ export default function ManageBrand() {
             <Breadcrumb pageName={"Brand"} />
             <div className="content-area">
                 <Filter setSearch={setSearch} setSorting={setSorting} setStatus={setStatus} />
+
                 <div className="card">
                     <div className="card-header">
                         <span className="card-title">Brand List</span>
@@ -65,8 +67,10 @@ export default function ManageBrand() {
                             <button className="btn btn-primary btn-sm waves-effect">Card</button>
                         </div>
                     </div>
+
                     <div className="card-body">
                         <AddButton buttonLink="/add-brand" level={"Add Brand"} />
+
                         <div className="table-responsive">
                             <table className="table table-striped table-bordered table-hover">
                                 <thead>

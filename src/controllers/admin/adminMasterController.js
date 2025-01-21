@@ -40,15 +40,12 @@ class Controller {
         // Total Items and Pages
         const totalResult = await Helpers.getDataLength(query, MODEL.Generic);
         const totalPages = Math.ceil(totalResult / parseInt(req.query.limit || PAGINATION_LIMIT));
-
         if (!query) throw new ApiError(400, "Generic name is not found");
-
         const pagination = {
             totalResult: totalResult,
             totalPages: totalPages,
             currentPage: parseInt(req.query.page),
         };
-
         return res
             .status(200)
             .json(new ApiResponse(200, { results: query, pagination }, "All List of generic"));

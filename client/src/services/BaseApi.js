@@ -31,16 +31,16 @@ class BaseAPI {
             const { statusCode, message } = response.data || {};
 
             const errorMessage = {
-                403: "Unauthorized",
+                401: "Unauthorized",
                 412: "Validation Error",
-                400: "Bad Request",
+                400: message || "Bad Request",
                 404: "Not Found",
                 428: "Step Error",
                 500: "Internal Server Error",
             };
 
             switch (statusCode) {
-                case 403:
+                case 401:
                     window.location.href = "/logout";
                     break;
 

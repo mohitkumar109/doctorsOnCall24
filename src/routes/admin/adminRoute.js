@@ -173,7 +173,6 @@ router.patch(
 );
 
 //Medicine Brand
-
 router.post("/brand", Middleware.userAuth, AdminMasterController.addBrand);
 router.get("/brand", Middleware.userAuth, AdminMasterController.fetchBrand);
 router.get("/brand/:id", Middleware.userAuth, AdminMasterController.fetchBrandById);
@@ -198,7 +197,6 @@ router.patch(
 );
 
 //Medicine Strength
-
 router.post("/strength", Middleware.userAuth, AdminMasterController.addStrength);
 router.get("/strength", Middleware.userAuth, AdminMasterController.fetchStrength);
 router.get("/strength/:id", Middleware.userAuth, AdminMasterController.fetchStrengthById);

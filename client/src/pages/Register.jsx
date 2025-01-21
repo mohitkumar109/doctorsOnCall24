@@ -18,7 +18,7 @@ const Register = () => {
     const debouncedLogin = useCallback(
         debounce(async (data) => {
             try {
-                const response = await axios.post(`${BASE_URL}/users/register`, data, {
+                const response = await axios.post(`${BASE_URL}/admin/register`, data, {
                     headers: {
                         "Content-Type": "application/json",
                         Accept: "application/json",

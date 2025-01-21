@@ -1,17 +1,19 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import Breadcrumb from "../../../components/Breadcrumb";
 import BrandApi from "../../../services/BrandApi";
 
 export default function AddBrand() {
-    const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
     const [brand, setBrand] = useState("");
     const [status, setStatus] = useState("");
+    const navigate = useNavigate();
     const { id } = useParams();
+
     const apiInstance = useMemo(() => new BrandApi(), []);
 
-    const getBrand = useCallback(async () => {
+    const getBrand = async () => {
         try {
             const res = await apiInstance.getBrandByIdAPI(id);
             if (res?.success) {
@@ -19,37 +21,42 @@ export default function AddBrand() {
                 setStatus(res?.data?.status || "");
             }
         } catch (error) {
-            toast.error("Failed to fetch brand details.");
+            console.log("Failed to fetch brand details.", error);
         }
-    }, [apiInstance, id]);
+    };
 
     useEffect(() => {
         if (id) {
             getBrand();
         }
-    }, [id, getBrand]);
+    }, [id, apiInstance]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!brand) {
-            toast.error("Brand name is required !");
+            toast.error("Brand name is required!");
             return;
         }
 
         try {
+            setLoading(true);
             const res = id
                 ? await apiInstance.updateBrandAPI(id, { brandName: brand, status })
                 : await apiInstance.addBrandAPI({ brandName: brand, status });
 
             if (res?.success) {
                 toast.success(res?.message);
-                navigate("/manage-brand");
-            } else {
-                toast.error(res?.message);
+                setTimeout(() => {
+                    navigate("/manage-brand");
+                }, 300); // 2 seconds delay
             }
         } catch (error) {
-            toast.error(error.res?.data?.message);
+            console.log("Something went wrong with the brand:", error);
+        } finally {
+            setTimeout(() => {
+                setLoading(false);
+            }, 300); // 2 seconds delay
         }
     };
 
@@ -107,8 +114,12 @@ export default function AddBrand() {
 
                             <div className="row mb-5 mt-5">
                                 <div className="col-sm-5 offset-sm-2">
-                                    <button type="submit" className="btn btn-primary me-3">
-                                        {id ? "Update" : "Submit"}
+                                    <button
+                                        type="submit"
+                                        className="btn btn-primary me-3"
+                                        disabled={loading}
+                                    >
+                                        {loading ? "Loading..." : id ? "Update" : "Submit"}
                                     </button>
                                     <button
                                         type="button"

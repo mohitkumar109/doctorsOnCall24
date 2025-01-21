@@ -64,7 +64,6 @@ class Controller {
         }
 
         const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id);
-
         const loggedInUser = await MODEL.User.findById(user._id).select("-password -refreshToken");
 
         const cookieOptions = {

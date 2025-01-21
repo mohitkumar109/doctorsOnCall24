@@ -1,11 +1,9 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { debounce } from "lodash";
-import axios from "axios";
 import { useGlobalContext } from "../context/AppContext";
-import { BASE_URL } from "../services/apiConfig";
 import LoginHeader from "../components/LoginHeader";
+import AuthApi from "../services/AuthApi";
 
 const Login = () => {
     const { setAuth } = useGlobalContext();
@@ -14,45 +12,27 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    const debouncedLogin = useCallback(
-        debounce(async (data) => {
-            try {
-                const response = await axios.post(`${BASE_URL}/admin/login`, data, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Accept: "application/json",
-                    },
-                    withCredentials: true,
-                });
-
-                if (response && response?.data?.success) {
-                    localStorage.setItem("token", JSON.stringify(response.data?.data?.accessToken));
-                    setAuth(response?.data?.data?.data?.role);
-                    toast.success(response?.data.message, { duration: 3000 });
-                    navigate("/");
-                }
-            } catch (error) {
-                console.log("Something went wrong with the login:", error);
-                toast.error(error?.response?.data?.message || "An unexpected error occurred.");
-            } finally {
-                setLoading(false);
-            }
-        }, 1000), // 300ms debounce delay
-        [setAuth, navigate]
-    );
+    const apiInstance = useMemo(() => new AuthApi(), []);
 
     const loginHandle = async (e) => {
         e.preventDefault();
-        setLoading(true);
-        const data = { email, password };
-        debouncedLogin(data);
+        try {
+            setLoading(true);
+            const res = await apiInstance.loginAPI({ email, password });
+            if (res?.success) {
+                localStorage.setItem("token", JSON.stringify(res.data?.accessToken));
+                setAuth(res?.data?.data?.role);
+                toast.success(res?.message);
+                setTimeout(() => {
+                    navigate("/");
+                }, 2000); // 2 seconds delay
+            }
+        } catch (error) {
+            console.log("Something went wrong with the login:", error);
+        } finally {
+            setLoading(false);
+        }
     };
-
-    useEffect(() => {
-        return () => {
-            debouncedLogin.cancel(); // Cleanup the debounced function on component unmount
-        };
-    }, [debouncedLogin]);
 
     return (
         <>

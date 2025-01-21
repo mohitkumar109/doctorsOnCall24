@@ -1,5 +1,4 @@
 // Get Environment
-
 const ENV_CONFIG = {
     dev: {
         BASE_URL: process.env.REACT_APP_BASE_URL_DEV,
