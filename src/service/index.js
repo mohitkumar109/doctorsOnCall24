@@ -10,7 +10,7 @@ export const bootstrapStatus = {
     environmentCheck: config.environment,
 
     /** creates admins */
-    createAdmin: Seeder.createAdmin([{ name: "Admin", email: "mohit@gmail.com" }]),
+    createAdmin: Seeder.createAdmin([{ name: "Admin", email: "admin@gmail.com" }]),
 };
 
 console.log("bootstrap status --\n", bootstrapStatus);

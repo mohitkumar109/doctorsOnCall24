@@ -2,7 +2,9 @@ import { Dependencies } from "../packages/index.js";
 const { ObjectId } = Dependencies.mongoose.Schema.Types;
 
 const medicineOrderSchema = new Dependencies.mongoose.Schema({
+    
     orderId: { type: String, required: true },
+    storeId: { type: ObjectId, ref: "Store" },
     items: [
         {
             medicine: { type: ObjectId, ref: "Medicine", required: true },
@@ -16,7 +18,6 @@ const medicineOrderSchema = new Dependencies.mongoose.Schema({
         enum: { values: ["pending"], message: "Status can't be out of {VALUE}" },
         default: "pending",
     },
-    storeId: { type: ObjectId, ref: "Store" },
     createdBy: { type: ObjectId, ref: "Users" },
 });
 

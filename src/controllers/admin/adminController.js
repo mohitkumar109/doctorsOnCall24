@@ -2,6 +2,7 @@ import { Dependencies } from "../../packages/index.js";
 import { asyncHandler, ApiResponse, ApiError } from "../../utils/index.js";
 import { Helpers } from "../../common/index.js";
 import { MODEL } from "../../models/index.js";
+import { config } from "../../common/index.js";
 
 const generateAccessAndRefreshTokens = async (userId) => {
     try {
@@ -68,7 +69,7 @@ class Controller {
 
         const cookieOptions = {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "development",
+            secure: config.environment === "development",
             sameSite: "strict",
             maxAge: 1 * 24 * 60 * 60 * 1000,
         };

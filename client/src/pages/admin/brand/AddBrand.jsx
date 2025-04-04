@@ -56,7 +56,7 @@ export default function AddBrand() {
         } finally {
             setTimeout(() => {
                 setLoading(false);
-            }, 300); // 2 seconds delay
+            }, 300); // 3 seconds delay
         }
     };
 

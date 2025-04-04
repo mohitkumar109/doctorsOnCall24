@@ -24,3 +24,4 @@ export const MODEL = {
     MedicineOrder,
     StoreMedicine,
 };
+Object.freeze(MODEL)
